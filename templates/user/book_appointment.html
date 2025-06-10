@@ -2,13 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Book Appointment - MediConnect</title>
+    <title>Book Appointment - ApkaDr.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scroll caused by off-screen sidebar */
+        }
+
+        /* Custom color variables for consistency */
+        :root {
+            --apkadr-dark-blue: #1e3a8a; /* From logo's pen */
+            --apkadr-gold: #facc15; /* From logo's pen accent */
+            --apkadr-black: #343a40; /* General dark text/element, from logo text */
+            --apkadr-light-gray: #f7f7f7; /* Soft background */
+            --apkadr-white: #ffffff;
         }
 
         .card-aesthetic {
@@ -68,6 +78,7 @@
             display: block;
         }
 
+        /* Adjustments for medium and larger screens */
         @media (min-width: 768px) {
             .sidebar {
                 transform: translateX(0); /* Always visible on larger screens */
@@ -80,13 +91,19 @@
             .hamburger-icon {
                 display: none;
             }
+            .md\:w-full {
+                width: 100%; /* Ensure main content takes full width when sidebar is present */
+            }
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
 
     <header class="md:hidden bg-white shadow-md p-4 flex justify-between items-center z-30">
-        <h1 class="text-2xl font-extrabold text-gray-800">MediConnect</h1>
+        <div class="flex items-center gap-2">
+            <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="h-10 w-10 rounded-full object-cover border border-indigo-600">
+            <h1 class="text-2xl font-extrabold text-gray-800">ApkaDr.</h1>
+        </div>
         <button id="hamburger" class="text-gray-600 focus:outline-none p-2 rounded-md hover:bg-gray-100">
             <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -97,9 +114,12 @@
     <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
     <div class="flex flex-1">
-        <nav id="sidebar" class="sidebar fixed inset-y-0 left-0 bg-indigo-700 text-white w-64 p-5 z-50 md:relative">
+        <nav id="sidebar" class="sidebar fixed inset-y-0 left-0 bg-indigo-700 text-white w-64 p-5 z-50 md:relative md:translate-x-0">
             <div class="flex justify-between items-center mb-10 md:mb-8">
-                <h4 class="text-3xl font-extrabold hidden md:block">MediConnect</h4>
+                <div class="hidden md:flex items-center gap-2">
+                    <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="h-10 w-10 rounded-full object-cover border border-indigo-400">
+                    <h4 class="text-3xl font-extrabold">ApkaDr.</h4>
+                </div>
                 <button class="md:hidden text-white p-2 rounded-md hover:bg-indigo-600" onclick="toggleSidebar()">
                     <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -116,7 +136,7 @@
             </ul>
         </nav>
 
-        <main class="flex-1 p-6 md:p-10">
+        <main class="flex-1 p-6 md:p-10 md:w-full">
             <div class="card-aesthetic p-6 md:p-10 max-w-2xl mx-auto">
                 <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-6 text-center">Book Your Appointment</h2>
                 <p class="text-gray-600 text-lg mb-8 text-center">Fill in the details below to secure your consultation.</p>
@@ -191,21 +211,32 @@
             const checkbox = document.getElementById('bookingForOther');
             const patientDetails = document.getElementById('patientDetails');
             const selfNotesDiv = document.getElementById('selfNotesDiv');
-            const patientFields = patientDetails.querySelectorAll('input, textarea');
+            
+            const patientNameField = document.getElementById('patientName');
+            const patientAgeField = document.getElementById('patientAge');
+            const patientPhoneField = document.getElementById('patientPhone');
+            const patientNotesField = document.getElementById('patientNotes');
             const selfNotesField = document.getElementById('notes');
 
             if (checkbox.checked) {
                 patientDetails.style.display = 'block';
                 selfNotesDiv.style.display = 'none';
-                // Make patient fields required when visible
-                patientFields.forEach(field => field.setAttribute('required', 'required'));
-                selfNotesField.removeAttribute('required'); // Remove required for self notes
+
+                // Make patient fields required and self notes not required
+                patientNameField.setAttribute('required', 'required');
+                patientAgeField.setAttribute('required', 'required');
+                patientPhoneField.setAttribute('required', 'required');
+                // patientNotesField is optional, so no 'required'
+                selfNotesField.removeAttribute('required'); 
             } else {
                 patientDetails.style.display = 'none';
                 selfNotesDiv.style.display = 'block';
-                // Make self notes required when visible
+
+                // Make self notes required and patient fields not required
                 selfNotesField.setAttribute('required', 'required');
-                patientFields.forEach(field => field.removeAttribute('required')); // Remove required for patient fields
+                patientNameField.removeAttribute('required');
+                patientAgeField.removeAttribute('required');
+                patientPhoneField.removeAttribute('required');
             }
         }
 

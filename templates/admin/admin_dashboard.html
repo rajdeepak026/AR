@@ -3,95 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - ApkaDr.</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Custom Colors inspired by ApkaDr. Logo */
         :root {
-            --primary-color: #007bff;
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-            --dark-color: #343a40;
-            --light-color: #f8f9fa;
-            --white-color: #fff;
+            --apkadr-dark-blue: #1e3a8a; /* From logo's pen */
+            --apkadr-gold: #facc15; /* From logo's pen accent */
+            --apkadr-black: #343a40; /* General dark text/element, from logo text */
+            --apkadr-light-gray: #f7f7f7; /* Soft background */
+            --apkadr-white: #ffffff;
+
+            /* Mapped to general Bootstrap-like variable names for convenience */
+            --primary-color: var(--apkadr-dark-blue);
+            --secondary-color: #6c757d; /* Keep some default for general secondary */
+            --success-color: #1a6f3b; /* A darker green for success */
+            --danger-color: #c0392b; /* A more subdued red */
+            --warning-color: var(--apkadr-gold); /* Using gold for warning/attention */
+            --info-color: #2980b9; /* A distinct blue for info */
+            --dark-color: var(--apkadr-black);
+            --light-color: var(--apkadr-light-gray);
+            --white-color: var(--apkadr-white);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif; /* Consistent with login/register */
             background-color: var(--light-color);
+            color: var(--dark-color);
         }
 
         /* Sidebar styles */
         .sidebar {
-            width: 250px;
-            background-color: var(--dark-color);
+            width: 280px; /* Slightly wider sidebar for better logo display */
+            background-color: var(--dark-color); /* Black/Dark Gray */
             color: var(--white-color);
             transition: all 0.3s ease;
-            flex-shrink: 0; /* Prevent sidebar from shrinking */
+            flex-shrink: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
         }
 
         .sidebar .nav-link {
             color: rgba(255, 255, 255, 0.75);
-            padding: 12px 20px;
+            padding: 15px 25px; /* More padding for better click area */
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
+            font-weight: 500;
         }
 
         .sidebar .nav-link:hover,
         .sidebar .nav-link.active {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--white-color);
-            border-left: 4px solid var(--primary-color);
+            border-left: 5px solid var(--apkadr-gold); /* Gold accent for active link */
+            padding-left: 20px; /* Adjust padding due to border */
         }
 
         .sidebar .nav-link i {
-            margin-right: 10px;
+            margin-right: 12px; /* Increased icon spacing */
+            font-size: 1.1rem;
         }
 
-        .sidebar h4 {
+        .sidebar .logo-container {
             padding: 20px;
             margin-bottom: 0;
             text-align: center;
             background-color: rgba(0, 0, 0, 0.2);
-            font-weight: 600;
-            color: var(--primary-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .logo-container img {
+            max-height: 80px; /* Adjust logo height */
+            width: 80px; /* Ensure width matches height for perfect circle */
+            object-fit: cover; /* Ensures image covers the circular area */
+            border: 2px solid var(--apkadr-gold); /* Add a subtle gold border */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a subtle shadow to the logo */
         }
 
         /* Main content styles */
         .main-content {
             flex-grow: 1;
-            padding: 20px;
+            padding: 30px; /* More overall padding */
             background-color: var(--light-color);
         }
 
         .card {
             border: none;
-            border-radius: 8px;
+            border-radius: 12px; /* More rounded corners */
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
             transition: all 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+            transform: translateY(-8px); /* More pronounced lift on hover */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         .card-body {
-            padding: 25px;
+            padding: 30px; /* More padding inside cards */
             font-size: 1.1rem;
             font-weight: 500;
         }
 
-        /* Hamburger menu for small devices */
+        /* Custom card backgrounds */
+        .card.bg-custom-blue {
+            background-color: var(--apkadr-dark-blue) !important;
+            color: var(--white-color) !important;
+        }
+        .card.bg-custom-gold {
+            background-color: var(--apkadr-gold) !important;
+            color: var(--apkadr-black) !important; /* Black text on gold */
+        }
+        .card.bg-custom-green {
+            background-color: var(--success-color) !important;
+            color: var(--white-color) !important;
+        }
+        .card.bg-custom-red {
+            background-color: var(--danger-color) !important;
+            color: var(--white-color) !important;
+        }
+
+        /* Hamburger menu and offcanvas */
         .navbar-toggler {
             border: none;
             color: var(--white-color);
             padding: 0;
+            font-size: 1.5rem; /* Larger icon */
         }
 
         .navbar-toggler:focus {
@@ -102,11 +141,30 @@
             background-color: var(--dark-color);
             color: var(--white-color);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+        }
+
+        .offcanvas-header .offcanvas-title {
+             display: flex;
+             align-items: center;
+             gap: 10px;
+        }
+
+        .offcanvas-header .offcanvas-title img {
+            max-height: 40px; /* Smaller logo in offcanvas header */
+            width: 40px; /* Ensure width matches height for perfect circle */
+            object-fit: cover; /* Ensures image covers the circular area */
+            border: 1.5px solid var(--apkadr-gold); /* Add a subtle gold border */
         }
 
         .offcanvas-body {
             background-color: var(--dark-color);
             color: var(--white-color);
+            padding-top: 0; /* Remove top padding for nav links */
+        }
+
+        .offcanvas-body .nav-link {
+            padding: 15px 25px; /* Consistent padding */
         }
 
         /* Responsive adjustments */
@@ -114,105 +172,107 @@
             .sidebar {
                 position: fixed;
                 top: 0;
-                left: -250px; /* Hide sidebar by default */
+                left: -280px; /* Match new width */
                 height: 100vh;
                 z-index: 1050;
-                /* Remove fixed width for offcanvas */
-                width: 250px;
+                width: 280px; /* Match new width */
             }
 
             .sidebar.show {
-                left: 0; /* Show sidebar when offcanvas is open */
+                left: 0;
             }
 
             .main-content {
-                margin-left: 0; /* No margin on small screens */
+                margin-left: 0;
+                padding: 20px; /* Slightly less padding on small screens */
             }
 
             .navbar-expand-lg .navbar-collapse {
-                display: none !important; /* Hide regular navbar collapse on small screens */
+                display: none !important;
+            }
+
+            .header-admin-dashboard { /* New class for mobile header */
+                font-size: 1.5rem; /* Smaller heading on mobile */
             }
         }
 
         @media (min-width: 992px) {
             .navbar-toggler-container {
-                display: none; /* Hide hamburger on large screens */
+                display: none;
             }
-        }
-
-        .navbar-brand-custom {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-align: center;
-            width: 100%;
-            display: block;
+            .header-admin-dashboard {
+                font-size: 2rem; /* Larger heading on desktop */
+                text-align: left !important;
+            }
         }
     </style>
 </head>
 <body>
     <div class="d-flex">
         <nav class="sidebar vh-100 d-none d-lg-block">
-            <h4 class="navbar-brand-custom">MediConnect</h4>
+            <div class="logo-container">
+                <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle">
+            </div>
             <ul class="nav flex-column mt-4">
                 <li class="nav-item">
-                    <a class="nav-link text-white active" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a class="nav-link active" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                    <a class="nav-link" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                    <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                    <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </li>
             </ul>
         </nav>
 
         <main class="main-content w-100">
-            <header class="d-flex justify-content-between align-items-center mb-4 d-lg-none py-2 bg-dark text-white rounded shadow-sm">
-                <button class="btn btn-dark ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
+            <header class="d-flex justify-content-between align-items-center mb-4 d-lg-none py-3 bg-dark text-white rounded shadow-sm">
+                <button class="btn ms-3 text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="fas fa-bars fa-lg"></i>
                 </button>
-                <h2 class="mb-0 me-3 text-white">Admin Dashboard</h2>
+                <h2 class="mb-0 me-3 text-white header-admin-dashboard">Admin Dashboard</h2>
             </header>
 
             <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasSidebarLabel">MediConnect</h5>
-                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <h5 class="offcanvas-title" id="offcanvasSidebarLabel">
+                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle" style="height: 40px; margin-right: 10px;"> ApkaDr.
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link text-white active" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                            <a class="nav-link active" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                            <a class="nav-link" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                            <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                            <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <h2 class="mb-4 d-none d-lg-block">Welcome, Admin ({{ user_name }})</h2>
-            <h2 class="mb-4 d-lg-none text-center">Welcome, Admin ({{ user_name }})</h2>
+            <h2 class="mb-4 header-admin-dashboard">Welcome, Admin ({{ user_name }})</h2>
 
             <div class="row mt-4">
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card text-white bg-primary">
+                    <div class="card text-white bg-custom-blue">
                         <div class="card-body">
                             <h5 class="card-title"><i class="fas fa-users"></i> Total Users</h5>
                             <p class="card-text fs-3">{{ total_users }}</p>
@@ -220,7 +280,7 @@
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card text-white bg-success">
+                    <div class="card text-dark bg-custom-gold">
                         <div class="card-body">
                             <h5 class="card-title"><i class="fas fa-user-md"></i> Total Doctors</h5>
                             <p class="card-text fs-3">{{ total_doctors }}</p>
@@ -228,7 +288,7 @@
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card text-white bg-warning">
+                    <div class="card text-white bg-custom-green">
                         <div class="card-body">
                             <h5 class="card-title"><i class="fas fa-calendar-day"></i> Appointments Today</h5>
                             <p class="card-text fs-3">{{ todays_appointments }}</p>
@@ -236,7 +296,7 @@
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card text-white bg-danger">
+                    <div class="card text-white bg-custom-red">
                         <div class="card-body">
                             <h5 class="card-title"><i class="fas fa-rupee-sign"></i> Total Revenue</h5>
                             <p class="card-text fs-3">₹{{ total_revenue }}</p>
@@ -244,7 +304,7 @@
                     </div>
                 </div>
             </div>
-            </main>
+        </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

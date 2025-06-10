@@ -2,13 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>User Dashboard - MediConnect</title>
+    <title>User Dashboard - ApkaDr.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scroll caused by off-screen sidebar */
+        }
+
+        /* Custom color variables for consistency */
+        :root {
+            --apkadr-dark-blue: #1e3a8a; /* From logo's pen */
+            --apkadr-gold: #facc15; /* From logo's pen accent */
+            --apkadr-black: #343a40; /* General dark text/element, from logo text */
+            --apkadr-light-gray: #f7f7f7; /* Soft background */
+            --apkadr-white: #ffffff;
         }
 
         .card-aesthetic {
@@ -62,6 +72,7 @@
             display: block;
         }
 
+        /* Adjustments for medium and larger screens */
         @media (min-width: 768px) {
             .sidebar {
                 transform: translateX(0); /* Always visible on larger screens */
@@ -74,13 +85,19 @@
             .hamburger-icon {
                 display: none;
             }
+            .md\:w-full {
+                width: 100%; /* Ensure main content takes full width when sidebar is present */
+            }
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
 
     <header class="md:hidden bg-white shadow-md p-4 flex justify-between items-center z-30">
-        <h1 class="text-2xl font-extrabold text-gray-800">MediConnect</h1>
+        <div class="flex items-center gap-2">
+            <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="h-10 w-10 rounded-full object-cover border border-indigo-600">
+            <h1 class="text-2xl font-extrabold text-gray-800">ApkaDr.</h1>
+        </div>
         <button id="hamburger" class="text-gray-600 focus:outline-none p-2 rounded-md hover:bg-gray-100">
             <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -91,9 +108,12 @@
     <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
     <div class="flex flex-1">
-        <nav id="sidebar" class="sidebar fixed inset-y-0 left-0 bg-indigo-700 text-white w-64 p-5 z-50 md:relative">
+        <nav id="sidebar" class="sidebar fixed inset-y-0 left-0 bg-indigo-700 text-white w-64 p-5 z-50 md:relative md:translate-x-0">
             <div class="flex justify-between items-center mb-10 md:mb-8">
-                <h4 class="text-3xl font-extrabold hidden md:block">MediConnect</h4>
+                <div class="hidden md:flex items-center gap-2">
+                    <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="h-10 w-10 rounded-full object-cover border border-indigo-400">
+                    <h4 class="text-3xl font-extrabold">ApkaDr.</h4>
+                </div>
                 <button class="md:hidden text-white p-2 rounded-md hover:bg-indigo-600" onclick="toggleSidebar()">
                     <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -101,7 +121,7 @@
                 </button>
             </div>
             <ul class="nav flex flex-col space-y-4">
-                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg bg-indigo-600 text-white text-lg font-medium" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('my_appointments') }}">My Appointments</a></li>

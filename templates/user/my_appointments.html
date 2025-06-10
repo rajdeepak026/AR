@@ -2,13 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Appointments - MediConnect</title>
+    <title>My Appointments - ApkaDr.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scroll caused by off-screen sidebar */
+        }
+
+        /* Custom color variables for consistency */
+        :root {
+            --apkadr-dark-blue: #1e3a8a; /* From logo's pen */
+            --apkadr-gold: #facc15; /* From logo's pen accent */
+            --apkadr-black: #343a40; /* General dark text/element, from logo text */
+            --apkadr-light-gray: #f7f7f7; /* Soft background */
+            --apkadr-white: #ffffff;
         }
 
         .card-aesthetic {
@@ -68,6 +78,7 @@
             display: block;
         }
 
+        /* Adjustments for medium and larger screens */
         @media (min-width: 768px) {
             .sidebar {
                 transform: translateX(0);
@@ -80,21 +91,44 @@
             .hamburger-icon {
                 display: none;
             }
+            .md\:w-full {
+                width: 100%; /* Ensure main content takes full width when sidebar is present */
+            }
         }
 
-        /* Specific styles for appointment table */
+        /* Specific styles for appointment table (desktop) */
         .appointment-table-row {
             transition: background-color 0.2s ease;
         }
         .appointment-table-row:hover {
             background-color: rgba(99, 102, 241, 0.05); /* Light indigo hover */
         }
+        .appointment-table thead {
+            background-color: var(--apkadr-dark-blue);
+        }
+
+        .appointment-table th {
+            color: var(--apkadr-white);
+            font-weight: 600;
+            text-align: left;
+            vertical-align: top;
+            padding: 0.75rem 1rem; /* px-4 py-3 */
+        }
+        
+        .appointment-table td {
+            text-align: left;
+            vertical-align: top;
+            padding: 1rem; /* px-4 py-3 */
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
 
     <header class="md:hidden bg-white shadow-md p-4 flex justify-between items-center z-30">
-        <h1 class="text-2xl font-extrabold text-gray-800">MediConnect</h1>
+        <div class="flex items-center gap-2">
+            <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="h-10 w-10 rounded-full object-cover border border-indigo-600">
+            <h1 class="text-2xl font-extrabold text-gray-800">ApkaDr.</h1>
+        </div>
         <button id="hamburger" class="text-gray-600 focus:outline-none p-2 rounded-md hover:bg-gray-100">
             <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -105,9 +139,12 @@
     <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
     <div class="flex flex-1">
-        <nav id="sidebar" class="sidebar fixed inset-y-0 left-0 bg-indigo-700 text-white w-64 p-5 z-50 md:relative">
+        <nav id="sidebar" class="sidebar fixed inset-y-0 left-0 bg-indigo-700 text-white w-64 p-5 z-50 md:relative md:translate-x-0">
             <div class="flex justify-between items-center mb-10 md:mb-8">
-                <h4 class="text-3xl font-extrabold hidden md:block">MediConnect</h4>
+                <div class="hidden md:flex items-center gap-2">
+                    <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="h-10 w-10 rounded-full object-cover border border-indigo-400">
+                    <h4 class="text-3xl font-extrabold">ApkaDr.</h4>
+                </div>
                 <button class="md:hidden text-white p-2 rounded-md hover:bg-indigo-600" onclick="toggleSidebar()">
                     <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -124,30 +161,30 @@
             </ul>
         </nav>
 
-        <main class="flex-1 p-6 md:p-10">
+        <main class="flex-1 p-6 md:p-10 md:w-full">
             <div class="card-aesthetic p-6 md:p-10 max-w-5xl mx-auto">
                 <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-6 text-center">Your Appointments</h2>
                 <p class="text-gray-600 text-lg mb-8 text-center">Track the status and details of your booked consultations.</p>
 
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                <div class="overflow-x-auto hidden md:block">
+                    <table class="min-w-full divide-y divide-gray-200 appointment-table">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Symptoms</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider rounded-tl-lg">Doctor</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Time</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Token</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider rounded-tr-lg">Details</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             {% for appointment in appointments %}
                             <tr class="appointment-table-row">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ appointment.doctor.full_name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ appointment.appointment_date.strftime('%Y-%m-%d') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ appointment.appointment_time }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ appointment.doctor.full_name }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ appointment.appointment_date.strftime('%Y-%m-%d') }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ appointment.appointment_time }}</td>
+                                <td class="px-4 py-3">
                                     {% if appointment.status == 'pending' %}
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
                                     {% elif appointment.status == 'confirmed' %}
@@ -158,17 +195,69 @@
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ appointment.status.capitalize() }}</span>
                                     {% endif %}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ appointment.token_number if appointment.token_number else '--' }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600 max-w-xs overflow-hidden text-ellipsis">{{ appointment.symptoms if appointment.symptoms else 'N/A' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ appointment.token_number if appointment.token_number else '--' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">
+                                    {% if appointment.patient_name %}
+                                        <span class="font-bold">Patient:</span> {{ appointment.patient_name }}<br>
+                                        {{ appointment.patient_notes if appointment.patient_notes else 'No patient notes.' }}
+                                    {% else %}
+                                        {{ appointment.symptoms if appointment.symptoms else 'N/A' }}
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-600">No appointments found. Book your first appointment today!</td>
+                                <td colspan="6" class="px-4 py-3 text-center text-sm text-gray-600">No appointments found. Book your first appointment today!</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+
+                <div class="md:hidden space-y-4">
+                    {% for appointment in appointments %}
+                    <div class="card-aesthetic p-4">
+                        <div class="mb-2">
+                            <p class="text-lg font-semibold text-gray-800">Dr. {{ appointment.doctor.full_name }}</p>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-1">
+                            <span class="font-medium">Date:</span> {{ appointment.appointment_date.strftime('%Y-%m-%d') }}
+                        </p>
+                        <p class="text-sm text-gray-600 mb-1">
+                            <span class="font-medium">Time:</span> {{ appointment.appointment_time }}
+                        </p>
+                        <p class="text-sm text-gray-600 mb-1">
+                            <span class="font-medium">Status:</span> 
+                            {% if appointment.status == 'pending' %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                            {% elif appointment.status == 'confirmed' %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
+                            {% elif appointment.status == 'rejected' %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
+                            {% else %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ appointment.status.capitalize() }}</span>
+                            {% endif %}
+                        </p>
+                        <p class="text-sm text-gray-600 mb-1">
+                            <span class="font-medium">Token:</span> {{ appointment.token_number if appointment.token_number else '--' }}
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <span class="font-medium">Details:</span> 
+                            {% if appointment.patient_name %}
+                                <span class="font-bold">Patient:</span> {{ appointment.patient_name }}<br>
+                                {{ appointment.patient_notes if appointment.patient_notes else 'No patient notes.' }}
+                            {% else %}
+                                {{ appointment.symptoms if appointment.symptoms else 'N/A' }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% else %}
+                    <div class="card-aesthetic p-4 text-center text-gray-600">
+                        No appointments found. Book your first appointment today!
+                    </div>
+                    {% endfor %}
+                </div>
+
             </div>
         </main>
     </div>
