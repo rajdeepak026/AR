@@ -1,65 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Appointments</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>My Appointments - MediConnect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card-aesthetic {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-aesthetic {
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .input-aesthetic:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            outline: none;
+        }
+
+        .button-aesthetic {
+            background: linear-gradient(to right, #6366f1, #8b5cf6);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .button-aesthetic:hover {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Custom styles for sidebar animation */
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+        }
+
+        .overlay.open {
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+                position: relative;
+                box-shadow: none;
+            }
+            .overlay {
+                display: none;
+            }
+            .hamburger-icon {
+                display: none;
+            }
+        }
+
+        /* Specific styles for appointment table */
+        .appointment-table-row {
+            transition: background-color 0.2s ease;
+        }
+        .appointment-table-row:hover {
+            background-color: rgba(99, 102, 241, 0.05); /* Light indigo hover */
+        }
+    </style>
 </head>
-<body>
-  <div class="d-flex">
-    <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
-      <h4>MediConnect</h4>
-      <ul class="nav flex-column mt-4">
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
-        <li class="nav-item"><a class="nav-link text-white active" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('user_profile') }}">My Profile</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a></li>
-      </ul>
-    </nav>
-    <main class="p-4 w-100">
-      <h2>My Appointments</h2>
-      <table class="table mt-4">
-        <thead>
-          <tr>
-            <th>Doctor</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-            <th>Token</th>
-            <th>Symptoms</th> {# Added Symptoms column for completeness #}
-          </tr>
-        </thead>
-        <tbody>
-          {% for appointment in appointments %}
-          <tr>
-            <td>{{ appointment.doctor.full_name }}</td>
-            <td>{{ appointment.appointment_date.strftime('%Y-%m-%d') }}</td>
-            <td>{{ appointment.appointment_time }}</td>
-            <td>
-              {% if appointment.status == 'pending' %}
-                <span class="badge bg-warning text-dark">{{ appointment.status.capitalize() }}</span>
-              {% elif appointment.status == 'confirmed' %}
-                <span class="badge bg-success">{{ appointment.status.capitalize() }}</span>
-              {% elif appointment.status == 'rejected' %}
-                <span class="badge bg-danger">{{ appointment.status.capitalize() }}</span>
-              {% else %}
-                <span class="badge bg-info">{{ appointment.status.capitalize() }}</span>
-              {% endif %}
-            </td>
-            <td>{{ appointment.token_number if appointment.token_number else '--' }}</td>
-            <td>{{ appointment.symptoms }}</td> {# Display symptoms #}
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="6" class="text-center">No appointments found.</td> {# Updated colspan #}
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </main>
-  </div>
+<body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
+
+    <header class="md:hidden bg-white shadow-md p-4 flex justify-between items-center z-30">
+        <h1 class="text-2xl font-extrabold text-gray-800">MediConnect</h1>
+        <button id="hamburger" class="text-gray-600 focus:outline-none p-2 rounded-md hover:bg-gray-100">
+            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </header>
+
+    <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="flex flex-1">
+        <nav id="sidebar" class="sidebar fixed inset-y-0 left-0 bg-indigo-700 text-white w-64 p-5 z-50 md:relative">
+            <div class="flex justify-between items-center mb-10 md:mb-8">
+                <h4 class="text-3xl font-extrabold hidden md:block">MediConnect</h4>
+                <button class="md:hidden text-white p-2 rounded-md hover:bg-indigo-600" onclick="toggleSidebar()">
+                    <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <ul class="nav flex flex-col space-y-4">
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg bg-indigo-600 text-white text-lg font-medium" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_profile') }}">My Profile</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 p-6 md:p-10">
+            <div class="card-aesthetic p-6 md:p-10 max-w-5xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-6 text-center">Your Appointments</h2>
+                <p class="text-gray-600 text-lg mb-8 text-center">Track the status and details of your booked consultations.</p>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Symptoms</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for appointment in appointments %}
+                            <tr class="appointment-table-row">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ appointment.doctor.full_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ appointment.appointment_date.strftime('%Y-%m-%d') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ appointment.appointment_time }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if appointment.status == 'pending' %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                    {% elif appointment.status == 'confirmed' %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
+                                    {% elif appointment.status == 'rejected' %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
+                                    {% else %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ appointment.status.capitalize() }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ appointment.token_number if appointment.token_number else '--' }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 max-w-xs overflow-hidden text-ellipsis">{{ appointment.symptoms if appointment.symptoms else 'N/A' }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-600">No appointments found. Book your first appointment today!</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Hamburger menu functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        document.getElementById('hamburger').addEventListener('click', toggleSidebar);
+
+        // Close sidebar if screen resized to desktop while open
+        window.addEventListener('resize', () => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,58 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Manage Users</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+            --white-color: #fff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background-color: var(--dark-color);
+            color: var(--white-color);
+            transition: all 0.3s ease;
+            flex-shrink: 0; /* Prevent sidebar from shrinking */
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white-color);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+
+        .sidebar h4 {
+            padding: 20px;
+            margin-bottom: 0;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Main content styles */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: var(--light-color);
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-body {
+            padding: 25px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Hamburger menu for small devices */
+        .navbar-toggler {
+            border: none;
+            color: var(--white-color);
+            padding: 0;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        .offcanvas-header {
+            background-color: var(--dark-color);
+            color: var(--white-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .offcanvas-body {
+            background-color: var(--dark-color);
+            color: var(--white-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -250px; /* Hide sidebar by default */
+                height: 100vh;
+                z-index: 1050;
+                /* Remove fixed width for offcanvas */
+                width: 250px;
+            }
+
+            .sidebar.show {
+                left: 0; /* Show sidebar when offcanvas is open */
+            }
+
+            .main-content {
+                margin-left: 0; /* No margin on small screens */
+            }
+
+            .navbar-expand-lg .navbar-collapse {
+                display: none !important; /* Hide regular navbar collapse on small screens */
+            }
+        }
+
+        @media (min-width: 992px) {
+            .navbar-toggler-container {
+                display: none; /* Hide hamburger on large screens */
+            }
+        }
+
+        .navbar-brand-custom {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            width: 100%;
+            display: block;
+        }
+
+        /* Table Styles */
+        .table {
+            background-color: var(--white-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .table thead {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+    </style>
 </head>
 <body>
-  <div class="d-flex">
-    <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
-      <h4>MediConnect</h4>
-      <ul class="nav flex-column mt-4">
-        <li class="nav-item">
-          <a class="nav-link text-white" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-white" href="{{ url_for('manage_doctors') }}">Manage Doctors</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-white" href="{{ url_for('manage_users') }}">Manage Users</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-white active" href="{{ url_for('appointments') }}">Appointments</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
-        </li>
-      </ul>
-    </nav>
+    <div class="d-flex">
+        <nav class="sidebar vh-100 d-none d-lg-block">
+            <h4 class="navbar-brand-custom">MediConnect</h4>
+            <ul class="nav flex-column mt-4">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white active" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </nav>
 
-    <main class="p-4 w-100">
-      <h2>Manage Users</h2>
-      <table class="table mt-4">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <!-- Removed 'Appointments' column as it's not directly in User model -->
-          </tr>
-        </thead>
-        <tbody>
-          {% for user in users %}
-          <tr>
-            <td>{{ user.fullName }}</td>
-            <td>{{ user.email }}</td>
-            <!-- Removed 'Appointments' data display -->
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="2" class="text-center">No users found.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </main>
-  </div>
+        <main class="main-content w-100">
+            <header class="d-flex justify-content-between align-items-center mb-4 d-lg-none py-2 bg-dark text-white rounded shadow-sm">
+                <button class="btn btn-dark ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
+                    <i class="fas fa-bars fa-lg"></i>
+                </button>
+                <h2 class="mb-0 me-3 text-white">Manage Users</h2>
+            </header>
+
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasSidebarLabel">MediConnect</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white active" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2 class="mb-4 d-none d-lg-block">Manage Users</h2>
+            <h2 class="mb-4 d-lg-none text-center">Manage Users</h2>
+
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.fullName }}</td>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2" class="text-center">No users found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

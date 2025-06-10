@@ -1,58 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-  <div class="d-flex">
-    <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
-      <h4>MediConnect</h4>
-      <ul class="nav flex-column mt-4">
-        <li class="nav-item"><a class="nav-link text-white active" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('user_profile') }}">My Profile</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a></li>
-      </ul>
-    </nav>
-    <main class="p-4 w-100">
-      <h2>Welcome, {{ user.fullName }}!</h2> {# Dynamically display user's full name #}
-      <p class="text-muted">Here you can search for doctors, book appointments, and view your history.</p>
+    <meta charset="UTF-8" />
+    <title>User Dashboard - MediConnect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
 
-      <div class="row mt-4">
-        <div class="col-md-4">
-          <div class="card text-bg-primary mb-3">
-            <div class="card-body">
-              <h5 class="card-title">Search Doctors</h5>
-              <p class="card-text">Find the best doctors near you.</p>
-              <a href="{{ url_for('search_doctors') }}" class="btn btn-light btn-sm">Go</a>
+        .card-aesthetic {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-aesthetic:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 35px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        .button-aesthetic {
+            background: linear-gradient(to right, #6366f1, #8b5cf6);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .button-aesthetic:hover {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Custom styles for sidebar animation */
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1); /* Added shadow for better separation */
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+        }
+
+        .overlay.open {
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0); /* Always visible on larger screens */
+                position: relative; /* Change from fixed to relative for desktop */
+                box-shadow: none; /* Remove shadow on desktop */
+            }
+            .overlay {
+                display: none;
+            }
+            .hamburger-icon {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
+
+    <header class="md:hidden bg-white shadow-md p-4 flex justify-between items-center z-30">
+        <h1 class="text-2xl font-extrabold text-gray-800">MediConnect</h1>
+        <button id="hamburger" class="text-gray-600 focus:outline-none p-2 rounded-md hover:bg-gray-100">
+            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </header>
+
+    <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="flex flex-1">
+        <nav id="sidebar" class="sidebar fixed inset-y-0 left-0 bg-indigo-700 text-white w-64 p-5 z-50 md:relative">
+            <div class="flex justify-between items-center mb-10 md:mb-8">
+                <h4 class="text-3xl font-extrabold hidden md:block">MediConnect</h4>
+                <button class="md:hidden text-white p-2 rounded-md hover:bg-indigo-600" onclick="toggleSidebar()">
+                    <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card text-bg-success mb-3">
-            <div class="card-body">
-              <h5 class="card-title">Book Appointment</h5>
-              <p class="card-text">Easily book your consultation.</p>
-              <a href="{{ url_for('book_appointment') }}" class="btn btn-light btn-sm">Book Now</a>
+            <ul class="nav flex flex-col space-y-4">
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_profile') }}">My Profile</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 p-6 md:p-10">
+            <h2 class="text-4xl font-extrabold text-gray-800 mb-2">Welcome, {{ user.fullName }}!</h2>
+            <p class="text-gray-600 text-lg mb-10">Quickly access key features and manage your healthcare journey.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <a href="{{ url_for('search_doctors') }}" class="card-aesthetic p-8 flex flex-col items-center text-center hover:cursor-pointer">
+                    <svg class="h-16 w-16 text-indigo-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <h5 class="text-2xl font-bold text-gray-800 mb-2">Find a Doctor</h5>
+                    <p class="text-gray-600 text-base">Explore specialists and general practitioners near you.</p>
+                    <span class="mt-4 button-aesthetic inline-block px-6 py-2 rounded-lg text-white font-semibold text-sm">Search Now</span>
+                </a>
+
+                <a href="{{ url_for('book_appointment') }}" class="card-aesthetic p-8 flex flex-col items-center text-center hover:cursor-pointer">
+                    <svg class="h-16 w-16 text-purple-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h.01M16 11h.01M9 15h.01M15 15h.01M10 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2h-5m-7-2h7"></path>
+                    </svg>
+                    <h5 class="text-2xl font-bold text-gray-800 mb-2">Book an Appointment</h5>
+                    <p class="text-gray-600 text-base">Schedule your consultations with ease and convenience.</p>
+                    <span class="mt-4 button-aesthetic inline-block px-6 py-2 rounded-lg text-white font-semibold text-sm">Book Now</span>
+                </a>
+
+                <a href="{{ url_for('my_appointments') }}" class="card-aesthetic p-8 flex flex-col items-center text-center hover:cursor-pointer">
+                    <svg class="h-16 w-16 text-pink-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M12 16h.01"></path>
+                    </svg>
+                    <h5 class="text-2xl font-bold text-gray-800 mb-2">My Appointments</h5>
+                    <p class="text-gray-600 text-base">View, manage, or reschedule your upcoming appointments.</p>
+                    <span class="mt-4 button-aesthetic inline-block px-6 py-2 rounded-lg text-white font-semibold text-sm">View Details</span>
+                </a>
+
+                <a href="{{ url_for('user_profile') }}" class="card-aesthetic p-8 flex flex-col items-center text-center hover:cursor-pointer">
+                    <svg class="h-16 w-16 text-blue-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <h5 class="text-2xl font-bold text-gray-800 mb-2">My Profile</h5>
+                    <p class="text-gray-600 text-base">Update your personal information and preferences.</p>
+                    <span class="mt-4 button-aesthetic inline-block px-6 py-2 rounded-lg text-white font-semibold text-sm">Manage Profile</span>
+                </a>
+
             </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card text-bg-warning mb-3">
-            <div class="card-body">
-              <h5 class="card-title">My Appointments</h5>
-              <p class="card-text">Track and manage your bookings.</p>
-              <a href="{{ url_for('my_appointments') }}" class="btn btn-light btn-sm">View</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        document.getElementById('hamburger').addEventListener('click', toggleSidebar);
+
+        // Close sidebar if screen resized to desktop while open
+        window.addEventListener('resize', () => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+            }
+        });
+    </script>
 </body>
 </html>
