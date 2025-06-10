@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="d-flex">
+    <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
+      <h4>MediConnect</h4>
+      <ul class="nav flex-column mt-4">
+        <li class="nav-item"><a class="nav-link text-white active" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('user_profile') }}">My Profile</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </nav>
+    <main class="p-4 w-100">
+      <h2>Welcome, {{ user.fullName }}!</h2> {# Dynamically display user's full name #}
+      <p class="text-muted">Here you can search for doctors, book appointments, and view your history.</p>
+
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <div class="card text-bg-primary mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Search Doctors</h5>
+              <p class="card-text">Find the best doctors near you.</p>
+              <a href="{{ url_for('search_doctors') }}" class="btn btn-light btn-sm">Go</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-bg-success mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Book Appointment</h5>
+              <p class="card-text">Easily book your consultation.</p>
+              <a href="{{ url_for('book_appointment') }}" class="btn btn-light btn-sm">Book Now</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-bg-warning mb-3">
+            <div class="card-body">
+              <h5 class="card-title">My Appointments</h5>
+              <p class="card-text">Track and manage your bookings.</p>
+              <a href="{{ url_for('my_appointments') }}" class="btn btn-light btn-sm">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

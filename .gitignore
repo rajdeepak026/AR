@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+.Python
+env/
+venv/
+lib/
+lib64/
+bin/
+include/
+share/
+/dist/
+/build/
+*.egg-info/
+.coverage
+
+# Flask
+instance/ # The 'instance' folder often holds dynamic data like your SQLite DB
+           # and should generally not be version-controlled.
+
+# Database
+*.sqlite3
+*.db
+*.sql
+
+# Environment variables
+.env
+.flaskenv
+
+# Editors/IDE
+.vscode/        # VS Code settings
+.idea/          # PyCharm/IntelliJ IDEA settings
+*.sublime-project
+*.sublime-workspace
+
+# OS Generated Files
+.DS_Store       # macOS
+Thumbs.db       # Windows
+ehthumbs.db     # Windows
+Desktop.ini     # Windows
+
+# Logs
+*.log

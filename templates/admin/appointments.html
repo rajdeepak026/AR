@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - All Appointments</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
+      <h4>MediConnect</h4>
+      <ul class="nav flex-column mt-4">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{{ url_for('manage_doctors') }}">Manage Doctors</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{{ url_for('manage_users') }}">Manage Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white active" href="{{ url_for('appointments') }}">Appointments</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-4 w-100">
+      <h2>All Appointments</h2>
+      <table class="table mt-4">
+        <thead>
+          <tr>
+            <th>Appointment ID</th>
+            <th>Doctor</th>
+            <th>Patient</th> {# Changed from User to Patient for clarity #}
+            <th>Date</th>
+            <th>Time</th>
+            <th>Symptoms</th> {# Added Symptoms column #}
+            <th>Status</th>
+            <th>Token</th> {# Added Token column #}
+            <th>Actions</th> {# Added Actions column #}
+          </tr>
+        </thead>
+        <tbody>
+          {% for appointment in appointments %}
+          <tr>
+            <td>#{{ appointment.id }}</td>
+            <td>{{ appointment.doctor.full_name }}</td>
+            <td>{{ appointment.patient.fullName }}</td>
+            <td>{{ appointment.appointment_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ appointment.appointment_time }}</td>
+            <td>{{ appointment.symptoms }}</td> {# Display symptoms #}
+            <td>
+              {% if appointment.status == 'pending' %}
+                <span class="badge bg-warning text-dark">{{ appointment.status.capitalize() }}</span>
+              {% elif appointment.status == 'confirmed' %}
+                <span class="badge bg-success">{{ appointment.status.capitalize() }}</span>
+              {% elif appointment.status == 'rejected' %}
+                <span class="badge bg-danger">{{ appointment.status.capitalize() }}</span>
+              {% else %}
+                <span class="badge bg-info">{{ appointment.status.capitalize() }}</span>
+              {% endif %}
+            </td>
+            <td>{{ appointment.token_number if appointment.token_number else '--' }}</td> {# Display token #}
+            <td>
+              {% if appointment.status == 'pending' %}
+                <a href="{{ url_for('approve_appointment', appointment_id=appointment.id) }}" class="btn btn-success btn-sm me-2">Approve</a>
+                <a href="{{ url_for('reject_appointment', appointment_id=appointment.id) }}" class="btn btn-danger btn-sm">Reject</a>
+              {% else %}
+                <button class="btn btn-secondary btn-sm" disabled>No Action</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="9" class="text-center">No appointments found.</td> {# Updated colspan #}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </main>
+  </div>
+</body>
+</html>

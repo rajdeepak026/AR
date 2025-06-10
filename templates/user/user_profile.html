@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="d-flex">
+    <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
+      <h4>MediConnect</h4>
+      <ul class="nav flex-column mt-4">
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
+        <li class="nav-item"><a class="nav-link text-white active" href="{{ url_for('user_profile') }}">My Profile</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </nav>
+    <main class="p-4 w-100">
+      <h2>My Profile</h2>
+      <form class="mt-4" method="POST" action="{{ url_for('user_profile') }}">
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="fullName" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="fullName" name="fullName" value="{{ user.fullName }}" required>
+          </div>
+          <div class="col-md-4">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+          </div>
+          <div class="col-md-4">
+            <label for="age" class="form-label">Age</label>
+            <input type="number" min="0" max="120" class="form-control" id="age" name="age" value="{{ user.age }}" required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone }}" required>
+          </div>
+          <div class="col-md-6">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" name="address" value="{{ user.address }}" required>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="profilePic" class="form-label">Profile Photo</label>
+          <input type="file" class="form-control" id="profilePic" name="profilePic">
+          {# Note: File upload handling requires separate server-side logic beyond this update #}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+      </form>
+    </main>
+  </div>
+</body>
+</html>

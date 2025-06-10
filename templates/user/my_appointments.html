@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Appointments</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="d-flex">
+    <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
+      <h4>MediConnect</h4>
+      <ul class="nav flex-column mt-4">
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+        <li class="nav-item"><a class="nav-link text-white active" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('user_profile') }}">My Profile</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </nav>
+    <main class="p-4 w-100">
+      <h2>My Appointments</h2>
+      <table class="table mt-4">
+        <thead>
+          <tr>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Token</th>
+            <th>Symptoms</th> {# Added Symptoms column for completeness #}
+          </tr>
+        </thead>
+        <tbody>
+          {% for appointment in appointments %}
+          <tr>
+            <td>{{ appointment.doctor.full_name }}</td>
+            <td>{{ appointment.appointment_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ appointment.appointment_time }}</td>
+            <td>
+              {% if appointment.status == 'pending' %}
+                <span class="badge bg-warning text-dark">{{ appointment.status.capitalize() }}</span>
+              {% elif appointment.status == 'confirmed' %}
+                <span class="badge bg-success">{{ appointment.status.capitalize() }}</span>
+              {% elif appointment.status == 'rejected' %}
+                <span class="badge bg-danger">{{ appointment.status.capitalize() }}</span>
+              {% else %}
+                <span class="badge bg-info">{{ appointment.status.capitalize() }}</span>
+              {% endif %}
+            </td>
+            <td>{{ appointment.token_number if appointment.token_number else '--' }}</td>
+            <td>{{ appointment.symptoms }}</td> {# Display symptoms #}
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="text-center">No appointments found.</td> {# Updated colspan #}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </main>
+  </div>
+</body>
+</html>

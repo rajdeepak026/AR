@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Appointment</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="d-flex">
+    <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
+      <h4>MediConnect</h4>
+      <ul class="nav flex-column mt-4">
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
+        <li class="nav-item"><a class="nav-link text-white active" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('user_profile') }}">My Profile</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </nav>
+    <main class="p-4 w-100">
+      <h2>Book Appointment</h2>
+      <form class="mt-4" method="POST" action="{{ url_for('book_appointment') }}">
+        {# Hidden input to pass doctor_id if it came from search results #}
+        <input type="hidden" name="doctor_id" value="{{ doctor.id if doctor else '' }}">
+
+        <div class="mb-3">
+          <label for="doctorName" class="form-label">Doctor Name</label>
+          <input type="text" class="form-control" id="doctorName" value="{{ doctor.full_name if doctor else 'No Doctor Selected' }}" readonly>
+        </div>
+        <div class="mb-3">
+          <label for="appointmentDate" class="form-label">Select Date</label>
+          <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" required>
+        </div>
+        <div class="mb-3">
+          <label for="appointmentTime" class="form-label">Select Time</label>
+          <input type="time" class="form-control" id="appointmentTime" name="appointmentTime" required>
+        </div>
+
+        <hr>
+        <h5>Patient Details</h5>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" value="true" id="bookingForOther" name="bookingForOther" onchange="togglePatientDetails()">
+          <label class="form-check-label" for="bookingForOther">
+            Booking for someone else
+          </label>
+        </div>
+
+        <div id="patientDetails" style="display:none;">
+          <div class="mb-3">
+            <label for="patientName" class="form-label">Patient Name</label>
+            <input type="text" class="form-control" id="patientName" name="patientName" placeholder="Enter patient's full name">
+          </div>
+          <div class="mb-3">
+            <label for="patientAge" class="form-label">Patient Age</label>
+            <input type="number" min="0" max="120" class="form-control" id="patientAge" name="patientAge" placeholder="Enter patient's age">
+          </div>
+          <div class="mb-3">
+            <label for="patientPhone" class="form-label">Patient Phone</label>
+            <input type="tel" class="form-control" id="patientPhone" name="patientPhone" placeholder="Enter patient's phone number">
+          </div>
+          <div class="mb-3">
+            <label for="patientNotes" class="form-label">Additional Notes</label>
+            <textarea class="form-control" id="patientNotes" name="patientNotes" rows="3" placeholder="Enter any symptoms or notes for the other patient"></textarea>
+          </div>
+        </div>
+
+        <div class="mb-3" id="selfNotesDiv">
+          <label for="notes" class="form-label">Notes / Symptoms</label>
+          <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter your symptoms or any notes for the doctor.">{{ user.symptoms if user.symptoms else '' }}</textarea> {# Assuming 'symptoms' might be a field in User model for defaults, otherwise leave blank #}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Confirm Appointment</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    function togglePatientDetails() {
+      const checkbox = document.getElementById('bookingForOther');
+      const patientDetails = document.getElementById('patientDetails');
+      const selfNotesDiv = document.getElementById('selfNotesDiv');
+      const patientFields = patientDetails.querySelectorAll('input, textarea');
+      const selfNotesField = document.getElementById('notes');
+
+      if (checkbox.checked) {
+        patientDetails.style.display = 'block';
+        selfNotesDiv.style.display = 'none';
+        // Make patient fields required when visible
+        patientFields.forEach(field => field.setAttribute('required', 'required'));
+        selfNotesField.removeAttribute('required'); // Remove required for self notes
+      } else {
+        patientDetails.style.display = 'none';
+        selfNotesDiv.style.display = 'block';
+        // Make self notes required when visible
+        selfNotesField.setAttribute('required', 'required');
+        patientFields.forEach(field => field.removeAttribute('required')); // Remove required for patient fields
+      }
+    }
+
+    // Initialize required state based on initial checkbox state (if page reloads with it checked)
+    document.addEventListener('DOMContentLoaded', togglePatientDetails);
+  </script>
+</body>
+</html>
