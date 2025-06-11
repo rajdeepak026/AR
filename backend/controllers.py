@@ -80,12 +80,121 @@ def logout():
 @app.route("/doctor_dashboard/<int:user_id>")
 def doctor_dashboard(user_id):
     doctor = Doctor.query.get_or_404(user_id)
+    # Ensure the user ID in the URL matches the session ID for the logged-in doctor
     if session.get("user_type") != "doctor" or session.get("user_id") != doctor.id:
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
     # Fetch appointments for this doctor, ordered by date and time
     doctor_appointments = Appointment.query.filter_by(doctor_id=doctor.id).order_by(Appointment.appointment_date, Appointment.appointment_time).all()
     return render_template("doctor/doctor_dashboard.html", doctor=doctor, appointments=doctor_appointments)
+
+@app.route("/doctor/appointments/<int:user_id>")
+def doctor_appointments(user_id):
+    """
+    Route for doctor to manage all their appointments.
+    """
+    doctor = Doctor.query.get_or_404(user_id)
+    # Ensure the user ID in the URL matches the session ID for the logged-in doctor
+    if session.get("user_type") != "doctor" or session.get("user_id") != doctor.id:
+        flash("Unauthorized access", "danger")
+        return redirect(url_for("login_page"))
+
+    # Fetch appointments for this doctor, ordered by date and time
+    appointments = Appointment.query.filter_by(doctor_id=doctor.id).order_by(Appointment.appointment_date, Appointment.appointment_time).all()
+    return render_template("doctor/doctor_appointments.html", appointments=appointments)
+
+
+@app.route("/doctor/appointments/confirm/<int:appointment_id>")
+def confirm_appointment_by_doctor(appointment_id):
+    """
+    Doctor route to confirm a pending appointment.
+    """
+    if session.get("user_type") != "doctor":
+        flash("Unauthorized access", "danger")
+        return redirect(url_for("login_page"))
+
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    # Ensure the doctor is confirming their own appointment
+    if appointment.doctor_id != session.get("user_id"):
+        flash("You can only confirm appointments assigned to you.", "danger")
+        return redirect(url_for("doctor_dashboard", user_id=session.get("user_id")))
+
+    if appointment.status == 'pending':
+        appointment.status = "confirmed"
+        # Generate a more unique token
+        appointment.token_number = f"TKN{appointment_id}-{datetime.datetime.now().strftime('%H%M%S')}"
+
+        try:
+            db.session.commit()
+            flash(f"Appointment {appointment_id} for {appointment.patient.fullName} confirmed.", "success")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error confirming appointment: {e}", "danger")
+    else:
+        flash(f"Appointment {appointment_id} is already '{appointment.status}'. Cannot confirm.", "warning")
+    return redirect(url_for("doctor_dashboard", user_id=session.get("user_id")))
+
+
+@app.route("/doctor/appointments/cancel/<int:appointment_id>")
+def cancel_appointment_by_doctor(appointment_id):
+    """
+    Doctor route to cancel a pending or confirmed appointment.
+    """
+    if session.get("user_type") != "doctor":
+        flash("Unauthorized access", "danger")
+        return redirect(url_for("login_page"))
+
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    # Ensure the doctor is cancelling their own appointment
+    if appointment.doctor_id != session.get("user_id"):
+        flash("You can only cancel appointments assigned to you.", "danger")
+        return redirect(url_for("doctor_dashboard", user_id=session.get("user_id")))
+
+    if appointment.status in ['pending', 'confirmed']:
+        appointment.status = "cancelled" # Changed status to 'cancelled' for doctor actions
+        try:
+            db.session.commit()
+            flash(f"Appointment {appointment_id} for {appointment.patient.fullName} cancelled.", "warning")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error cancelling appointment: {e}", "danger")
+    else:
+        flash(f"Appointment {appointment_id} is already '{appointment.status}'. Cannot cancel.", "warning")
+    return redirect(url_for("doctor_dashboard", user_id=session.get("user_id")))
+
+
+@app.route("/doctor/profile/<int:user_id>", methods=["GET", "POST"])
+def doctor_profile(user_id):
+    """
+    Doctor route to view and update their profile.
+    """
+    doctor = Doctor.query.get_or_404(user_id)
+    # Ensure the user ID in the URL matches the session ID for the logged-in doctor
+    if session.get("user_type") != "doctor" or session.get("user_id") != doctor.id:
+        flash("Unauthorized access", "danger")
+        return redirect(url_for("login_page"))
+
+    if request.method == "POST":
+        doctor.full_name = request.form["full_name"]
+        doctor.email = request.form["email"]
+        doctor.phone = request.form["phone"]
+        doctor.specialty = request.form["specialty"]
+        # Removed lines attempting to update doctor.age and doctor.address
+        # doctor.age = request.form.get("age", type=int)
+        # doctor.address = request.form.get("address")
+
+        try:
+            db.session.commit()
+            flash("Profile updated successfully!", "success")
+            return redirect(url_for("doctor_profile", user_id=doctor.id))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error updating profile: {e}", "danger")
+            app.logger.error(f"Error updating doctor profile: {e}")
+
+    return render_template("doctor/doctor_profile.html", doctor=doctor)
 
 
 @app.route("/user_dashboard/<int:user_id>")
@@ -170,12 +279,12 @@ def approve_appointment(appointment_id):
 
         try:
             db.session.commit()
-            flash(f"Appointment {appointment_id} for {appointment.patient.fullName} with Dr. {appointment.doctor.full_name} approved and confirmed.", "success")
+            flash(f"Appointment {appointment.id} for {appointment.patient.fullName} with Dr. {appointment.doctor.full_name} approved and confirmed.", "success")
         except Exception as e:
             db.session.rollback()
             flash(f"Error approving appointment: {e}", "danger")
     else:
-        flash(f"Appointment {appointment_id} is already '{appointment.status}'. Cannot approve.", "warning")
+        flash(f"Appointment {appointment.id} is already '{appointment.status}'. Cannot approve.", "warning")
     return redirect(url_for("appointments")) # Redirect back to appointments list
 
 @app.route("/admin/appointments/reject/<int:appointment_id>")
@@ -192,12 +301,12 @@ def reject_appointment(appointment_id):
         appointment.status = "rejected"
         try:
             db.session.commit()
-            flash(f"Appointment {appointment_id} for {appointment.patient.fullName} with Dr. {appointment.doctor.full_name} rejected.", "warning")
+            flash(f"Appointment {appointment.id} for {appointment.patient.fullName} with Dr. {appointment.doctor.full_name} rejected.", "warning")
         except Exception as e:
             db.session.rollback()
             flash(f"Error rejecting appointment: {e}", "danger")
     else:
-        flash(f"Appointment {appointment_id} is already '{appointment.status}'. Cannot reject.", "warning")
+        flash(f"Appointment {appointment.id} is already '{appointment.status}'. Cannot reject.", "warning")
     return redirect(url_for("appointments")) # Redirect back to appointments list
 
 
@@ -312,7 +421,7 @@ def book_appointment():
         try:
             appointment_date = datetime.datetime.strptime(appointment_date_str, '%Y-%m-%d').date()
         except ValueError:
-            flash("Invalid date format. Please use YYYY-MM-DD.", "danger")
+            flash("Invalid date format. Please use %Y-%m-%d.", "danger")
             return redirect(request.url)
         doctor_for_booking = Doctor.query.get(doctor_id_form)
         if not doctor_for_booking:
@@ -371,4 +480,3 @@ def user_profile():
             db.session.rollback()
             flash(f"Error updating profile: {e}", "danger")
     return render_template("user/user_profile.html", user=user)
-# --- End User-Specific Routes ---
