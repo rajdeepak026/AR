@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -89,6 +91,75 @@
                 width: 100%; /* Ensure main content takes full width when sidebar is present */
             }
         }
+
+        /* --- Styles for Custom Toast Notifications --- */
+        .toast-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1000; /* Ensure it's on top of everything */
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-end; /* Stacks toasts from bottom-right */
+        }
+
+        .custom-toast {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            max-width: 320px; /* Limit width */
+            position: relative; /* For the close button positioning */
+        }
+
+        .custom-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .custom-toast .icon {
+            font-size: 1.5rem;
+            color: #22c55e; /* Green for success */
+        }
+
+        .custom-toast .content {
+            flex-grow: 1;
+        }
+
+        .custom-toast .title {
+            font-weight: 600;
+            color: #1a202c; /* Dark text */
+            margin-bottom: 0.25rem;
+        }
+
+        .custom-toast .message {
+            font-size: 0.9rem;
+            color: #4a5568; /* Gray text */
+            line-height: 1.4;
+        }
+
+        .custom-toast .close-button {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: #a0aec0; /* Light gray for close icon */
+            cursor: pointer;
+            padding: 0.25rem;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+        .custom-toast .close-button:hover {
+            color: #718096;
+        }
+
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
@@ -122,8 +193,7 @@
             </div>
             <ul class="nav flex flex-col space-y-4">
                 <li><a class="nav-link block py-3 px-4 rounded-lg bg-indigo-600 text-white text-lg font-medium" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
-                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
-                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Book Appointment</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_profile') }}">My Profile</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('logout') }}">Logout</a></li>
@@ -175,7 +245,12 @@
         </main>
     </div>
 
+    <div class="toast-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+
     <script>
+        // Sidebar toggle functionality
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
@@ -194,6 +269,75 @@
                 overlay.classList.remove('open');
             }
         });
+
+        // --- Socket.IO Client-Side Logic for Notifications ---
+        var socket = io(); // Connects to the same host that served the page
+
+        // Optional: Log connection status
+        socket.on('connect', function() {
+            console.log('Connected to WebSocket server from user dashboard!');
+        });
+
+        socket.on('disconnect', function() {
+            console.log('Disconnected from WebSocket server from user dashboard.');
+        });
+
+        // Function to create and show a custom toast notification
+        function showCustomToast(title, message, iconClass = 'fa-solid fa-bell', duration = 7000) {
+            const toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                console.error("Toast container not found!");
+                return;
+            }
+
+            const toastHtml = `
+                <div class="custom-toast">
+                    <div class="icon text-green-500">
+                        <i class="${iconClass}"></i>
+                    </div>
+                    <div class="content">
+                        <div class="title">${title}</div>
+                        <div class="message">${message}</div>
+                    </div>
+                    <button class="close-button" onclick="this.closest('.custom-toast').remove()">&times;</button>
+                </div>
+            `;
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = toastHtml.trim();
+            const newToastEl = tempDiv.firstChild;
+            toastContainer.appendChild(newToastEl);
+
+            // Trigger reflow to ensure transition works
+            void newToastEl.offsetWidth; 
+
+            newToastEl.classList.add('show');
+
+            setTimeout(() => {
+                newToastEl.classList.remove('show');
+                newToastEl.addEventListener('transitionend', () => newToastEl.remove());
+            }, duration);
+        }
+
+
+        // Listen for 'appointment_approved' events
+        socket.on('appointment_approved', function(data) {
+            console.log('Appointment Approved Notification Received:', data);
+            
+            // Display the custom toast notification
+            showCustomToast(
+                'Appointment Approved!',
+                data.message,
+                'fa-solid fa-check-circle' // Font Awesome icon for success
+            );
+
+            // You might want to update the 'My Appointments' section dynamically here
+            // (e.g., re-fetch the list of appointments or update a specific one)
+            // This would require an AJAX call to your server to get updated data
+            // and then manipulating the DOM.
+        });
+
     </script>
+    
 </body>
 </html>

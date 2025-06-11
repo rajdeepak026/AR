@@ -128,8 +128,8 @@
             </div>
             <ul class="nav flex flex-col space-y-4">
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
-                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
-                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Book Appointment</a></li>
+                <!-- <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('book_appointment') }}">Book Appointment</a></li> -->
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg bg-indigo-600 text-white text-lg font-medium" href="{{ url_for('user_profile') }}">My Profile</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('logout') }}">Logout</a></li>

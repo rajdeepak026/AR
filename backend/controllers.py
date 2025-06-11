@@ -4,6 +4,8 @@ from .models import User, Doctor, Appointment
 from .database import db
 from flask import current_app as app
 import datetime
+from datetime import date # Import date for today's date
+from sqlalchemy.orm import joinedload # Make sure to import this
 
 @app.route("/")
 def login_page():
@@ -17,7 +19,15 @@ def register():
         age = request.form["age"]
         phone = request.form["phone"]
         address = request.form["address"]
-        password = generate_password_hash(request.form["password"])
+        # Get the plain password for validation before hashing
+        plain_password = request.form["password"]
+
+        # Validate password length
+        if len(plain_password) < 8:
+            flash("Password must be at least 8 characters long.", "danger")
+            return redirect(url_for("register"))
+
+        password = generate_password_hash(plain_password)
 
         new_user = User(
             fullName=fullName,
@@ -38,7 +48,7 @@ def register():
             flash("Email or name already registered", "danger")
 
     return render_template("register.html")
-
+    
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -207,14 +217,24 @@ def user_dashboard(user_id):
 
 @app.route("/admin_dashboard")
 def admin_dashboard():
+    # Check if the user is an admin
     if session.get("user_type") != "admin":
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
 
+    # Get total count of users and doctors
     total_users = User.query.count()
     total_doctors = Doctor.query.count()
-    todays_appointments = 0
-    total_revenue = 0
+
+    # Calculate today's appointments
+    today = date.today()
+    todays_appointments = Appointment.query.filter_by(appointment_date=today).count()
+
+    # Calculate total revenue: 20 rupees per appointment for ALL appointments
+    # First, get the total count of all appointments
+    total_appointments_count = Appointment.query.count()
+    # Then, multiply by the per-appointment fee
+    total_revenue = total_appointments_count * 20 # 20 rupees per appointment
 
     return render_template(
         "admin/admin_dashboard.html",
@@ -254,39 +274,71 @@ def appointments():
         return redirect(url_for("login_page"))
 
     # Fetch all appointments, ordered by date and time, and include doctor/user details
-    all_appointments = Appointment.query.order_by(Appointment.appointment_date.desc(), Appointment.appointment_time.desc()).all()
+    all_appointments = Appointment.query \
+        .options(joinedload(Appointment.doctor), joinedload(Appointment.patient)) \
+        .order_by(Appointment.appointment_date.desc(), Appointment.appointment_time.desc()) \
+        .all()
 
     return render_template("admin/appointments.html", appointments=all_appointments)
-
-
-@app.route("/admin/appointments/approve/<int:appointment_id>")
+@app.route("/admin/appointments/approve/<int:appointment_id>", methods=["POST"])
 def approve_appointment(appointment_id):
     """
     Admin route to approve a pending appointment.
+    Sets status to 'confirmed' and assigns a token number.
     """
     if session.get("user_type") != "admin":
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
 
     appointment = Appointment.query.get_or_404(appointment_id)
+
     if appointment.status == 'pending':
-        appointment.status = "confirmed"
-        # Optional: Assign a token number if confirmed
-        # For simplicity, generating a basic token here. You might have more complex logic.
-        # Ensure your Appointment model can store this.
-        # For example, generate a simple incrementing token or random one.
-        appointment.token_number = f"TKN{appointment_id}" # Simple token
+        token_number = request.form.get('token_number')
+
+        if not token_number:
+            flash("Token number is required to approve an appointment.", "warning")
+            return redirect(url_for("appointments"))
+
+        appointment.status = 'confirmed'
+        appointment.token_number = token_number
 
         try:
             db.session.commit()
-            flash(f"Appointment {appointment.id} for {appointment.patient.fullName} with Dr. {appointment.doctor.full_name} approved and confirmed.", "success")
+            flash(f"Appointment #{appointment.id} for {appointment.patient.fullName} with Dr. {appointment.doctor.full_name} has been approved with Token: {token_number}.", "success")
+
         except Exception as e:
             db.session.rollback()
             flash(f"Error approving appointment: {e}", "danger")
     else:
-        flash(f"Appointment {appointment.id} is already '{appointment.status}'. Cannot approve.", "warning")
-    return redirect(url_for("appointments")) # Redirect back to appointments list
+        flash(f"Appointment #{appointment.id} is already '{appointment.status}'. Only pending appointments can be approved.", "info")
 
+    return redirect(url_for("appointments"))
+
+
+@app.route("/admin/appointments/delete/<int:appointment_id>", methods=["POST"])
+def delete_appointment(appointment_id):
+    """
+    Admin route to delete an appointment.
+    """
+    # 1. Authorization Check: Only admins should be able to delete appointments
+    if session.get("user_type") != "admin":
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("login_page"))
+
+    # 2. Retrieve the appointment
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    # 3. Perform the deletion
+    try:
+        db.session.delete(appointment)
+        db.session.commit()
+        flash(f"Appointment {appointment.id} for {appointment.patient.fullName} has been successfully deleted.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error deleting appointment {appointment.id}: {e}", "danger")
+
+    # 4. Redirect back to the appointments list
+    return redirect(url_for("appointments"))
 @app.route("/admin/appointments/reject/<int:appointment_id>")
 def reject_appointment(appointment_id):
     """
@@ -322,6 +374,17 @@ def add_doctor():
         phone = request.form["phone"]
         specialty = request.form["specialty"]
         password = generate_password_hash(request.form["password"])
+        status = request.form.get("status", "pending") # Get status from form, default to pending
+
+        # Get availability times
+        available_from_str = request.form.get("available_from")
+        available_to_str = request.form.get("available_to")
+
+        # Get the new address field
+        address = request.form.get("address") # Retrieve the address from the form
+
+        # You might want to add validation here to ensure times are valid, and address is not empty.
+        # For example, ensure available_from is before available_to.
 
         new_doctor = Doctor(
             full_name=full_name,
@@ -329,7 +392,10 @@ def add_doctor():
             phone=phone,
             specialty=specialty,
             password=password,
-            status='pending'
+            status=status,
+            available_from=available_from_str,    # Store as string (HH:MM)
+            available_to=available_to_str,         # Store as string (HH:MM)
+            address=address                        # Pass the new address field
         )
 
         try:
@@ -337,9 +403,11 @@ def add_doctor():
             db.session.commit()
             flash("Doctor added successfully and is pending approval.", "success")
             return redirect(url_for("manage_doctors"))
-        except Exception:
+        except Exception as e:
             db.session.rollback()
-            flash("Email already in use or another error occurred.", "danger")
+            flash(f"An error occurred: {e}. Email might be in use.", "danger")
+            # For debugging, you might print e or log it
+            # print(f"Error adding doctor: {e}")
 
     return render_template("admin/adddoctor.html")
 
@@ -373,21 +441,35 @@ def search_doctors():
     if session.get("user_type") != "general":
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
+
     doctors_query = Doctor.query.filter_by(status='approved')
+
+    # Get all approved doctors to extract unique specialties for the dropdown
+    # It's good practice to get all approved doctors first, then extract specialties
     all_approved_doctors = Doctor.query.filter_by(status='approved').all()
-    specialties = sorted(list(set([d.specialty for d in all_approved_doctors])))
+    specialties = sorted(list(set([d.specialty for d in all_approved_doctors if d.specialty]))) # Added check for None specialty
+
     specialty_filter = request.args.get("specialty")
     location_filter = request.args.get("location")
+
     if specialty_filter and specialty_filter != "Choose...":
         doctors_query = doctors_query.filter_by(specialty=specialty_filter)
+
+    # Activate location filtering
     if location_filter:
-        flash("Location search is not fully implemented yet, searching by specialty only.", "info")
+        # Use ilike for case-insensitive partial match on the address field
+        doctors_query = doctors_query.filter(Doctor.address.ilike(f'%{location_filter}%'))
+        flash("Location search results are displayed.", "info") # Optional: update message
+
+    # No need for the 'else' block that flashed the "not implemented" message now
+
     doctors = doctors_query.all()
+
     return render_template(
         "user/search_doctors.html",
         doctors=doctors,
         specialties=specialties,
-        selected_specialty=specialty_filter if specialty_filter else "Choose...",
+        selected_specialty=specialty_filter if specialty_filter else "", # Changed default to empty string for 'All Specialties'
         selected_location=location_filter if location_filter else ""
     )
 

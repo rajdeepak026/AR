@@ -153,8 +153,8 @@
             </div>
             <ul class="nav flex flex-col space-y-4">
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
-                <li><a class="nav-link block py-3 px-4 rounded-lg bg-indigo-600 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Search Doctors</a></li>
-                <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+                <li><a class="nav-link block py-3 px-4 rounded-lg bg-indigo-600 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Book Appointment</a></li>
+                <!-- <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('book_appointment') }}">Book Appointment</a></li> -->
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_profile') }}">My Profile</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('logout') }}">Logout</a></li>
@@ -197,6 +197,7 @@
                                     <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider rounded-tl-lg">Name</th>
                                     <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Specialty</th>
                                     <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Location</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Availability</th> {# New column for desktop #}
                                     <th scope="col" class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider rounded-tr-lg">Action</th>
                                 </tr>
                             </thead>
@@ -205,14 +206,21 @@
                                 <tr class="doctor-table-row">
                                     <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ doctor.full_name }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-600">{{ doctor.specialty }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-600">{{ doctor.location if doctor.location else 'Not specified' }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">{{ doctor.address if doctor.address else 'Not specified' }}</td> {# Changed to address for location #}
+                                    <td class="px-4 py-3 text-sm text-gray-600">
+                                        {% if doctor.available_from and doctor.available_to %}
+                                            {{ doctor.available_from }} - {{ doctor.available_to }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td> {# Displaying availability #}
                                     <td class="px-4 py-3 text-sm">
                                         <a href="{{ url_for('book_appointment', doctor_id=doctor.id) }}" class="button-aesthetic inline-block px-3 py-1.5 rounded-lg text-white font-semibold text-sm">Book Appointment</a>
                                     </td>
                                 </tr>
                                 {% else %}
                                 <tr>
-                                    <td colspan="4" class="px-4 py-3 text-center text-sm text-gray-600">No doctors found matching your criteria.</td>
+                                    <td colspan="5" class="px-4 py-3 text-center text-sm text-gray-600">No doctors found matching your criteria.</td> {# Updated colspan #}
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -229,9 +237,17 @@
                             <p class="text-sm text-gray-600 mb-1">
                                 <span class="font-medium">Specialty:</span> {{ doctor.specialty }}
                             </p>
-                            <p class="text-sm text-gray-600">
-                                <span class="font-medium">Location:</span> {{ doctor.location if doctor.location else 'Not specified' }}
+                            <p class="text-sm text-gray-600 mb-1">
+                                <span class="font-medium">Location:</span> {{ doctor.address if doctor.address else 'Not specified' }} {# Changed to address for location #}
                             </p>
+                            <p class="text-sm text-gray-600">
+                                <span class="font-medium">Available:</span> 
+                                {% if doctor.available_from and doctor.available_to %}
+                                    {{ doctor.available_from }} - {{ doctor.available_to }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </p> {# Displaying availability in mobile view #}
                         </div>
                         {% else %}
                         <div class="card-aesthetic p-4 text-center text-gray-600">

@@ -1,51 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - All Appointments - ApkaDr.</title>
+    <!-- Auto-refresh the page every 5 seconds -->
+    <meta http-equiv="refresh" content="5">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Custom Colors inspired by ApkaDr. Logo (consistent with admin_dashboard) */
         :root {
-            --apkadr-dark-blue: #1e3a8a; /* From logo's pen */
-            --apkadr-gold: #facc15; /* From logo's pen accent */
-            --apkadr-black: #343a40; /* General dark text/element, from logo text */
-            --apkadr-light-gray: #f7f7f7; /* Soft background */
+            --apkadr-dark-blue: #1e3a8a;
+            /* From logo's pen */
+            --apkadr-gold: #facc15;
+            /* From logo's pen accent */
+            --apkadr-black: #343a40;
+            /* General dark text/element, from logo text */
+            --apkadr-light-gray: #f7f7f7;
+            /* Soft background */
             --apkadr-white: #ffffff;
 
             /* Mapped to general Bootstrap-like variable names for convenience */
             --primary-color: var(--apkadr-dark-blue);
-            --secondary-color: #6c757d; /* Keep some default for general secondary */
-            --success-color: #1a6f3b; /* A darker green for success */
-            --danger-color: #c0392b; /* A more subdued red */
-            --warning-color: var(--apkadr-gold); /* Using gold for warning/attention */
-            --info-color: #2980b9; /* A distinct blue for info */
+            --secondary-color: #6c757d;
+            /* Keep some default for general secondary */
+            --success-color: #1a6f3b;
+            /* A darker green for success */
+            --danger-color: #c0392b;
+            /* A more subdued red */
+            --warning-color: var(--apkadr-gold);
+            /* Using gold for warning/attention */
+            --info-color: #2980b9;
+            /* A distinct blue for info */
             --dark-color: var(--apkadr-black);
             --light-color: var(--apkadr-light-gray);
             --white-color: var(--apkadr-white);
         }
 
         body {
-            font-family: 'Poppins', sans-serif; /* Consistent with login/register and dashboard */
+            font-family: 'Poppins', sans-serif;
+            /* Consistent with login/register and dashboard */
             background-color: var(--light-color);
             color: var(--dark-color);
         }
 
         /* Sidebar styles (consistent with dashboard) */
         .sidebar {
-            width: 280px; /* Consistent with dashboard */
-            background-color: var(--dark-color); /* Black/Dark Gray */
+            width: 280px;
+            /* Consistent with dashboard */
+            background-color: var(--dark-color);
+            /* Black/Dark Gray */
             color: var(--white-color);
             transition: all 0.3s ease;
             flex-shrink: 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow for depth */
         }
 
         .sidebar .nav-link {
             color: rgba(255, 255, 255, 0.75);
-            padding: 15px 25px; /* More padding for better click area */
+            padding: 15px 25px;
+            /* More padding for better click area */
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -56,12 +73,15 @@
         .sidebar .nav-link.active {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--white-color);
-            border-left: 5px solid var(--apkadr-gold); /* Gold accent for active link */
-            padding-left: 20px; /* Adjust padding due to border */
+            border-left: 5px solid var(--apkadr-gold);
+            /* Gold accent for active link */
+            padding-left: 20px;
+            /* Adjust padding due to border */
         }
 
         .sidebar .nav-link i {
-            margin-right: 12px; /* Increased icon spacing */
+            margin-right: 12px;
+            /* Increased icon spacing */
             font-size: 1.1rem;
         }
 
@@ -75,38 +95,50 @@
         }
 
         .sidebar .logo-container img {
-            max-height: 80px; /* Adjust logo height */
-            width: 80px; /* Ensure width matches height for perfect circle */
-            object-fit: cover; /* Ensures image covers the circular area */
-            border: 2px solid var(--apkadr-gold); /* Add a subtle gold border */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a subtle shadow to the logo */
+            max-height: 80px;
+            /* Adjust logo height */
+            width: 80px;
+            /* Ensure width matches height for perfect circle */
+            object-fit: cover;
+            /* Ensures image covers the circular area */
+            border: 2px solid var(--apkadr-gold);
+            /* Add a subtle gold border */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            /* Add a subtle shadow to the logo */
         }
 
         /* Main content styles (consistent with dashboard) */
         .main-content {
             flex-grow: 1;
-            padding: 30px; /* More overall padding */
+            padding: 30px;
+            /* More overall padding */
             background-color: var(--light-color);
         }
 
         /* Header for Admin Dashboard (reused for main page title) */
         .header-admin-dashboard {
-            font-size: 2rem; /* Consistent large heading on desktop */
+            font-size: 2rem;
+            /* Consistent large heading on desktop */
             text-align: left !important;
-            margin-bottom: 2rem; /* Consistent margin */
-            color: var(--dark-color); /* Ensure consistent text color */
+            margin-bottom: 2rem;
+            /* Consistent margin */
+            color: var(--dark-color);
+            /* Ensure consistent text color */
         }
 
         /* Table styles (enhanced for theme) */
         .table {
             background-color: var(--white-color);
-            border-radius: 12px; /* More rounded corners */
+            border-radius: 12px;
+            /* More rounded corners */
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            /* Enhanced shadow */
         }
 
         .table thead th {
-            background-color: var(--primary-color); /* Using themed primary color */
+            background-color: var(--primary-color);
+            /* Using themed primary color */
             color: var(--white-color);
             padding: 15px;
             border-bottom: none;
@@ -117,7 +149,8 @@
         .table tbody td {
             padding: 12px 15px;
             vertical-align: middle;
-            border-bottom: 1px solid #e9ecef; /* Lighter border for better look */
+            border-bottom: 1px solid #e9ecef;
+            /* Lighter border for better look */
         }
 
         .table tbody tr:last-child td {
@@ -125,7 +158,8 @@
         }
 
         .table tbody tr:hover {
-            background-color: #f0f2f5; /* Slightly darker light-gray on hover */
+            background-color: #f0f2f5;
+            /* Slightly darker light-gray on hover */
         }
 
         /* Badge styling (using themed colors) */
@@ -135,17 +169,21 @@
             font-weight: 600;
             border-radius: 0.375rem;
         }
+
         /* Override Bootstrap defaults for specific badge colors */
         .badge.bg-warning.text-dark {
             background-color: var(--warning-color) !important;
             color: var(--dark-color) !important;
         }
+
         .badge.bg-success {
             background-color: var(--success-color) !important;
         }
+
         .badge.bg-danger {
             background-color: var(--danger-color) !important;
         }
+
         .badge.bg-info {
             background-color: var(--info-color) !important;
         }
@@ -155,26 +193,35 @@
             background-color: var(--success-color);
             border-color: var(--success-color);
         }
+
         .btn-success:hover {
-            background-color: #155e30; /* Darker green */
+            background-color: #155e30;
+            /* Darker green */
             border-color: #155e30;
         }
+
         .btn-danger {
             background-color: var(--danger-color);
             border-color: var(--danger-color);
         }
+
         .btn-danger:hover {
-            background-color: #a72d38; /* Darker red */
+            background-color: #a72d38;
+            /* Darker red */
             border-color: #a72d38;
         }
+
         .btn-secondary {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
         }
+
         .btn-secondary:hover {
-            background-color: #5a6268; /* Darker secondary */
+            background-color: #5a6268;
+            /* Darker secondary */
             border-color: #5a6268;
         }
+
         .btn-sm {
             padding: 0.35rem 0.75rem;
             font-size: 0.875rem;
@@ -193,7 +240,8 @@
             border: none;
             color: var(--white-color);
             padding: 0;
-            font-size: 1.5rem; /* Larger icon */
+            font-size: 1.5rem;
+            /* Larger icon */
         }
 
         .navbar-toggler:focus {
@@ -214,20 +262,26 @@
         }
 
         .offcanvas-header .offcanvas-title img {
-            max-height: 40px; /* Smaller logo in offcanvas header */
-            width: 40px; /* Ensure width matches height for perfect circle */
-            object-fit: cover; /* Ensures image covers the circular area */
-            border: 1.5px solid var(--apkadr-gold); /* Add a subtle gold border */
+            max-height: 40px;
+            /* Smaller logo in offcanvas header */
+            width: 40px;
+            /* Ensure width matches height for perfect circle */
+            object-fit: cover;
+            /* Ensures image covers the circular area */
+            border: 1.5px solid var(--apkadr-gold);
+            /* Add a subtle gold border */
         }
 
         .offcanvas-body {
             background-color: var(--dark-color);
             color: var(--white-color);
-            padding-top: 0; /* Remove top padding for nav links */
+            padding-top: 0;
+            /* Remove top padding for nav links */
         }
 
         .offcanvas-body .nav-link {
-            padding: 15px 25px; /* Consistent padding */
+            padding: 15px 25px;
+            /* Consistent padding */
         }
 
         /* Responsive adjustments (consistent with dashboard) */
@@ -235,10 +289,12 @@
             .sidebar {
                 position: fixed;
                 top: 0;
-                left: -280px; /* Match new width */
+                left: -280px;
+                /* Match new width */
                 height: 100vh;
                 z-index: 1050;
-                width: 280px; /* Match new width */
+                width: 280px;
+                /* Match new width */
             }
 
             .sidebar.show {
@@ -247,21 +303,30 @@
 
             .main-content {
                 margin-left: 0;
-                padding: 20px; /* Slightly less padding on small screens */
+                padding: 20px;
+                /* Slightly less padding on small screens */
             }
 
             /* Mobile header consistent with dashboard */
-            .header-mobile-bar { /* New class for the mobile header container */
-                font-size: 1.5rem; /* Smaller heading on mobile */
-                text-align: right; /* Align title to the right */
+            .header-mobile-bar {
+                /* New class for the mobile header container */
+                font-size: 1.5rem;
+                /* Smaller heading on mobile */
+                text-align: right;
+                /* Align title to the right */
                 background-color: var(--dark-color);
                 color: var(--white-color);
-                padding: 15px 20px; /* Adjusted padding */
+                padding: 15px 20px;
+                /* Adjusted padding */
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                margin-bottom: 20px; /* Space below header */
-                display: flex; /* Make it a flex container */
-                justify-content: space-between; /* Space out items */
-                align-items: center; /* Vertically align items */
+                margin-bottom: 20px;
+                /* Space below header */
+                display: flex;
+                /* Make it a flex container */
+                justify-content: space-between;
+                /* Space out items */
+                align-items: center;
+                /* Vertically align items */
             }
 
             /* Hide desktop H2 on mobile */
@@ -271,11 +336,13 @@
 
             /* Stack table content for very small screens if necessary, or use horizontal scroll */
             .table-responsive-custom table {
-                min-width: 700px; /* Ensure table doesn't collapse too much for horizontal scroll */
+                min-width: 700px;
+                /* Ensure table doesn't collapse too much for horizontal scroll */
             }
         }
 
         @media (min-width: 992px) {
+
             /* Hide mobile header on desktop */
             .header-mobile-bar {
                 display: none;
@@ -283,6 +350,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="d-flex">
         <nav class="sidebar vh-100 d-none d-lg-block">
@@ -291,16 +359,20 @@
             </div>
             <ul class="nav flex-column mt-4">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i>
+                        Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                    <a class="nav-link" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage
+                        Doctors</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                    <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage
+                        Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                    <a class="nav-link active" href="{{ url_for('appointments') }}"><i
+                                class="fas fa-calendar-check"></i> Appointments</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -310,35 +382,44 @@
 
         <main class="main-content w-100">
             <header class="header-mobile-bar d-lg-none">
-                <button class="btn text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
+                <button class="btn text-white" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="fas fa-bars fa-lg"></i>
                 </button>
                 <h2 class="mb-0 text-white">All Appointments</h2>
             </header>
 
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar"
+                aria-labelledby="offcanvasSidebarLabel">
                 <div class="offcanvas-header">
                     <h5 class="offcanvas-title" id="offcanvasSidebarLabel">
-                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle"> ApkaDr.
+                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle">
+                        ApkaDr.
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                            <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i
+                                        class="fas fa-tachometer-alt"></i> Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                            <a class="nav-link" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i>
+                                Manage Doctors</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                            <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage
+                                Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                            <a class="nav-link active" href="{{ url_for('appointments') }}"><i
+                                        class="fas fa-calendar-check"></i> Appointments</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>
+                                Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -372,22 +453,35 @@
                             <td>{{ appointment.symptoms }}</td>
                             <td>
                                 {% if appointment.status == 'pending' %}
-                                    <span class="badge bg-warning text-dark">{{ appointment.status.capitalize() }}</span>
+                                <span class="badge bg-warning text-dark">{{ appointment.status.capitalize() }}</span>
                                 {% elif appointment.status == 'confirmed' %}
-                                    <span class="badge bg-success">{{ appointment.status.capitalize() }}</span>
+                                <span class="badge bg-success">{{ appointment.status.capitalize() }}</span>
                                 {% elif appointment.status == 'rejected' %}
-                                    <span class="badge bg-danger">{{ appointment.status.capitalize() }}</span>
+                                <span class="badge bg-danger">{{ appointment.status.capitalize() }}</span>
                                 {% else %}
-                                    <span class="badge bg-info">{{ appointment.status.capitalize() }}</span>
+                                <span class="badge bg-info">{{ appointment.status.capitalize() }}</span>
                                 {% endif %}
                             </td>
                             <td>{{ appointment.token_number if appointment.token_number else '--' }}</td>
                             <td>
                                 {% if appointment.status == 'pending' %}
-                                    <a href="{{ url_for('approve_appointment', appointment_id=appointment.id) }}" class="btn btn-success btn-sm me-2" title="Approve"><i class="fas fa-check"></i></a>
-                                    <a href="{{ url_for('reject_appointment', appointment_id=appointment.id) }}" class="btn btn-danger btn-sm" title="Reject"><i class="fas fa-times"></i></a>
+                                <form action="{{ url_for('approve_appointment', appointment_id=appointment.id) }}"
+                                    method="POST" class="d-inline-flex align-items-center">
+                                    <input type="text" name="token_number" class="form-control form-control-sm me-2"
+                                        placeholder="Enter Token" required style="width: 120px;">
+                                    <button type="submit" class="btn btn-success btn-sm me-2" title="Approve"><i
+                                                class="fas fa-check"></i></button>
+                                </form>
+                                <a href="{{ url_for('reject_appointment', appointment_id=appointment.id) }}"
+                                    class="btn btn-danger btn-sm" title="Reject"><i class="fas fa-times"></i></a>
                                 {% else %}
-                                    <button class="btn btn-secondary btn-sm" disabled title="No Action"><i class="fas fa-minus-circle"></i></button>
+                                <form action="{{ url_for('delete_appointment', appointment_id=appointment.id) }}"
+                                    method="POST" class="d-inline-block">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Delete Appointment"
+                                        onclick="return confirm('Are you sure you want to delete this appointment? This action cannot be undone.');">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                                 {% endif %}
                             </td>
                         </tr>
@@ -404,4 +498,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

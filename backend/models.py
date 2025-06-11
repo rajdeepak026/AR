@@ -23,8 +23,13 @@ class Doctor(db.Model):
     password = db.Column(db.String(200), nullable=False)   # Hashed
     status = db.Column(db.String(20), nullable=False, default='pending')   # 'pending' or 'approved'
     photo = db.Column(db.String(200))   # Path to uploaded photo
-    age = db.Column(db.Integer(), nullable=True)  # Added age field
+    age = db.Column(db.Integer(), nullable=True)    # Added age field
     address = db.Column(db.String(200), nullable=True) # Added address field
+
+    # New fields for doctor availability
+    # Storing as String(5) to hold time in "HH:MM" format (e.g., "09:00", "17:30")
+    available_from = db.Column(db.String(5), nullable=True)
+    available_to = db.Column(db.String(5), nullable=True)
 
     # Define relationship to appointments where this doctor is involved
     appointments = db.relationship('Appointment', backref='doctor', lazy=True, primaryjoin="Doctor.id == Appointment.doctor_id")
