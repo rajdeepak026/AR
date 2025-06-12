@@ -82,12 +82,24 @@ def login():
 
     return render_template("login.html")
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    flash("You have been logged out.", "success")
-    return redirect(url_for("login_page"))
+@app.route("/")
+def index(): # Renamed from login_page to index for clarity
+    # Check if user is already logged in
+    if "user_id" in session:
+        user_id = session["user_id"]
+        user_type = session.get("user_type") # Use .get() to avoid KeyError if not set
 
+        if user_type == "admin":
+            return redirect(url_for("admin_dashboard"))
+        elif user_type == "general":
+            return redirect(url_for("user_dashboard", user_id=user_id))
+        elif user_type == "doctor":
+            # For doctors, also check if their status is approved if needed,
+            # but usually, this check happens at initial login.
+            # Here we just redirect if they are already in session.
+            return redirect(url_for("doctor_dashboard", user_id=user_id))
+    # If no user_id in session, show the login page
+    return render_template("login.html")
 @app.route("/doctor_dashboard/<int:user_id>")
 def doctor_dashboard(user_id):
     doctor = Doctor.query.get_or_404(user_id)
