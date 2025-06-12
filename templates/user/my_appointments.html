@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>My Appointments - ApkaDr.</title>
-    <meta http-equiv="refresh" content="4">
+    <meta http-equiv="refresh" content="6">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -426,8 +426,8 @@
 
                 if (status === 'confirmed' && !confirmedAppointmentIds.has(appointmentId)) {
                     showToast(
-                        'अपॉइंटमेंट की पुष्टि हुई!', // Hindi title
-                        `${userName}, आपका अपॉइंटमेंट स्वीकार हो चुका है!`, // Hindi message
+                        'Appointment Accepted', // Hindi title
+                        `${userName}, आपका Appointment स्Accept हो चुका है!`, // Hindi message
                         'text-green-500 fas fa-check-circle'
                     );
                     confirmedAppointmentIds.add(appointmentId);
@@ -438,8 +438,8 @@
                     newStatusFound = true;
                 } else if (status === 'rejected' && !rejectedAppointmentIds.has(appointmentId)) {
                     showToast(
-                        'अपॉइंटमेंट अस्वीकृत!', // Hindi title for Rejected
-                        `${userName}, आपका अपॉइंटमेंट अस्वीकृत हो गया है।`, // Hindi message for Rejected
+                        'Appointment Rejected!', // Hindi title for Rejected
+                        `${userName}, आपका Appointment Reject हो गया है।`, // Hindi message for Rejected
                         'text-red-500 fas fa-times-circle'
                     );
                     rejectedAppointmentIds.add(appointmentId);

@@ -111,7 +111,12 @@
             <td class="py-3 px-4">
               <!-- Conditional action buttons for pending and confirmed appointments -->
               {% if appointment.status == 'pending' %}
-                <a href="{{ url_for('confirm_appointment_by_doctor', appointment_id=appointment.id) }}" class="btn btn-success btn-sm me-2 rounded-md hover:shadow-lg transition duration-300">Confirm</a>
+                <form action="{{ url_for('confirm_appointment_by_doctor', appointment_id=appointment.id) }}"
+                    method="POST" class="d-inline-flex align-items-center">
+                    <input type="text" name="token_number" class="form-control form-control-sm me-2"
+                        placeholder="Enter Token" required style="width: 120px;">
+                    <button type="submit" class="btn btn-success btn-sm me-2 rounded-md hover:shadow-lg transition duration-300">Confirm</button>
+                </form>
                 <a href="{{ url_for('cancel_appointment_by_doctor', appointment_id=appointment.id) }}" class="btn btn-danger btn-sm rounded-md hover:shadow-lg transition duration-300">Cancel</a>
               {% elif appointment.status == 'confirmed' %}
                 <button class="btn btn-secondary btn-sm rounded-md" disabled>Confirmed</button>

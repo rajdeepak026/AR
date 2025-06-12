@@ -21,15 +21,19 @@ class Doctor(db.Model):
     phone = db.Column(db.String(20), nullable=False)
     specialty = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(200), nullable=False)   # Hashed
-    status = db.Column(db.String(20), nullable=False, default='pending')   # 'pending' or 'approved'
-    photo = db.Column(db.String(200))   # Path to uploaded photo
-    age = db.Column(db.Integer(), nullable=True)    # Added age field
+    status = db.Column(db.String(20), nullable=False, default='pending')    # 'pending' or 'approved'
+    photo = db.Column(db.String(200))    # Path to uploaded photo
+    age = db.Column(db.Integer(), nullable=True)     # Added age field
     address = db.Column(db.String(200), nullable=True) # Added address field
 
-    # New fields for doctor availability
-    # Storing as String(5) to hold time in "HH:MM" format (e.g., "09:00", "17:30")
+    # Existing fields for general doctor availability (HH:MM format)
     available_from = db.Column(db.String(5), nullable=True)
     available_to = db.Column(db.String(5), nullable=True)
+
+    # NEW fields for specific availability slots from the HTML form
+    morning_slot = db.Column(db.String(50), nullable=True) # Store full slot description
+    afternoon_slot = db.Column(db.String(50), nullable=True) # Store full slot description
+    evening_slot = db.Column(db.String(50), nullable=True) # Store full slot description
 
     # Define relationship to appointments where this doctor is involved
     appointments = db.relationship('Appointment', backref='doctor', lazy=True, primaryjoin="Doctor.id == Appointment.doctor_id")

@@ -114,10 +114,12 @@ def doctor_appointments(user_id):
     return render_template("doctor/doctor_appointments.html", appointments=appointments)
 
 
-@app.route("/doctor/appointments/confirm/<int:appointment_id>")
+# --- Updated /doctor/appointments/confirm/<int:appointment_id> route ---
+@app.route("/doctor/appointments/confirm/<int:appointment_id>", methods=["POST"])
 def confirm_appointment_by_doctor(appointment_id):
     """
     Doctor route to confirm a pending appointment.
+    Requires a token number from the form.
     """
     if session.get("user_type") != "doctor":
         flash("Unauthorized access", "danger")
@@ -128,24 +130,34 @@ def confirm_appointment_by_doctor(appointment_id):
     # Ensure the doctor is confirming their own appointment
     if appointment.doctor_id != session.get("user_id"):
         flash("You can only confirm appointments assigned to you.", "danger")
-        return redirect(url_for("doctor_dashboard", user_id=session.get("user_id")))
+        return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
+
+    # Retrieve the token number from the form submission
+    token_number = request.form.get('token_number')
+
+    if not token_number:
+        flash("Token number is required to confirm an appointment.", "warning")
+        return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
 
     if appointment.status == 'pending':
         appointment.status = "confirmed"
-        # Generate a more unique token
-        appointment.token_number = f"TKN{appointment_id}-{datetime.datetime.now().strftime('%H%M%S')}"
+        # Assign the token number provided by the doctor
+        appointment.token_number = token_number
 
         try:
             db.session.commit()
-            flash(f"Appointment {appointment_id} for {appointment.patient.fullName} confirmed.", "success")
+            flash(f"Appointment {appointment_id} for {appointment.patient.fullName} confirmed with Token: {token_number}.", "success")
         except Exception as e:
             db.session.rollback()
             flash(f"Error confirming appointment: {e}", "danger")
     else:
-        flash(f"Appointment {appointment_id} is already '{appointment.status}'. Cannot confirm.", "warning")
-    return redirect(url_for("doctor_dashboard", user_id=session.get("user_id")))
+        flash(f"Appointment {appointment_id} is already '{appointment.status}'. Only pending appointments can be confirmed.", "warning")
+    
+    # Redirect back to the doctor's appointments page
+    return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
 
 
+# --- Original /doctor/appointments/cancel/<int:appointment_id> route ---
 @app.route("/doctor/appointments/cancel/<int:appointment_id>")
 def cancel_appointment_by_doctor(appointment_id):
     """
@@ -160,7 +172,7 @@ def cancel_appointment_by_doctor(appointment_id):
     # Ensure the doctor is cancelling their own appointment
     if appointment.doctor_id != session.get("user_id"):
         flash("You can only cancel appointments assigned to you.", "danger")
-        return redirect(url_for("doctor_dashboard", user_id=session.get("user_id")))
+        return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
 
     if appointment.status in ['pending', 'confirmed']:
         appointment.status = "cancelled" # Changed status to 'cancelled' for doctor actions
@@ -172,8 +184,9 @@ def cancel_appointment_by_doctor(appointment_id):
             flash(f"Error cancelling appointment: {e}", "danger")
     else:
         flash(f"Appointment {appointment_id} is already '{appointment.status}'. Cannot cancel.", "warning")
-    return redirect(url_for("doctor_dashboard", user_id=session.get("user_id")))
-
+    
+    # Redirect back to the doctor's appointments page
+    return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
 
 @app.route("/doctor/profile/<int:user_id>", methods=["GET", "POST"])
 def doctor_profile(user_id):
@@ -376,15 +389,17 @@ def add_doctor():
         password = generate_password_hash(request.form["password"])
         status = request.form.get("status", "pending") # Get status from form, default to pending
 
-        # Get availability times
+        # Get general availability times (assuming these fields exist elsewhere in your form)
         available_from_str = request.form.get("available_from")
         available_to_str = request.form.get("available_to")
 
         # Get the new address field
         address = request.form.get("address") # Retrieve the address from the form
 
-        # You might want to add validation here to ensure times are valid, and address is not empty.
-        # For example, ensure available_from is before available_to.
+        # NEW: Get specific availability slot values from the form
+        morning_slot = request.form.get("morning_slot")
+        afternoon_slot = request.form.get("afternoon_slot")
+        evening_slot = request.form.get("evening_slot")
 
         new_doctor = Doctor(
             full_name=full_name,
@@ -395,7 +410,11 @@ def add_doctor():
             status=status,
             available_from=available_from_str,    # Store as string (HH:MM)
             available_to=available_to_str,         # Store as string (HH:MM)
-            address=address                        # Pass the new address field
+            address=address,                       # Pass the new address field
+            # NEW: Assign the specific slot values
+            morning_slot=morning_slot,
+            afternoon_slot=afternoon_slot,
+            evening_slot=evening_slot
         )
 
         try:
@@ -410,6 +429,7 @@ def add_doctor():
             # print(f"Error adding doctor: {e}")
 
     return render_template("admin/adddoctor.html")
+
 
 @app.route("/approve_doctor/<int:doctor_id>")
 def approve_doctor(doctor_id):

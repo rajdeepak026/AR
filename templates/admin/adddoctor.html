@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,43 +10,57 @@
     <style>
         /* Custom Colors inspired by ApkaDr. Logo (consistent with admin_dashboard) */
         :root {
-            --apkadr-dark-blue: #1e3a8a; /* From logo's pen */
-            --apkadr-gold: #facc15; /* From logo's pen accent */
-            --apkadr-black: #343a40; /* General dark text/element, from logo text */
-            --apkadr-light-gray: #f7f7f7; /* Soft background */
+            --apkadr-dark-blue: #1e3a8a;
+            /* From logo's pen */
+            --apkadr-gold: #facc15;
+            /* From logo's pen accent */
+            --apkadr-black: #343a40;
+            /* General dark text/element, from logo text */
+            --apkadr-light-gray: #f7f7f7;
+            /* Soft background */
             --apkadr-white: #ffffff;
 
             /* Mapped to general Bootstrap-like variable names for convenience */
             --primary-color: var(--apkadr-dark-blue);
-            --secondary-color: #6c757d; /* Keep some default for general secondary */
-            --success-color: #1a6f3b; /* A darker green for success */
-            --danger-color: #c0392b; /* A more subdued red */
-            --warning-color: var(--apkadr-gold); /* Using gold for warning/attention */
-            --info-color: #2980b9; /* A distinct blue for info */
+            --secondary-color: #6c757d;
+            /* Keep some default for general secondary */
+            --success-color: #1a6f3b;
+            /* A darker green for success */
+            --danger-color: #c0392b;
+            /* A more subdued red */
+            --warning-color: var(--apkadr-gold);
+            /* Using gold for warning/attention */
+            --info-color: #2980b9;
+            /* A distinct blue for info */
             --dark-color: var(--apkadr-black);
             --light-color: var(--apkadr-light-gray);
             --white-color: var(--apkadr-white);
         }
 
         body {
-            font-family: 'Poppins', sans-serif; /* Consistent with login/register and dashboard */
+            font-family: 'Poppins', sans-serif;
+            /* Consistent with login/register and dashboard */
             background-color: var(--light-color);
             color: var(--dark-color);
         }
 
         /* Sidebar styles (consistent with dashboard) */
         .sidebar {
-            width: 280px; /* Consistent with dashboard */
-            background-color: var(--dark-color); /* Black/Dark Gray */
+            width: 280px;
+            /* Consistent with dashboard */
+            background-color: var(--dark-color);
+            /* Black/Dark Gray */
             color: var(--white-color);
             transition: all 0.3s ease;
             flex-shrink: 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow for depth */
         }
 
         .sidebar .nav-link {
             color: rgba(255, 255, 255, 0.75);
-            padding: 15px 25px; /* More padding for better click area */
+            padding: 15px 25px;
+            /* More padding for better click area */
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -56,12 +71,15 @@
         .sidebar .nav-link.active {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--white-color);
-            border-left: 5px solid var(--apkadr-gold); /* Gold accent for active link */
-            padding-left: 20px; /* Adjust padding due to border */
+            border-left: 5px solid var(--apkadr-gold);
+            /* Gold accent for active link */
+            padding-left: 20px;
+            /* Adjust padding due to border */
         }
 
         .sidebar .nav-link i {
-            margin-right: 12px; /* Increased icon spacing */
+            margin-right: 12px;
+            /* Increased icon spacing */
             font-size: 1.1rem;
         }
 
@@ -75,26 +93,35 @@
         }
 
         .sidebar .logo-container img {
-            max-height: 80px; /* Adjust logo height */
-            width: 80px; /* Ensure width matches height for perfect circle */
-            object-fit: cover; /* Ensures image covers the circular area */
-            border: 2px solid var(--apkadr-gold); /* Add a subtle gold border */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a subtle shadow to the logo */
+            max-height: 80px;
+            /* Adjust logo height */
+            width: 80px;
+            /* Ensure width matches height for perfect circle */
+            object-fit: cover;
+            /* Ensures image covers the circular area */
+            border: 2px solid var(--apkadr-gold);
+            /* Add a subtle gold border */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            /* Add a subtle shadow to the logo */
         }
 
         /* Main content styles (consistent with dashboard) */
         .main-content {
             flex-grow: 1;
-            padding: 30px; /* More overall padding */
+            padding: 30px;
+            /* More overall padding */
             background-color: var(--light-color);
         }
 
         /* Header for Admin Dashboard (reused for main page title) */
         .header-admin-dashboard {
-            font-size: 2rem; /* Consistent large heading on desktop */
+            font-size: 2rem;
+            /* Consistent large heading on desktop */
             text-align: left !important;
-            margin-bottom: 2rem; /* Consistent margin */
-            color: var(--dark-color); /* Ensure consistent text color */
+            margin-bottom: 2rem;
+            /* Consistent margin */
+            color: var(--dark-color);
+            /* Ensure consistent text color */
         }
 
         /* Form specific styles */
@@ -115,19 +142,23 @@
 
         .form-control:focus,
         .form-select:focus {
-            border-color: var(--primary-color); /* Uses primary color from :root */
-            box-shadow: 0 0 0 0.25rem rgba(30, 58, 138, 0.25); /* Using var(--apkadr-dark-blue) for shadow */
+            border-color: var(--primary-color);
+            /* Uses primary color from :root */
+            box-shadow: 0 0 0 0.25rem rgba(30, 58, 138, 0.25);
+            /* Using var(--apkadr-dark-blue) for shadow */
             outline: 0;
         }
 
         .btn-primary {
-            background-color: var(--primary-color); /* Uses primary color from :root */
+            background-color: var(--primary-color);
+            /* Uses primary color from :root */
             border-color: var(--primary-color);
             transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
-            background-color: #1a3070; /* Slightly darker shade of apkadr-dark-blue */
+            background-color: #1a3070;
+            /* Slightly darker shade of apkadr-dark-blue */
             border-color: #1a3070;
         }
 
@@ -136,7 +167,8 @@
             border: none;
             color: var(--white-color);
             padding: 0;
-            font-size: 1.5rem; /* Larger icon */
+            font-size: 1.5rem;
+            /* Larger icon */
         }
 
         .navbar-toggler:focus {
@@ -157,20 +189,26 @@
         }
 
         .offcanvas-header .offcanvas-title img {
-            max-height: 40px; /* Smaller logo in offcanvas header */
-            width: 40px; /* Ensure width matches height for perfect circle */
-            object-fit: cover; /* Ensures image covers the circular area */
-            border: 1.5px solid var(--apkadr-gold); /* Add a subtle gold border */
+            max-height: 40px;
+            /* Smaller logo in offcanvas header */
+            width: 40px;
+            /* Ensure width matches height for perfect circle */
+            object-fit: cover;
+            /* Ensures image covers the circular area */
+            border: 1.5px solid var(--apkadr-gold);
+            /* Add a subtle gold border */
         }
 
         .offcanvas-body {
             background-color: var(--dark-color);
             color: var(--white-color);
-            padding-top: 0; /* Remove top padding for nav links */
+            padding-top: 0;
+            /* Remove top padding for nav links */
         }
 
         .offcanvas-body .nav-link {
-            padding: 15px 25px; /* Consistent padding */
+            padding: 15px 25px;
+            /* Consistent padding */
         }
 
         /* Responsive adjustments (consistent with dashboard) */
@@ -178,10 +216,12 @@
             .sidebar {
                 position: fixed;
                 top: 0;
-                left: -280px; /* Match new width */
+                left: -280px;
+                /* Match new width */
                 height: 100vh;
                 z-index: 1050;
-                width: 280px; /* Match new width */
+                width: 280px;
+                /* Match new width */
             }
 
             .sidebar.show {
@@ -190,21 +230,30 @@
 
             .main-content {
                 margin-left: 0;
-                padding: 20px; /* Slightly less padding on small screens */
+                padding: 20px;
+                /* Slightly less padding on small screens */
             }
 
             /* Mobile header consistent with dashboard */
-            .header-mobile-bar { /* New class for the mobile header container */
-                font-size: 1.5rem; /* Smaller heading on mobile */
-                text-align: right; /* Align title to the right */
+            .header-mobile-bar {
+                /* New class for the mobile header container */
+                font-size: 1.5rem;
+                /* Smaller heading on mobile */
+                text-align: right;
+                /* Align title to the right */
                 background-color: var(--dark-color);
                 color: var(--white-color);
-                padding: 15px 20px; /* Adjusted padding */
+                padding: 15px 20px;
+                /* Adjusted padding */
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                margin-bottom: 20px; /* Space below header */
-                display: flex; /* Make it a flex container */
-                justify-content: space-between; /* Space out items */
-                align-items: center; /* Vertically align items */
+                margin-bottom: 20px;
+                /* Space below header */
+                display: flex;
+                /* Make it a flex container */
+                justify-content: space-between;
+                /* Space out items */
+                align-items: center;
+                /* Vertically align items */
             }
 
             /* Hide desktop H2 on mobile */
@@ -214,6 +263,7 @@
         }
 
         @media (min-width: 992px) {
+
             /* Hide mobile header on desktop */
             .header-mobile-bar {
                 display: none;
@@ -221,6 +271,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="d-flex">
         <nav class="sidebar vh-100 d-none d-lg-block">
@@ -229,16 +280,20 @@
             </div>
             <ul class="nav flex-column mt-4">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i>
+                        Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                    <a class="nav-link active" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i>
+                        Manage Doctors</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                    <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage
+                        Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                    <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i>
+                        Appointments</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -248,35 +303,44 @@
 
         <main class="main-content w-100">
             <header class="header-mobile-bar d-lg-none">
-                <button class="btn text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
+                <button class="btn text-white" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="fas fa-bars fa-lg"></i>
                 </button>
                 <h2 class="mb-0 text-white">Add New Doctor</h2>
             </header>
 
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar"
+                aria-labelledby="offcanvasSidebarLabel">
                 <div class="offcanvas-header">
                     <h5 class="offcanvas-title" id="offcanvasSidebarLabel">
-                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle"> ApkaDr.
+                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle">
+                        ApkaDr.
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                            <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i
+                                    class="fas fa-tachometer-alt"></i> Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                            <a class="nav-link active" href="{{ url_for('manage_doctors') }}"><i
+                                    class="fas fa-user-md"></i> Manage Doctors</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                            <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage
+                                Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                            <a class="nav-link" href="{{ url_for('appointments') }}"><i
+                                    class="fas fa-calendar-check"></i> Appointments</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>
+                                Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -285,11 +349,11 @@
             <h2 class="header-admin-dashboard d-none d-lg-block">Add New Doctor</h2>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
             {% endwith %}
 
             <form action="{{ url_for('add_doctor') }}" method="post" enctype="multipart/form-data">
@@ -319,7 +383,8 @@
                 <div class="row mb-3">
                     <div class="col-md-12"> {# Address can take full width #}
                         <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" name="address" placeholder="e.g., House No., Street, City, State" required>
+                        <input type="text" class="form-control" id="address" name="address"
+                            placeholder="e.g., House No., Street, City, State" required>
                     </div>
                 </div>
 
@@ -337,17 +402,39 @@
                     </div>
                 </div>
 
-                <h4 class="mt-4 mb-3">Availability</h4>
+                <h4 class="mt-4 mb-3">Availability Slots</h4>
                 <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="available_from" class="form-label">Available From (Time)</label>
-                        <input type="time" class="form-control" id="available_from" name="available_from">
+                    <div class="col-md-4">
+                        <label for="morning_slot" class="form-label">Morning Slot</label>
+                        <select class="form-select" id="morning_slot" name="morning_slot">
+                            <option value="">Select Morning Slot (Optional)</option>
+                            <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
+                            <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                            <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
+                        </select>
                     </div>
-                    <div class="col-md-6">
-                        <label for="available_to" class="form-label">Available To (Time)</label>
-                        <input type="time" class="form-control" id="available_to" name="available_to">
+                    <div class="col-md-4">
+                        <label for="afternoon_slot" class="form-label">Afternoon Slot</label>
+                        <select class="form-select" id="afternoon_slot" name="afternoon_slot">
+                            <option value="">Select Afternoon Slot (Optional)</option>
+                            <option value="01:00 PM - 02:00 PM">01:00 PM - 02:00 PM</option>
+                            <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+                            <option value="03:00 PM - 04:00 PM">03:00 PM - 04:00 PM</option>
+                            <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="evening_slot" class="form-label">Evening Slot</label>
+                        <select class="form-select" id="evening_slot" name="evening_slot">
+                            <option value="">Select Evening Slot (Optional)</option>
+                            <option value="06:00 PM - 07:00 PM">06:00 PM - 07:00 PM</option>
+                            <option value="07:00 PM - 08:00 PM">07:00 PM - 08:00 PM</option>
+                            <option value="08:00 PM - 09:00 PM">08:00 PM - 09:00 PM</option>
+                        </select>
                     </div>
                 </div>
+
+
 
                 <div class="mb-3">
                     <label for="photo" class="form-label">Profile Photo</label>
@@ -361,4 +448,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
