@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>My Appointments - ApkaDr.</title>
+    <meta http-equiv="refresh" content="4">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -120,6 +123,80 @@
             vertical-align: top;
             padding: 1rem; /* px-4 py-3 */
         }
+
+        /* --- Styles for Custom Toast Notifications (CENTERED) --- */
+        .toast-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            pointer-events: none; /* Allows clicks to pass through if no toast is showing */
+        }
+
+        .custom-toast {
+            background-color: white;
+            border-radius: 0.75rem; /* Slightly larger border-radius */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* More prominent shadow */
+            padding: 1.5rem 2rem; /* More padding */
+            display: flex;
+            align-items: center; /* Align items vertically in the toast */
+            gap: 1rem; /* More space between icon and text */
+            opacity: 0;
+            transform: scale(0.9) translateY(0); /* Start slightly smaller and at original Y position */
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out; /* Slower transition */
+            max-width: 400px; /* Wider toast */
+            position: relative;
+            text-align: center; /* Center text within toast */
+            pointer-events: auto; /* Re-enable pointer events for the toast itself */
+        }
+
+        .custom-toast.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .custom-toast .icon {
+            font-size: 2rem; /* Larger icon */
+            color: #22c55e;
+            margin-right: 0.5rem; /* Space before text */
+        }
+
+        .custom-toast .content {
+            flex-grow: 1;
+        }
+
+        .custom-toast .title {
+            font-weight: 700; /* Bolder title */
+            color: #1a202c;
+            font-size: 1.25rem; /* Larger title font */
+            margin-bottom: 0.5rem;
+        }
+
+        .custom-toast .message {
+            font-size: 1.1rem; /* Larger message font */
+            color: #4a5568;
+            line-height: 1.5;
+        }
+
+        .custom-toast .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem; /* Larger close button */
+            color: #a0aec0;
+            cursor: pointer;
+            padding: 0.25rem;
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+        }
+
+        .custom-toast .close-button:hover {
+            color: #718096;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
@@ -154,7 +231,6 @@
             <ul class="nav flex flex-col space-y-4">
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('search_doctors') }}">Book Appointment</a></li>
-                <!-- <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('book_appointment') }}">Book Appointment</a></li> -->
                 <li><a class="nav-link block py-3 px-4 rounded-lg bg-indigo-600 text-white text-lg font-medium" href="{{ url_for('my_appointments') }}">My Appointments</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('user_profile') }}">My Profile</a></li>
                 <li><a class="nav-link block py-3 px-4 rounded-lg hover:bg-indigo-600 transition duration-200 text-white text-lg font-medium" href="{{ url_for('logout') }}">Logout</a></li>
@@ -186,13 +262,13 @@
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ appointment.appointment_time }}</td>
                                 <td class="px-4 py-3">
                                     {% if appointment.status == 'pending' %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 appointment-status" data-appointment-id="{{ appointment.id }}">Pending</span>
                                     {% elif appointment.status == 'confirmed' %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 appointment-status" data-appointment-id="{{ appointment.id }}">Confirmed</span>
                                     {% elif appointment.status == 'rejected' %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 appointment-status" data-appointment-id="{{ appointment.id }}">Rejected</span>
                                     {% else %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ appointment.status.capitalize() }}</span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 appointment-status" data-appointment-id="{{ appointment.id }}">{{ appointment.status.capitalize() }}</span>
                                     {% endif %}
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ appointment.token_number if appointment.token_number else '--' }}</td>
@@ -229,13 +305,13 @@
                         <p class="text-sm text-gray-600 mb-1">
                             <span class="font-medium">Status:</span> 
                             {% if appointment.status == 'pending' %}
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 appointment-status" data-appointment-id="{{ appointment.id }}">Pending</span>
                             {% elif appointment.status == 'confirmed' %}
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Confirmed</span>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 appointment-status" data-appointment-id="{{ appointment.id }}">Confirmed</span>
                             {% elif appointment.status == 'rejected' %}
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 appointment-status" data-appointment-id="{{ appointment.id }}">Rejected</span>
                             {% else %}
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ appointment.status.capitalize() }}</span>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 appointment-status" data-appointment-id="{{ appointment.id }}">{{ appointment.status.capitalize() }}</span>
                             {% endif %}
                         </p>
                         <p class="text-sm text-gray-600 mb-1">
@@ -262,6 +338,9 @@
         </main>
     </div>
 
+    <div class="toast-container"></div>
+
+
     <script>
         // Hamburger menu functionality
         function toggleSidebar() {
@@ -282,6 +361,189 @@
                 overlay.classList.remove('open');
             }
         });
+
+        // --- Toast Notification Functions (Updated for Centered Display and Hindi) ---
+        function showToast(title, message, iconClass, duration = 5000) { // Default duration reduced to 5 seconds
+            const toastContainer = document.querySelector('.toast-container');
+            
+            // Clear any existing toasts to ensure only one is shown at the center
+            toastContainer.innerHTML = ''; 
+
+            const toast = document.createElement('div');
+            toast.classList.add('custom-toast');
+            toast.innerHTML = `
+                <div class="icon ${iconClass}"></div>
+                <div class="content">
+                    <div class="title">${title}</div>
+                    <div class="message">${message}</div>
+                </div>
+                <button class="close-button" onclick="this.closest('.custom-toast').remove()">&times;</button>
+            `;
+            toastContainer.appendChild(toast);
+
+            // Trigger reflow to ensure animation plays
+            void toast.offsetWidth; 
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove());
+            }, duration);
+        }
+
+        // Variables to store seen appointment IDs for confirmed and rejected statuses
+        let confirmedAppointmentIds = new Set();
+        let rejectedAppointmentIds = new Set();
+
+        // Load from sessionStorage to persist across refreshes
+        if (sessionStorage.getItem('confirmedAppointmentIds')) {
+            try {
+                confirmedAppointmentIds = new Set(JSON.parse(sessionStorage.getItem('confirmedAppointmentIds')));
+            } catch (e) {
+                console.error("Error parsing confirmedAppointmentIds from sessionStorage:", e);
+            }
+        }
+        if (sessionStorage.getItem('rejectedAppointmentIds')) {
+            try {
+                rejectedAppointmentIds = new Set(JSON.parse(sessionStorage.getItem('rejectedAppointmentIds')));
+            } catch (e) {
+                console.error("Error parsing rejectedAppointmentIds from sessionStorage:", e);
+            }
+        }
+
+        // Function to check appointment statuses and show toast
+        function checkAndShowStatusToast() {
+            // This function is for initial display based on the server-rendered HTML.
+            // For dynamic updates, you'd fetch data via AJAX (see suggestion below).
+            const userName = "{{ user.full_name if user else 'User' }}";
+
+            const statusElements = document.querySelectorAll('.appointment-status');
+            let newStatusFound = false;
+
+            statusElements.forEach(element => {
+                const appointmentId = element.dataset.appointmentId;
+                const status = element.textContent.trim().toLowerCase();
+
+                if (status === 'confirmed' && !confirmedAppointmentIds.has(appointmentId)) {
+                    showToast(
+                        'अपॉइंटमेंट की पुष्टि हुई!', // Hindi title
+                        `${userName}, आपका अपॉइंटमेंट स्वीकार हो चुका है!`, // Hindi message
+                        'text-green-500 fas fa-check-circle'
+                    );
+                    confirmedAppointmentIds.add(appointmentId);
+                    // Remove from rejected if it was previously rejected and now confirmed
+                    if (rejectedAppointmentIds.has(appointmentId)) {
+                        rejectedAppointmentIds.delete(appointmentId);
+                    }
+                    newStatusFound = true;
+                } else if (status === 'rejected' && !rejectedAppointmentIds.has(appointmentId)) {
+                    showToast(
+                        'अपॉइंटमेंट अस्वीकृत!', // Hindi title for Rejected
+                        `${userName}, आपका अपॉइंटमेंट अस्वीकृत हो गया है।`, // Hindi message for Rejected
+                        'text-red-500 fas fa-times-circle'
+                    );
+                    rejectedAppointmentIds.add(appointmentId);
+                    // Remove from confirmed if it was previously confirmed and now rejected (unlikely but good for robustness)
+                    if (confirmedAppointmentIds.has(appointmentId)) {
+                        confirmedAppointmentIds.delete(appointmentId);
+                    }
+                    newStatusFound = true;
+                }
+            });
+
+            // Save updated IDs to sessionStorage
+            if (newStatusFound) {
+                sessionStorage.setItem('confirmedAppointmentIds', JSON.stringify(Array.from(confirmedAppointmentIds)));
+                sessionStorage.setItem('rejectedAppointmentIds', JSON.stringify(Array.from(rejectedAppointmentIds)));
+            }
+        }
+
+        // --- Initial check on page load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAndShowStatusToast(); 
+        });
+
+        // --- Recommended: Using AJAX for periodic updates instead of full page reload ---
+        // This requires an API endpoint (e.g., /api/appointments/status) that returns
+        // the current status of appointments for the logged-in user.
+
+        /*
+        async function fetchAndUpdateAppointmentStatuses() {
+            try {
+                // Replace with your actual API endpoint for fetching appointment statuses
+                const response = await fetch('/api/appointments/status'); 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const appointments = await response.json(); // Assuming your API returns JSON
+
+                const userName = "{{ user.full_name if user else 'User' }}";
+                let newStatusFound = false;
+
+                appointments.forEach(appointment => {
+                    const appointmentId = String(appointment.id); // Ensure ID is a string for Set
+                    const status = appointment.status.toLowerCase();
+
+                    // Find the corresponding element in the DOM and update its text and class
+                    const element = document.querySelector(`.appointment-status[data-appointment-id="${appointmentId}"]`);
+                    if (element) {
+                        element.textContent = appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1); // Capitalize first letter
+                        if (status === 'confirmed') {
+                            element.classList.remove('bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800', 'bg-gray-100', 'text-gray-800');
+                            element.classList.add('bg-green-100', 'text-green-800');
+                        } else if (status === 'rejected') {
+                            element.classList.remove('bg-yellow-100', 'text-yellow-800', 'bg-green-100', 'text-green-800', 'bg-gray-100', 'text-gray-800');
+                            element.classList.add('bg-red-100', 'text-red-800');
+                        } else if (status === 'pending') {
+                            element.classList.remove('bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-gray-100', 'text-gray-800');
+                            element.classList.add('bg-yellow-100', 'text-yellow-800');
+                        } else {
+                            element.classList.remove('bg-yellow-100', 'text-yellow-800', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+                            element.classList.add('bg-gray-100', 'text-gray-800');
+                        }
+                    }
+
+                    if (status === 'confirmed' && !confirmedAppointmentIds.has(appointmentId)) {
+                        showToast(
+                            'अपॉइंटमेंट की पुष्टि हुई!', 
+                            `${userName}, आपका अपॉइंटमेंट स्वीकार हो चुका है!`, 
+                            'text-green-500 fas fa-check-circle'
+                        );
+                        confirmedAppointmentIds.add(appointmentId);
+                        rejectedAppointmentIds.delete(appointmentId); // If it was previously rejected, now confirmed
+                        newStatusFound = true;
+                    } else if (status === 'rejected' && !rejectedAppointmentIds.has(appointmentId)) {
+                        showToast(
+                            'अपॉइंटमेंट अस्वीकृत!', 
+                            `${userName}, आपका अपॉइंटमेंट अस्वीकृत हो गया है।`, 
+                            'text-red-500 fas fa-times-circle'
+                        );
+                        rejectedAppointmentIds.add(appointmentId);
+                        confirmedAppointmentIds.delete(appointmentId); // If it was previously confirmed, now rejected (unlikely)
+                        newStatusFound = true;
+                    }
+                });
+
+                if (newStatusFound) {
+                    sessionStorage.setItem('confirmedAppointmentIds', JSON.stringify(Array.from(confirmedAppointmentIds)));
+                    sessionStorage.setItem('rejectedAppointmentIds', JSON.stringify(Array.from(rejectedAppointmentIds)));
+                }
+
+            } catch (error) {
+                console.error("Failed to fetch appointment statuses:", error);
+                // Optionally show an error toast here
+            }
+        }
+
+        // Call the AJAX function periodically
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial call
+            fetchAndUpdateAppointmentStatuses(); 
+
+            // Set interval for periodic checks (e.g., every 10 seconds)
+            setInterval(fetchAndUpdateAppointmentStatuses, 10000); // 10 seconds
+        });
+        */
     </script>
 </body>
 </html>
