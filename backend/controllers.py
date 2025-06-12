@@ -100,7 +100,7 @@ def login():
 def logout():
     session.clear()
     flash("You have been logged out.", "success")
-    return redirect(url_for("login_page"))
+    return redirect(url_for("index")) # Changed from login_page to index
 
 @app.route("/doctor_dashboard/<int:user_id>")
 def doctor_dashboard(user_id):
