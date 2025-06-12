@@ -1,6 +1,7 @@
-import os # Add this import
+import os
 from flask import Flask
 from backend.database import db
+from datetime import timedelta # Added: Import timedelta for session lifetime
 
 app = Flask(__name__)
 
@@ -16,6 +17,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # NEVER hardcode it in production.
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your-fallback-dev-secret-key-if-not-set")
 
+# --- ADDITION: Configure Permanent Sessions ---
+# Sessions will last for 30 days if marked as permanent
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
+
 db.init_app(app)
 
 # Import routes after app and db are set up
@@ -23,7 +28,7 @@ with app.app_context():
     from backend import controllers
     # --- OPTIONAL: Database Creation on First Run (less common for production) ---
     # db.create_all() # Only use this if you want tables to be created on app startup
-                    # For production, use migration tools like Alembic.
+                        # For production, use migration tools like Alembic.
 
 if __name__ == "__main__":
     # --- CHANGE 3: Remove debug=True for Production (CRITICAL SECURITY & Performance) ---

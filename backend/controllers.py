@@ -60,7 +60,7 @@ def login():
             session["user_id"] = user.id
             session["user_type"] = user.type
             session["user_name"] = user.fullName
-
+            session.permanent = True # <--- Add this line for permanent user session
             if user.type == "admin":
                 return redirect(url_for("admin_dashboard"))
             elif user.type == "general":
@@ -75,6 +75,7 @@ def login():
             session["user_id"] = doctor.id
             session["user_type"] = "doctor"
             session["user_name"] = doctor.full_name
+            session.permanent = True # <--- Add this line for permanent doctor session
             return redirect(url_for("doctor_dashboard", user_id=doctor.id))
 
         flash("Invalid email or password", "danger")
