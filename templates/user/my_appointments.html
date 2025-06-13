@@ -135,6 +135,10 @@
             justify-content: center; /* Center horizontally */
             align-items: center; /* Center vertically */
             pointer-events: none; /* Allows clicks to pass through if no toast is showing */
+            width: 100%; /* Ensure it spans the width to perfectly center the toast */
+            height: 100%; /* Ensure it spans the height to perfectly center the toast */
+            padding: 1rem; /* Add some padding for smaller screens */
+            box-sizing: border-box; /* Include padding in element's total width and height */
         }
 
         .custom-toast {
@@ -143,8 +147,9 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* More prominent shadow */
             padding: 1.5rem 2rem; /* More padding */
             display: flex;
+            flex-direction: column; /* Stack icon and text vertically for better centering */
             align-items: center; /* Align items vertically in the toast */
-            gap: 1rem; /* More space between icon and text */
+            gap: 0.75rem; /* Space between icon and text */
             opacity: 0;
             transform: scale(0.9) translateY(0); /* Start slightly smaller and at original Y position */
             transition: opacity 0.4s ease-out, transform 0.4s ease-out; /* Slower transition */
@@ -152,6 +157,7 @@
             position: relative;
             text-align: center; /* Center text within toast */
             pointer-events: auto; /* Re-enable pointer events for the toast itself */
+            border: 1px solid #e2e8f0; /* Subtle border for definition */
         }
 
         .custom-toast.show {
@@ -160,20 +166,26 @@
         }
 
         .custom-toast .icon {
-            font-size: 2rem; /* Larger icon */
-            color: #22c55e;
-            margin-right: 0.5rem; /* Space before text */
+            font-size: 2.5rem; /* Larger icon */
+            color: #22c55e; /* Green for success */
+        }
+
+        .custom-toast .icon.text-red-500 { /* Specific color for rejected icon */
+            color: #ef4444;
         }
 
         .custom-toast .content {
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .custom-toast .title {
             font-weight: 700; /* Bolder title */
             color: #1a202c;
-            font-size: 1.25rem; /* Larger title font */
-            margin-bottom: 0.5rem;
+            font-size: 1.4rem; /* Larger title font */
+            margin-bottom: 0.25rem; /* Less space to message */
         }
 
         .custom-toast .message {
@@ -185,13 +197,14 @@
         .custom-toast .close-button {
             background: none;
             border: none;
-            font-size: 1.5rem; /* Larger close button */
+            font-size: 1.8rem; /* Larger close button */
             color: #a0aec0;
             cursor: pointer;
             padding: 0.25rem;
             position: absolute;
-            top: 0.75rem;
+            top: 0.5rem;
             right: 0.75rem;
+            line-height: 1; /* Adjust line height for better alignment */
         }
 
         .custom-toast .close-button:hover {
@@ -337,6 +350,44 @@
             </div>
         </main>
     </div>
+    <footer class="bg-gray-800 text-white p-8 md:p-10 text-center rounded-t-lg shadow-lg">
+        <div class="max-w-screen-xl mx-auto">
+            <!-- Brand Name -->
+            <h2 class="text-3xl font-semibold mb-2">ApkaDr.</h2>
+            <!-- Tagline -->
+            <p class="text-gray-300 text-lg mb-6">Your Trusted Online Doctor Appointment Platform</p>
+
+            <!-- Navigation Links -->
+            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-6">
+                <a href="/privacy-policy" class="text-gray-300 hover:text-white hover:underline transition-colors duration-300 rounded-md p-1">Privacy Policy</a>
+                <a href="/terms" class="text-gray-300 hover:text-white hover:underline transition-colors duration-300 rounded-md p-1">Terms & Conditions</a>
+                <a href="/refund-policy" class="text-gray-300 hover:text-white hover:underline transition-colors duration-300 rounded-md p-1">Refund Policy</a>
+                <a href="/careers" class="text-gray-300 hover:text-white hover:underline transition-colors duration-300 rounded-md p-1">Careers</a>
+                <a href="/contact" class="text-gray-300 hover:text-white hover:underline transition-colors duration-300 rounded-md p-1">Contact</a>
+            </div>
+
+            <!-- Social Media Icons -->
+            <div class="mb-6">
+                <a href="https://facebook.com" target="_blank" class="mx-3 text-gray-300 hover:text-blue-500 transition-colors duration-300 text-2xl">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://instagram.com" target="_blank" class="mx-3 text-gray-300 hover:text-pink-500 transition-colors duration-300 text-2xl">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://linkedin.com" target="_blank" class="mx-3 text-gray-300 hover:text-blue-700 transition-colors duration-300 text-2xl">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://twitter.com" target="_blank" class="mx-3 text-gray-300 hover:text-blue-400 transition-colors duration-300 text-2xl">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+
+            <!-- Copyright Information -->
+            <p class="text-sm text-gray-400">&copy; 2025 ApkaDr. All rights reserved.</p>
+                    Powered by <a href="https://infranique.io" class="text-primary-blue hover:underline">Infranique.io</a>
+
+        </div>
+    </footer>
 
     <div class="toast-container"></div>
 
@@ -387,7 +438,11 @@
 
             setTimeout(() => {
                 toast.classList.remove('show');
-                toast.addEventListener('transitionend', () => toast.remove());
+                // Use a short delay to allow the fade-out transition to complete before removing
+                toast.addEventListener('transitionend', function handler() {
+                    toast.remove();
+                    toast.removeEventListener('transitionend', handler); // Clean up listener
+                });
             }, duration);
         }
 
@@ -413,9 +468,7 @@
 
         // Function to check appointment statuses and show toast
         function checkAndShowStatusToast() {
-            // This function is for initial display based on the server-rendered HTML.
-            // For dynamic updates, you'd fetch data via AJAX (see suggestion below).
-            const userName = "{{ user.full_name if user else 'User' }}";
+            const userName = "{{ user.full_name if user else 'प्रिय उपयोगकर्ता' }}"; // Fallback to 'प्रिय उपयोगकर्ता' for Hindi
 
             const statusElements = document.querySelectorAll('.appointment-status');
             let newStatusFound = false;
@@ -426,8 +479,8 @@
 
                 if (status === 'confirmed' && !confirmedAppointmentIds.has(appointmentId)) {
                     showToast(
-                        'Appointment Accepted', // Hindi title
-                        `${userName}, आपका Appointment स्Accept हो चुका है!`, // Hindi message
+                        'Appointment Accepted', // Hindi title for Accepted
+                        `${userName}, आपका Appointment सफलतापूर्वक accept हो गया है।`, // Hindi message for Accepted
                         'text-green-500 fas fa-check-circle'
                     );
                     confirmedAppointmentIds.add(appointmentId);
@@ -438,7 +491,7 @@
                     newStatusFound = true;
                 } else if (status === 'rejected' && !rejectedAppointmentIds.has(appointmentId)) {
                     showToast(
-                        'Appointment Rejected!', // Hindi title for Rejected
+                        'Appointment Rejected', // Hindi title for Rejected
                         `${userName}, आपका Appointment Reject हो गया है।`, // Hindi message for Rejected
                         'text-red-500 fas fa-times-circle'
                     );
@@ -477,7 +530,7 @@
                 }
                 const appointments = await response.json(); // Assuming your API returns JSON
 
-                const userName = "{{ user.full_name if user else 'User' }}";
+                const userName = "{{ user.full_name if user else 'प्रिय उपयोगकर्ता' }}"; // Fallback to 'प्रिय उपयोगकर्ता' for Hindi
                 let newStatusFound = false;
 
                 appointments.forEach(appointment => {
@@ -505,8 +558,8 @@
 
                     if (status === 'confirmed' && !confirmedAppointmentIds.has(appointmentId)) {
                         showToast(
-                            'अपॉइंटमेंट की पुष्टि हुई!', 
-                            `${userName}, आपका अपॉइंटमेंट स्वीकार हो चुका है!`, 
+                            'अपॉइंटमेंट स्वीकृत!', 
+                            `${userName}, आपका अपॉइंटमेंट सफलतापूर्वक स्वीकृत हो गया है।`, 
                             'text-green-500 fas fa-check-circle'
                         );
                         confirmedAppointmentIds.add(appointmentId);

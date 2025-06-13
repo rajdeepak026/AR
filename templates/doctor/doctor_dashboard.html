@@ -1,133 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doctor Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <title>Doctor Dashboard - ApkaDr.</title>
+  <meta http-equiv="refresh" content="6">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
+    /* Custom Colors inspired by ApkaDr. Logo (consistent across the app) */
+    :root {
+      --apkadr-dark-blue: #1e3a8a;
+      /* From logo's pen */
+      --apkadr-gold: #facc15;
+      /* From logo's pen accent */
+      --apkadr-black: #343a40;
+      /* General dark text/element, from logo text */
+      --apkadr-light-gray: #f7f7f7;
+      /* Soft background */
+      --apkadr-white: #ffffff;
     }
-    .nav-link.active {
-      font-weight: bold;
+
+    /* Extend Tailwind's default theme with custom colors */
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer base {
+      body {
+        font-family: 'Poppins', sans-serif;
+        /* Consistent font */
+        @apply bg-apkadr-light-gray text-apkadr-black overflow-x-hidden;
+        /* Ensure no horizontal overflow */
+      }
     }
-    /* Custom badge styles for appointment statuses */
-    .badge-pending {
-      background-color: #ffc107; /* warning yellow */
-      color: #212529; /* dark text */
+
+    /* Custom classes for sidebar active link */
+    .sidebar-link-active {
+      @apply bg-gray-700 font-bold;
+      /* Tailwind's bg-gray-700 and font-bold for active state */
     }
-    .badge-confirmed {
-      background-color: #198754; /* success green */
-      color: #fff;
+
+    /* Styles for flash messages */
+    .alert-success {
+      @apply bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md relative mb-4;
     }
-    .badge-cancelled {
-      background-color: #dc3545; /* danger red */
-      color: #fff;
+
+    .alert-danger {
+      @apply bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative mb-4;
     }
-    .badge-completed {
-      background-color: #0d6efd; /* info blue for completed */
-      color: #fff;
+
+    .alert-info {
+      @apply bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-md relative mb-4;
+    }
+
+    .alert-warning {
+      @apply bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-md relative mb-4;
+    }
+
+    /* ************************************** */
+    /* MOBILE VERTICAL TABLE SPECIFIC STYLES */
+    /* ************************************** */
+    @media screen and (max-width: 767px) {
+      .vertical-table {
+        @apply block w-full;
+        /* Make table a block element and take full width */
+      }
+
+      .vertical-table thead {
+        @apply hidden;
+      }
+
+      .vertical-table tr {
+        @apply block mb-4 border border-gray-200 rounded-lg shadow-sm;
+        background-color: var(--apkadr-white);
+        /* Ensure row background is white */
+      }
+
+      .vertical-table td {
+        @apply block text-sm text-gray-800 text-right px-4 py-2 relative;
+        border-bottom: 1px solid #eee;
+        /* Light separator between cells */
+        white-space: normal;
+        /* Ensure text wraps */
+        overflow-wrap: break-word;
+        /* Break long words */
+      }
+
+      .vertical-table td:last-child {
+        border-bottom: 0;
+      }
+
+      .vertical-table td::before {
+        content: attr(data-label);
+        @apply float-left font-semibold text-apkadr-black uppercase;
+        margin-right: 1rem;
+      }
+
+      /* Adjust badge styling for vertical table */
+      .vertical-table .badge {
+        @apply inline-block float-none;
+        /* Remove float for better centering */
+      }
+
+      /* Adjust action buttons container for mobile vertical display */
+      .vertical-table .actions-cell .flex {
+        @apply flex-col space-y-2 items-end;
+        /* Stack buttons vertically and align to end */
+      }
+
+      .vertical-table .actions-cell .flex>* {
+        @apply w-full;
+        /* Make buttons take full width within their cell */
+      }
+
+      /* Adjust form for mobile token input */
+      .vertical-table .token-form {
+        @apply flex-col space-y-2 !important;
+        /* Override md:flex-row to ensure vertical stacking */
+      }
+
+      .vertical-table .token-form input {
+        @apply w-full !important;
+        /* Full width input */
+      }
     }
   </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'apkadr-dark-blue': 'var(--apkadr-dark-blue)',
+            'apkadr-gold': 'var(--apkadr-gold)',
+            'apkadr-black': 'var(--apkadr-black)',
+            'apkadr-light-gray': 'var(--apkadr-light-gray)',
+            'apkadr-white': 'var(--apkadr-white)',
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-  <div class="d-flex">
-    <nav class="bg-dark text-white p-3 vh-100 rounded-tr-xl rounded-br-xl" style="width: 250px;">
-      <h4 class="mb-4">ApkaDr.</h4>
-      <ul class="nav flex-column mt-4">
-        <li class="nav-item"><a class="nav-link text-white active rounded-md hover:bg-gray-700 transition duration-300" href="{{ url_for('doctor_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link text-white rounded-md hover:bg-gray-700 transition duration-300" href="{{ url_for('doctor_appointments', user_id=session.get('user_id')) }}">Appointments</a></li>
-        <li class="nav-item"><a class="nav-link text-white rounded-md hover:bg-gray-700 transition duration-300" href="{{ url_for('doctor_profile', user_id=session.get('user_id')) }}">My Profile</a></li>
-        <li class="nav-item"><a class="nav-link text-white rounded-md hover:bg-gray-700 transition duration-300" href="{{ url_for('logout') }}">Logout</a></li>
-      </ul>
-    </nav>
 
-    <main class="p-4 w-100">
+<body class="flex flex-col min-h-screen">
+  <div class="flex flex-1">
+    <aside id="sidebar" class="w-64 bg-gray-900 text-white p-4 shadow-lg transition-all duration-300 ease-in-out
+                        hidden lg:flex flex-col flex-shrink-0 rounded-tr-xl rounded-br-xl">
+      <h4 class="text-2xl font-bold mb-6">ApkaDr.</h4>
+      <nav class="flex-grow">
+        <ul class="flex flex-col space-y-2">
+          <li>
+            <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300 sidebar-link-active"
+              href="{{ url_for('doctor_dashboard', user_id=session.get('user_id')) }}">
+              <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+              href="{{ url_for('doctor_appointments', user_id=session.get('user_id')) }}">
+              <i class="fas fa-calendar-check mr-3"></i> Appointments
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+              href="{{ url_for('doctor_profile', user_id=session.get('user_id')) }}">
+              <i class="fas fa-user mr-3"></i> My Profile
+            </a>
+          </li>
+          <li>
+            <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+              href="{{ url_for('logout') }}">
+              <i class="fas fa-sign-out-alt mr-3"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="flex-grow p-4 md:p-8 bg-apkadr-light-gray flex flex-col overflow-x-hidden">
+      <header class="flex justify-between items-center bg-gray-900 text-white p-4 shadow-md lg:hidden mb-4 rounded-md">
+        <button id="mobile-menu-button" class="text-white text-xl focus:outline-none">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h2 class="text-xl font-semibold text-white">Doctor Dashboard</h2>
+        <div></div>
+      </header>
+
+      <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"
+        onclick="toggleMobileSidebar()"></div>
+      <div id="mobile-sidebar"
+        class="fixed top-0 left-0 h-full w-64 bg-gray-900 text-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
+        <div class="p-4 border-b border-gray-700 flex items-center justify-between">
+          <h5 class="text-xl font-semibold flex items-center gap-2">
+            ApkaDr.
+          </h5>
+          <button class="text-white focus:outline-none" onclick="toggleMobileSidebar()">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <nav class="mt-2">
+          <ul class="flex flex-col space-y-1">
+            <li>
+              <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300 sidebar-link-active"
+                href="{{ url_for('doctor_dashboard', user_id=session.get('user_id')) }}">
+                <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+              </a>
+            </li>
+            <li>
+              <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+                href="{{ url_for('doctor_appointments', user_id=session.get('user_id')) }}">
+                <i class="fas fa-calendar-check mr-3"></i> Appointments
+              </a>
+            </li>
+            <li>
+              <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+                href="{{ url_for('doctor_profile', user_id=session.get('user_id')) }}">
+                <i class="fas fa-user mr-3"></i> My Profile
+              </a>
+            </li>
+            <li>
+              <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+                href="{{ url_for('logout') }}">
+                <i class="fas fa-sign-out-alt mr-3"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
       {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show rounded-md" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        {% endif %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="
+                {% if category == 'success' %} alert-success
+                {% elif category == 'danger' %} alert-danger
+                {% elif category == 'info' %} alert-info
+                {% elif category == 'warning' %} alert-warning
+                {% else %} bg-gray-100 border border-gray-400 text-gray-700
+                {% endif %}
+                px-4 py-3 rounded-md relative mb-4">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
       {% endwith %}
 
-      <h2 class="mb-4 text-3xl font-bold">Welcome, Dr. {{ doctor.full_name }}</h2>
-      <p class="text-gray-700">Here are your upcoming appointments:</p>
+      <h2 class="text-3xl font-bold mb-4 text-apkadr-black">Welcome, Dr. {{ doctor.full_name }}</h2>
+      <p class="text-gray-700 mb-6">Here are your upcoming appointments:</p>
 
-      <table class="table mt-4 table-striped table-hover rounded-md overflow-hidden shadow-sm">
-        <thead class="bg-gray-800 text-white">
-          <tr>
-            <th scope="col" class="py-3 px-4">Patient Name</th>
-            <th scope="col" class="py-3 px-4">Date</th>
-            <th scope="col" class="py-3 px-4">Time</th>
-            <th scope="col" class="py-3 px-4">Symptoms</th>
-            <th scope="col" class="py-3 px-4">Status</th>
-            <th scope="col" class="py-3 px-4">Token Number</th>
-            <th scope="col" class="py-3 px-4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for appointment in appointments %}
-          <tr class="hover:bg-gray-50">
-            <td class="py-3 px-4">
-              {{ appointment.patient.fullName if appointment.patient else 'N/A' }}
-            </td>
-            <td class="py-3 px-4">
-              {{ appointment.appointment_date.strftime('%Y-%m-%d') if appointment.appointment_date else 'N/A' }}
-            </td>
-            <td class="py-3 px-4">
-              {{ appointment.appointment_time if appointment.appointment_time else 'N/A' }}
-            </td>
-            <td class="py-3 px-4">
-              {% if "Patient:" in (appointment.symptoms | default('')) %}
-                  {% set patient_details = (appointment.symptoms | default('')).split(',') %}
-                  {% set patient_name_line = patient_details[0] | default('') %}
-                  {{ patient_name_line.replace('Patient:', '').strip() }} - (Other)
-              {% else %}
-                  {{ appointment.symptoms | default('N/A') }}
-              {% endif %}
-            </td>
-            <td class="py-3 px-4">
-              {% if appointment.status == 'pending' %}
-                <span class="badge badge-pending rounded-pill px-3 py-2">Pending</span>
-              {% elif appointment.status == 'confirmed' %}
-                <span class="badge badge-confirmed rounded-pill px-3 py-2">Confirmed</span>
-              {% elif appointment.status == 'cancelled' %}
-                <span class="badge badge-cancelled rounded-pill px-3 py-2">Cancelled</span>
-              {% elif appointment.status == 'completed' %}
-                <span class="badge badge-completed rounded-pill px-3 py-2">Completed</span>
-              {% else %}
-                <span class="badge bg-secondary rounded-pill px-3 py-2">{{ appointment.status | default('Unknown') | capitalize }}</span>
-              {% endif %}
-            </td>
-            <td class="py-3 px-4">{{ appointment.token_number if appointment.token_number else '--' }}</td>
-            <td class="py-3 px-4">
-              {% if appointment.status == 'pending' %}
-                <a href="{{ url_for('confirm_appointment_by_doctor', appointment_id=appointment.id) }}" class="btn btn-success btn-sm me-2 rounded-md hover:shadow-lg transition duration-300">Confirm</a>
-                <a href="{{ url_for('cancel_appointment_by_doctor', appointment_id=appointment.id) }}" class="btn btn-danger btn-sm rounded-md hover:shadow-lg transition duration-300">Cancel</a>
-              {% elif appointment.status == 'confirmed' %}
-                <button class="btn btn-secondary btn-sm rounded-md" disabled>Confirmed</button>
-                <a href="{{ url_for('cancel_appointment_by_doctor', appointment_id=appointment.id) }}" class="btn btn-danger btn-sm rounded-md hover:shadow-lg transition duration-300">Cancel</a>
-              {% elif appointment.status == 'cancelled' %}
-                <button class="btn btn-warning btn-sm rounded-md" disabled>Cancelled</button>
-              {% elif appointment.status == 'completed' %}
-                <button class="btn btn-primary btn-sm rounded-md" disabled>Completed</button>
-              {% endif %}
-            </td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="7" class="text-center py-4 text-gray-500">No upcoming appointments found.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 vertical-table">
+          <thead class="bg-apkadr-dark-blue text-white">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tl-xl">Patient Name
+              </th>
+              <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">Date</th>
+              <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">Time</th>
+              <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">Symptoms</th>
+              <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">Status</th>
+              <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">Token Number</th>
+              <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tr-xl">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for appointment in appointments %}
+            <tr class="hover:bg-gray-50 transition-colors duration-200">
+              <td data-label="Patient Name" class="px-4 py-3 text-sm font-medium text-gray-900">
+                {{ appointment.patient.fullName if appointment.patient else 'N/A' }}
+              </td>
+              <td data-label="Date" class="px-4 py-3 text-sm text-gray-800">
+                {{ appointment.appointment_date.strftime('%Y-%m-%d') if appointment.appointment_date else 'N/A' }}
+              </td>
+              <td data-label="Time" class="px-4 py-3 text-sm text-gray-800">
+                {{ appointment.appointment_time if appointment.appointment_time else 'N/A' }}
+              </td>
+              <td data-label="Symptoms" class="px-4 py-3 text-sm text-gray-800">
+                {% if "Patient:" in (appointment.symptoms | default('')) %}
+                {% set patient_details = (appointment.symptoms | default('')).split(',') %}
+                {% set patient_name_line = patient_details[0] | default('') %}
+                {{ patient_name_line.replace('Patient:', '').strip() }} - (Other)
+                {% else %}
+                {{ appointment.symptoms | default('N/A') }}
+                {% endif %}
+              </td>
+              <td data-label="Status" class="px-4 py-3 text-sm">
+                {% if appointment.status == 'pending' %}
+                <span
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-apkadr-gold text-apkadr-black badge">Pending</span>
+                {% elif appointment.status == 'confirmed' %}
+                <span
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-600 text-white badge">Confirmed</span>
+                {% elif appointment.status == 'cancelled' %}
+                <span
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-600 text-white badge">Cancelled</span>
+                {% elif appointment.status == 'completed' %}
+                <span
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-600 text-white badge">Completed</span>
+                {% else %}
+                <span
+                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-500 text-white badge">{{
+                  appointment.status | default('Unknown') | capitalize }}</span>
+                {% endif %}
+              </td>
+              <td data-label="Token Number" class="px-4 py-3 text-sm text-gray-800">{{ appointment.token_number if
+                appointment.token_number else '--' }}</td>
+              <td data-label="Actions" class="px-4 py-3 text-sm font-medium actions-cell">
+                <div class="flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
+                  {% if appointment.status == 'pending' %}
+                  <form action="{{ url_for('confirm_appointment_by_doctor', appointment_id=appointment.id) }}"
+                    method="POST" class="flex flex-col md:flex-row items-center gap-2 token-form">
+                    <input type="text" name="token_number"
+                      class="w-full md:w-32 p-2 border border-gray-300 rounded-md focus:ring-apkadr-dark-blue focus:border-apkadr-dark-blue text-sm"
+                      placeholder="Enter Token" required>
+                    <button type="submit"
+                      class="w-full md:w-auto bg-green-600 text-white p-2 rounded-md hover:bg-green-700 transition-colors duration-200 text-center">
+                      Confirm
+                    </button>
+                  </form>
+                  <a href="{{ url_for('cancel_appointment_by_doctor', appointment_id=appointment.id) }}"
+                    class="w-full md:w-auto bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition-colors duration-200 text-center">
+                    Cancel
+                  </a>
+                  {% elif appointment.status == 'confirmed' %}
+                  <button class="w-full md:w-auto bg-gray-500 text-white p-2 rounded-md cursor-not-allowed opacity-75"
+                    disabled>Confirmed</button>
+                  <a href="{{ url_for('cancel_appointment_by_doctor', appointment_id=appointment.id) }}"
+                    class="w-full md:w-auto bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition-colors duration-200 text-center">
+                    Cancel
+                  </a>
+                  {% elif appointment.status == 'cancelled' %}
+                  <button class="w-full md:w-auto bg-gray-500 text-white p-2 rounded-md cursor-not-allowed opacity-75"
+                    disabled>Cancelled</button>
+                  {% elif appointment.status == 'completed' %}
+                  <button class="w-full md:w-auto bg-gray-500 text-white p-2 rounded-md cursor-not-allowed opacity-75"
+                    disabled>Completed</button>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="7" class="px-4 py-4 text-center text-gray-500 text-base">No upcoming appointments found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </main>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <footer class="mt-auto py-4 text-center text-gray-500 text-xs bg-white shadow-inner">
+    Copyright &copy; 2025 ApkaDr. All rights reserved.<br>
+    Powered by <a href="https://infranique.io" class="text-indigo-600 hover:underline">Infranique.io</a>
+  </footer>
+
+  <script>
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileSidebar = document.getElementById('mobile-sidebar');
+    const mobileSidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+
+    function toggleMobileSidebar() {
+      mobileSidebar.classList.toggle('-translate-x-full');
+      mobileSidebarOverlay.classList.toggle('hidden');
+    }
+
+    mobileMenuButton.addEventListener('click', toggleMobileSidebar);
+
+    // Close sidebar when a link is clicked (optional, but good for UX)
+    const sidebarLinks = mobileSidebar.querySelectorAll('a');
+    sidebarLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (!mobileSidebar.classList.contains('-translate-x-full')) {
+          toggleMobileSidebar();
+        }
+      });
+    });
+  </script>
 </body>
+
 </html>

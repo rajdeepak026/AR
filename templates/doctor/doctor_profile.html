@@ -1,79 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doctor Profile</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    .nav-link.active {
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile - ApkaDr.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Colors inspired by ApkaDr. Logo (consistent across the app) */
+        :root {
+            --apkadr-dark-blue: #1e3a8a;
+            /* From logo's pen */
+            --apkadr-gold: #facc15;
+            /* From logo's pen accent */
+            --apkadr-black: #343a40;
+            /* General dark text/element, from logo text */
+            --apkadr-light-gray: #f7f7f7;
+            /* Soft background */
+            --apkadr-white: #ffffff;
+        }
+
+        /* Extend Tailwind's default theme with custom colors */
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+        @layer base {
+            body {
+                font-family: 'Poppins', sans-serif;
+                /* Consistent font */
+                @apply bg-apkadr-light-gray text-apkadr-black overflow-x-hidden;
+                /* Ensure no horizontal overflow */
+            }
+        }
+
+        /* Custom classes for sidebar active link */
+        .sidebar-link-active {
+            @apply bg-gray-700 font-bold;
+            /* Tailwind's bg-gray-700 and font-bold for active state */
+        }
+
+        /* Styles for flash messages */
+        .alert-success {
+            @apply bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md relative mb-4;
+        }
+
+        .alert-danger {
+            @apply bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative mb-4;
+        }
+
+        .alert-info {
+            @apply bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-md relative mb-4;
+        }
+
+        .alert-warning {
+            @apply bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-md relative mb-4;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'apkadr-dark-blue': 'var(--apkadr-dark-blue)',
+                        'apkadr-gold': 'var(--apkadr-gold)',
+                        'apkadr-black': 'var(--apkadr-black)',
+                        'apkadr-light-gray': 'var(--apkadr-light-gray)',
+                        'apkadr-white': 'var(--apkadr-white)',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-  <div class="d-flex">
-    <nav class="bg-dark text-white p-3 vh-100 rounded-tr-xl rounded-br-xl" style="width: 250px;">
-      <h4 class="mb-4">ApkaDr.</h4>
-      <ul class="nav flex-column mt-4">
-        <li class="nav-item"><a class="nav-link text-white rounded-md hover:bg-gray-700 transition duration-300" href="{{ url_for('doctor_dashboard', user_id=session.get('user_id')) }}">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link text-white rounded-md hover:bg-gray-700 transition duration-300" href="{{ url_for('doctor_appointments', user_id=session.get('user_id')) }}">Appointments</a></li>
-        <li class="nav-item"><a class="nav-link text-white active rounded-md hover:bg-gray-700 transition duration-300" href="{{ url_for('doctor_profile', user_id=session.get('user_id')) }}">My Profile</a></li>
-        <li class="nav-item"><a class="nav-link text-white rounded-md hover:bg-gray-700 transition duration-300" href="{{ url_for('logout') }}">Logout</a></li>
-      </ul>
-    </nav>
 
-    <main class="p-4 w-100">
-      <!-- Flash messages for user feedback -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show rounded-md" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<body class="flex flex-col min-h-screen">
+    <div class="flex flex-1">
+        <!-- Sidebar for larger screens -->
+        <aside id="sidebar" class="w-64 bg-gray-900 text-white p-4 shadow-lg transition-all duration-300 ease-in-out
+                       hidden lg:flex flex-col flex-shrink-0 rounded-tr-xl rounded-br-xl">
+            <h4 class="text-2xl font-bold mb-6">ApkaDr.</h4>
+            <nav class="flex-grow">
+                <ul class="flex flex-col space-y-2">
+                    <li>
+                        <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+                            href="{{ url_for('doctor_dashboard', user_id=session.get('user_id')) }}">
+                            <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+                            href="{{ url_for('doctor_appointments', user_id=session.get('user_id')) }}">
+                            <i class="fas fa-calendar-check mr-3"></i> Appointments
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300 sidebar-link-active"
+                            href="{{ url_for('doctor_profile', user_id=session.get('user_id')) }}">
+                            <i class="fas fa-user mr-3"></i> My Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+                            href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt mr-3"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-4 md:p-8 bg-apkadr-light-gray flex flex-col">
+            <!-- Mobile Header Bar -->
+            <header class="flex justify-between items-center bg-gray-900 text-white p-4 shadow-md lg:hidden mb-4 rounded-md">
+                <button id="mobile-menu-button" class="text-white text-xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 class="text-xl font-semibold text-white">My Profile</h2>
+                <div></div> <!-- Placeholder for right alignment, if needed -->
+            </header>
+
+            <!-- Off-canvas Sidebar (for mobile) -->
+            <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"
+                onclick="toggleMobileSidebar()"></div>
+            <div id="mobile-sidebar"
+                class="fixed top-0 left-0 h-full w-64 bg-gray-900 text-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
+                <div class="p-4 border-b border-gray-700 flex items-center justify-between">
+                    <h5 class="text-xl font-semibold flex items-center gap-2">
+                        ApkaDr.
+                    </h5>
+                    <button class="text-white focus:outline-none" onclick="toggleMobileSidebar()">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <nav class="mt-2">
+                    <ul class="flex flex-col space-y-1">
+                        <li>
+                            <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+                                href="{{ url_for('doctor_dashboard', user_id=session.get('user_id')) }}">
+                                <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+                                href="{{ url_for('doctor_appointments', user_id=session.get('user_id')) }}">
+                                <i class="fas fa-calendar-check mr-3"></i> Appointments
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300 sidebar-link-active"
+                                href="{{ url_for('doctor_profile', user_id=session.get('user_id')) }}">
+                                <i class="fas fa-user mr-3"></i> My Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-center py-3 px-4 text-white rounded-md hover:bg-gray-700 transition duration-300"
+                                href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt mr-3"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
 
-      <h2 class="mb-4 text-3xl font-bold">My Profile</h2>
-      <form method="POST">
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="full_name" class="form-label">Full Name</label>
-            <input type="text" class="form-control rounded-md" id="full_name" name="full_name" value="{{ doctor.full_name | default('') }}" required />
-          </div>
-          <div class="col-md-6">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control rounded-md" id="email" name="email" value="{{ doctor.email | default('') }}" required readonly />
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="specialty" class="form-label">Specialization</label>
-          <input type="text" class="form-control rounded-md" id="specialty" name="specialty" value="{{ doctor.specialty | default('') }}" required />
-        </div>
-        <div class="mb-3">
-          <label for="phone" class="form-label">Phone</label>
-          <input type="text" class="form-control rounded-md" id="phone" name="phone" value="{{ doctor.phone | default('') }}" required />
-        </div>
-        {# Removed age and address fields #}
-        {#
-        <div class="col-md-4">
-            <label for="age" class="form-label">Age</label>
-            <input type="number" class="form-control rounded-md" id="age" name="age" value="{{ doctor.age | default('') }}" />
-        </div>
-        <div class="mb-3">
-            <label for="address" class="form-label">Address</label>
-            <input type="text" class="form-control rounded-md" id="address" name="address" value="{{ doctor.address | default('') }}" />
-        </div>
-        #}
-        <button type="submit" class="btn btn-primary rounded-md shadow-sm hover:shadow-lg transition duration-300">Update Profile</button>
-      </form>
-    </main>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="
+                {% if category == 'success' %} alert-success
+                {% elif category == 'danger' %} alert-danger
+                {% elif category == 'info' %} alert-info
+                {% elif category == 'warning' %} alert-warning
+                {% else %} bg-gray-100 border border-gray-400 text-gray-700
+                {% endif %}
+                px-4 py-3 rounded-md relative mb-4">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <h2 class="text-3xl font-bold mb-6 text-apkadr-black">My Profile</h2>
+            <form method="POST" class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-4">
+                    <div>
+                        <label for="full_name" class="block text-apkadr-black text-base font-medium mb-1">Full Name</label>
+                        <input type="text" id="full_name" name="full_name" value="{{ doctor.full_name | default('') }}" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-apkadr-black text-base font-medium mb-1">Email</label>
+                        <input type="email" id="email" name="email" value="{{ doctor.email | default('') }}" required readonly
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed focus:outline-none">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="specialty" class="block text-apkadr-black text-base font-medium mb-1">Specialization</label>
+                    <input type="text" id="specialty" name="specialty" value="{{ doctor.specialty | default('') }}" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:border-transparent">
+                </div>
+                <div class="mb-6">
+                    <label for="phone" class="block text-apkadr-black text-base font-medium mb-1">Phone</label>
+                    <input type="text" id="phone" name="phone" value="{{ doctor.phone | default('') }}" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:border-transparent">
+                </div>
+                
+                <button type="submit"
+                        class="w-full bg-apkadr-dark-blue text-white py-3 px-4 rounded-md font-semibold text-lg
+                               hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:ring-offset-2">
+                    Update Profile
+                </button>
+            </form>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-4 text-center text-gray-500 text-xs bg-white shadow-inner">
+        Copyright &copy; 2025 ApkaDr. All rights reserved.<br>
+        Powered by <a href="https://infranique.io" class="text-indigo-600 hover:underline">Infranique.io</a>
+    </footer>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        const mobileSidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+
+        function toggleMobileSidebar() {
+            mobileSidebar.classList.toggle('-translate-x-full');
+            mobileSidebarOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileSidebar);
+
+        // Close sidebar when a link is clicked (optional, but good for UX)
+        const sidebarLinks = mobileSidebar.querySelectorAll('a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!mobileSidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileSidebar();
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>

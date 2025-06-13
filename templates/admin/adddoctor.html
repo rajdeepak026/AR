@@ -5,417 +5,306 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Doctor - ApkaDr.</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom Colors inspired by ApkaDr. Logo (consistent with admin_dashboard) */
+        /* Eye-Friendly Modern Color Palette (Softer Tones) - Consistent with Admin Dashboard */
         :root {
-            --apkadr-dark-blue: #1e3a8a;
-            /* From logo's pen */
-            --apkadr-gold: #facc15;
-            /* From logo's pen accent */
-            --apkadr-black: #343a40;
-            /* General dark text/element, from logo text */
-            --apkadr-light-gray: #f7f7f7;
-            /* Soft background */
-            --apkadr-white: #ffffff;
-
-            /* Mapped to general Bootstrap-like variable names for convenience */
-            --primary-color: var(--apkadr-dark-blue);
-            --secondary-color: #6c757d;
-            /* Keep some default for general secondary */
-            --success-color: #1a6f3b;
-            /* A darker green for success */
-            --danger-color: #c0392b;
-            /* A more subdued red */
-            --warning-color: var(--apkadr-gold);
-            /* Using gold for warning/attention */
-            --info-color: #2980b9;
-            /* A distinct blue for info */
-            --dark-color: var(--apkadr-black);
-            --light-color: var(--apkadr-light-gray);
-            --white-color: var(--apkadr-white);
+            --primary-blue: #5C6BC0;
+            /* A muted, calming blue */
+            --primary-dark-blue: #3F51B5;
+            /* A slightly deeper, still subdued blue */
+            --accent-green: #81C784;
+            /* A gentle, pastel green for success/accents */
+            --text-dark: #424242;
+            /* Soft dark gray for text */
+            --bg-light: #ECEFF1;
+            /* Very light, cool gray background */
+            --surface-card: #FFFFFF;
+            /* White for cards */
+            --danger-red: #E57373;
+            /* A softer red for danger */
+            --warning-orange: #FFB74D;
+            /* A warm, mellow orange for warnings */
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            /* Consistent with login/register and dashboard */
-            background-color: var(--light-color);
-            color: var(--dark-color);
-        }
+        /* Extend Tailwind's default theme with custom colors */
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
 
-        /* Sidebar styles (consistent with dashboard) */
-        .sidebar {
-            width: 280px;
-            /* Consistent with dashboard */
-            background-color: var(--dark-color);
-            /* Black/Dark Gray */
-            color: var(--white-color);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            /* Subtle shadow for depth */
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.75);
-            padding: 15px 25px;
-            /* More padding for better click area */
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-        }
-
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--white-color);
-            border-left: 5px solid var(--apkadr-gold);
-            /* Gold accent for active link */
-            padding-left: 20px;
-            /* Adjust padding due to border */
-        }
-
-        .sidebar .nav-link i {
-            margin-right: 12px;
-            /* Increased icon spacing */
-            font-size: 1.1rem;
-        }
-
-        /* Logo container in sidebar (consistent with dashboard) */
-        .sidebar .logo-container {
-            padding: 20px;
-            margin-bottom: 0;
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar .logo-container img {
-            max-height: 80px;
-            /* Adjust logo height */
-            width: 80px;
-            /* Ensure width matches height for perfect circle */
-            object-fit: cover;
-            /* Ensures image covers the circular area */
-            border: 2px solid var(--apkadr-gold);
-            /* Add a subtle gold border */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            /* Add a subtle shadow to the logo */
-        }
-
-        /* Main content styles (consistent with dashboard) */
-        .main-content {
-            flex-grow: 1;
-            padding: 30px;
-            /* More overall padding */
-            background-color: var(--light-color);
-        }
-
-        /* Header for Admin Dashboard (reused for main page title) */
-        .header-admin-dashboard {
-            font-size: 2rem;
-            /* Consistent large heading on desktop */
-            text-align: left !important;
-            margin-bottom: 2rem;
-            /* Consistent margin */
-            color: var(--dark-color);
-            /* Ensure consistent text color */
-        }
-
-        /* Form specific styles */
-        .form-label {
-            font-weight: 500;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control,
-        .form-select {
-            border: 1px solid #ced4da;
-            border-radius: 0.375rem;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--primary-color);
-            /* Uses primary color from :root */
-            box-shadow: 0 0 0 0.25rem rgba(30, 58, 138, 0.25);
-            /* Using var(--apkadr-dark-blue) for shadow */
-            outline: 0;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            /* Uses primary color from :root */
-            border-color: var(--primary-color);
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #1a3070;
-            /* Slightly darker shade of apkadr-dark-blue */
-            border-color: #1a3070;
-        }
-
-        /* Hamburger menu and offcanvas (consistent with dashboard) */
-        .navbar-toggler {
-            border: none;
-            color: var(--white-color);
-            padding: 0;
-            font-size: 1.5rem;
-            /* Larger icon */
-        }
-
-        .navbar-toggler:focus {
-            box-shadow: none;
-        }
-
-        .offcanvas-header {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px;
-        }
-
-        .offcanvas-header .offcanvas-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .offcanvas-header .offcanvas-title img {
-            max-height: 40px;
-            /* Smaller logo in offcanvas header */
-            width: 40px;
-            /* Ensure width matches height for perfect circle */
-            object-fit: cover;
-            /* Ensures image covers the circular area */
-            border: 1.5px solid var(--apkadr-gold);
-            /* Add a subtle gold border */
-        }
-
-        .offcanvas-body {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            padding-top: 0;
-            /* Remove top padding for nav links */
-        }
-
-        .offcanvas-body .nav-link {
-            padding: 15px 25px;
-            /* Consistent padding */
-        }
-
-        /* Responsive adjustments (consistent with dashboard) */
-        @media (max-width: 991.98px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: -280px;
-                /* Match new width */
-                height: 100vh;
-                z-index: 1050;
-                width: 280px;
-                /* Match new width */
-            }
-
-            .sidebar.show {
-                left: 0;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-                /* Slightly less padding on small screens */
-            }
-
-            /* Mobile header consistent with dashboard */
-            .header-mobile-bar {
-                /* New class for the mobile header container */
-                font-size: 1.5rem;
-                /* Smaller heading on mobile */
-                text-align: right;
-                /* Align title to the right */
-                background-color: var(--dark-color);
-                color: var(--white-color);
-                padding: 15px 20px;
-                /* Adjusted padding */
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                margin-bottom: 20px;
-                /* Space below header */
-                display: flex;
-                /* Make it a flex container */
-                justify-content: space-between;
-                /* Space out items */
-                align-items: center;
-                /* Vertically align items */
-            }
-
-            /* Hide desktop H2 on mobile */
-            .main-content .header-admin-dashboard.d-lg-block {
-                display: none !important;
+        @layer base {
+            body {
+                font-family: 'Poppins', sans-serif;
+                @apply bg-bg-light text-text-dark overflow-x-hidden;
+                /* Ensure no horizontal overflow */
             }
         }
 
-        @media (min-width: 992px) {
+        /* Custom active state for sidebar links */
+        .sidebar-link-active {
+            @apply bg-primary-dark-blue text-white border-l-4 border-accent-green pl-6;
+            /* Adjusted for new palette */
+        }
 
-            /* Hide mobile header on desktop */
-            .header-mobile-bar {
-                display: none;
-            }
+        /* Styles for flash messages */
+        .alert-success {
+            @apply bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4;
+        }
+
+        .alert-danger {
+            @apply bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4;
+        }
+
+        .alert-info {
+            @apply bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4;
+        }
+
+        .alert-warning {
+            @apply bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4;
         }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': 'var(--primary-blue)',
+                        'primary-dark-blue': 'var(--primary-dark-blue)',
+                        'accent-green': 'var(--accent-green)',
+                        'text-dark': 'var(--text-dark)',
+                        'bg-light': 'var(--bg-light)',
+                        'surface-card': 'var(--surface-card)',
+                        'danger-red': 'var(--danger-red)',
+                        'warning-orange': 'var(--warning-orange)',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
-<body>
-    <div class="d-flex">
-        <nav class="sidebar vh-100 d-none d-lg-block">
-            <div class="logo-container">
-                <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle">
+<body class="flex flex-col min-h-screen">
+    <div class="flex flex-1">
+        <aside id="sidebar" class="w-64 bg-primary-blue text-white shadow-lg transition-all duration-300 ease-in-out
+                                hidden lg:flex flex-col flex-shrink-0 z-30 no-scrollbar">
+            <div class="p-5 mb-4 text-center bg-primary-dark-blue border-b border-white border-opacity-20">
+                <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo"
+                    class="w-24 h-24 object-cover rounded-full mx-auto border-3 border-accent-green shadow-md mb-2">
+                <h2 class="text-xl font-semibold">ApkaDr. Admin</h2>
             </div>
-            <ul class="nav flex-column mt-4">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i>
-                        Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i>
-                        Manage Doctors</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage
-                        Users</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i>
-                        Appointments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-        </nav>
+            <nav class="mt-4 flex-grow">
+                <ul class="flex flex-col">
+                    <li>
+                        <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                        hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                            href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-tachometer-alt mr-4 text-xl"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                        hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                            href="{{ url_for('manage_doctors') }}">
+                            <i class="fas fa-user-md mr-4 text-xl"></i> Manage Doctors
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                        hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                            href="{{ url_for('manage_users') }}">
+                            <i class="fas fa-users mr-4 text-xl"></i> Manage Users
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                        hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                            href="{{ url_for('appointments') }}">
+                            <i class="fas fa-calendar-check mr-4 text-xl"></i> Appointments
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                        hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6
+                                        sidebar-link-active" href="{{ url_for('add_doctor') }}">
+                            <i class="fas fa-user-plus mr-4 text-xl"></i> Add Doctor
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-5 border-t border-white border-opacity-20 mt-auto">
+                <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                    href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt mr-4 text-xl"></i> Logout
+                </a>
+            </div>
+        </aside>
 
-        <main class="main-content w-100">
-            <header class="header-mobile-bar d-lg-none">
-                <button class="btn text-white" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
-                    <i class="fas fa-bars fa-lg"></i>
-                </button>
-                <h2 class="mb-0 text-white">Add New Doctor</h2>
+        <main class="flex-grow p-4 sm:p-6 lg:p-8 bg-bg-light flex flex-col">
+            <header class="flex justify-between items-center mb-6 bg-surface-card rounded-lg shadow-sm p-4 lg:p-6">
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button"
+                        class="text-text-dark text-2xl focus:outline-none p-2 rounded-md hover:bg-bg-light">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-center lg:text-left text-text-dark flex-grow">
+                    Add New Doctor</h1>
+                <div class="hidden lg:block">
+                    <span class="text-text-dark text-lg font-medium">Admin Panel</span>
+                </div>
             </header>
 
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar"
-                aria-labelledby="offcanvasSidebarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasSidebarLabel">
-                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle">
-                        ApkaDr.
+            <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"
+                onclick="toggleMobileSidebar()"></div>
+            <div id="mobile-sidebar" class="fixed top-0 left-0 h-full w-64 bg-primary-blue text-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden no-scrollbar">
+                <div class="p-5 border-b border-white border-opacity-20 flex items-center justify-between">
+                    <h5 class="text-xl font-semibold flex items-center gap-2">
+                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo"
+                            class="w-10 h-10 object-cover rounded-full border-1.5 border-accent-green">
+                        ApkaDr. Admin
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
-                        aria-label="Close"></button>
+                    <button class="text-white focus:outline-none p-2 rounded-md hover:bg-primary-dark-blue"
+                        onclick="toggleMobileSidebar()">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
                 </div>
-                <div class="offcanvas-body">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i
-                                    class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <nav class="mt-0">
+                    <ul class="flex flex-col">
+                        <li>
+                            <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                            hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                                href="{{ url_for('admin_dashboard') }}">
+                                <i class="fas fa-tachometer-alt mr-4 text-xl"></i> Dashboard
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{{ url_for('manage_doctors') }}"><i
-                                    class="fas fa-user-md"></i> Manage Doctors</a>
+                        <li>
+                            <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                            hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                                href="{{ url_for('manage_doctors') }}">
+                                <i class="fas fa-user-md mr-4 text-xl"></i> Manage Doctors
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage
-                                Users</a>
+                        <li>
+                            <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                            hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                                href="{{ url_for('manage_users') }}">
+                                <i class="fas fa-users mr-4 text-xl"></i> Manage Users
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('appointments') }}"><i
-                                    class="fas fa-calendar-check"></i> Appointments</a>
+                        <li>
+                            <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                            hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                                href="{{ url_for('appointments') }}">
+                                <i class="fas fa-calendar-check mr-4 text-xl"></i> Appointments
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>
-                                Logout</a>
+                        <li>
+                            <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                            hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6
+                                            sidebar-link-active" href="{{ url_for('add_doctor') }}">
+                                <i class="fas fa-user-plus mr-4 text-xl"></i> Add Doctor
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-center py-3 px-6 text-white text-opacity-85 font-medium
+                                            hover:bg-primary-dark-blue hover:text-white hover:border-l-4 hover:border-accent-green hover:pl-6"
+                                href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt mr-4 text-xl"></i> Logout
+                            </a>
                         </li>
                     </ul>
-                </div>
+                </nav>
             </div>
-
-            <h2 class="header-admin-dashboard d-none d-lg-block">Add New Doctor</h2>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
+            <div class="
+                {% if category == 'success' %} alert-success
+                {% elif category == 'danger' %} alert-danger
+                {% elif category == 'info' %} alert-info
+                {% elif category == 'warning' %} alert-warning
+                {% else %} bg-gray-100 border border-gray-400 text-gray-700
+                {% endif %}
+                px-4 py-3 rounded relative mb-4">
+                {{ message }}
+            </div>
             {% endfor %}
             {% endif %}
             {% endwith %}
 
-            <form action="{{ url_for('add_doctor') }}" method="post" enctype="multipart/form-data">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" name="full_name" required>
+            <form action="{{ url_for('add_doctor') }}" method="post" enctype="multipart/form-data"
+                class="bg-surface-card p-6 md:p-8 rounded-xl shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-4">
+                    <div>
+                        <label for="name" class="block text-text-dark text-base font-medium mb-1">Full Name</label>
+                        <input type="text" id="name" name="full_name" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent">
                     </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="specialty" class="form-label">Specialty</label>
-                        <input type="text" class="form-control" id="specialty" name="specialty" required>
+                    <div>
+                        <label for="email" class="block text-text-dark text-base font-medium mb-1">Email</label>
+                        <input type="email" id="email" name="email" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent">
                     </div>
                 </div>
 
-                {# New row for Address #}
-                <div class="row mb-3">
-                    <div class="col-md-12"> {# Address can take full width #}
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" name="address"
-                            placeholder="e.g., House No., Street, City, State" required>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-4">
+                    <div>
+                        <label for="phone" class="block text-text-dark text-base font-medium mb-1">Phone</label>
+                        <input type="tel" id="phone" name="phone" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="specialty" class="block text-text-dark text-base font-medium mb-1">Specialty</label>
+                        <input type="text" id="specialty" name="specialty" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent">
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                <div class="mb-4">
+                    <label for="address" class="block text-text-dark text-base font-medium mb-1">Address</label>
+                    <input type="text" id="address" name="address" required
+                        placeholder="e.g., House No., Street, City, State"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6">
+                    <div>
+                        <label for="password" class="block text-text-dark text-base font-medium mb-1">Password</label>
+                        <input type="password" id="password" name="password" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent">
                     </div>
-                    <div class="col-md-6">
-                        <label for="status" class="form-label">Status</label>
-                        <select class="form-select" id="status" name="status">
+                    <div>
+                        <label for="status" class="block text-text-dark text-base font-medium mb-1">Status</label>
+                        <select id="status" name="status"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent bg-white appearance-none">
                             <option value="pending">Pending</option>
                             <option value="approved">Approved</option>
                         </select>
                     </div>
                 </div>
 
-                <h4 class="mt-4 mb-3">Availability Slots</h4>
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label for="morning_slot" class="form-label">Morning Slot</label>
-                        <select class="form-select" id="morning_slot" name="morning_slot">
+                <h4 class="text-xl font-semibold mb-4 text-text-dark">Availability Slots</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mb-6">
+                    <div>
+                        <label for="morning_slot" class="block text-text-dark text-base font-medium mb-1">Morning
+                            Slot</label>
+                        <select id="morning_slot" name="morning_slot"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent bg-white appearance-none">
                             <option value="">Select Morning Slot (Optional)</option>
                             <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
                             <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
                             <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label for="afternoon_slot" class="form-label">Afternoon Slot</label>
-                        <select class="form-select" id="afternoon_slot" name="afternoon_slot">
+                    <div>
+                        <label for="afternoon_slot" class="block text-text-dark text-base font-medium mb-1">Afternoon
+                            Slot</label>
+                        <select id="afternoon_slot" name="afternoon_slot"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent bg-white appearance-none">
                             <option value="">Select Afternoon Slot (Optional)</option>
                             <option value="01:00 PM - 02:00 PM">01:00 PM - 02:00 PM</option>
                             <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
@@ -423,9 +312,11 @@
                             <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label for="evening_slot" class="form-label">Evening Slot</label>
-                        <select class="form-select" id="evening_slot" name="evening_slot">
+                    <div>
+                        <label for="evening_slot" class="block text-text-dark text-base font-medium mb-1">Evening
+                            Slot</label>
+                        <select id="evening_slot" name="evening_slot"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark-blue focus:border-transparent bg-white appearance-none">
                             <option value="">Select Evening Slot (Optional)</option>
                             <option value="06:00 PM - 07:00 PM">06:00 PM - 07:00 PM</option>
                             <option value="07:00 PM - 08:00 PM">07:00 PM - 08:00 PM</option>
@@ -434,19 +325,108 @@
                     </div>
                 </div>
 
-
-
-                <div class="mb-3">
-                    <label for="photo" class="form-label">Profile Photo</label>
-                    <input class="form-control" type="file" id="photo" name="photo" accept="image/*">
+                <div class="mb-6">
+                    <label for="photo" class="block text-text-dark text-base font-medium mb-1">Profile Photo</label>
+                    <input type="file" id="photo" name="photo" accept="image/*"
+                        class="w-full text-text-dark file:mr-4 file:py-2 file:px-4
+                                     file:rounded-md file:border-0 file:text-sm file:font-semibold
+                                     file:bg-primary-dark-blue file:text-white hover:file:bg-primary-blue
+                                     cursor-pointer">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Create Doctor</button>
+                <button type="submit"
+                    class="w-full bg-primary-blue text-white py-3 px-4 rounded-md font-semibold text-lg
+                                hover:bg-primary-dark-blue transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:ring-offset-2">
+                    Create Doctor
+                </button>
             </form>
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 w-full bg-surface-card shadow-lg lg:hidden z-40">
+        <ul class="flex justify-around items-center h-16">
+            <li>
+                <a href="{{ url_for('admin_dashboard') }}"
+                    class="flex flex-col items-center justify-center text-text-dark text-opacity-70 text-xs font-medium h-full w-full px-2 pt-2 pb-1 hover:text-primary-blue">
+                    <i class="fas fa-tachometer-alt text-xl mb-1"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('manage_doctors') }}"
+                    class="flex flex-col items-center justify-center text-text-dark text-opacity-70 text-xs font-medium h-full w-full px-2 pt-2 pb-1 hover:text-primary-blue">
+                    <i class="fas fa-user-md text-xl mb-1"></i>
+                    Doctors
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('manage_users') }}"
+                    class="flex flex-col items-center justify-center text-text-dark text-opacity-70 text-xs font-medium h-full w-full px-2 pt-2 pb-1 hover:text-primary-blue">
+                    <i class="fas fa-users text-xl mb-1"></i>
+                    Users
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('appointments') }}"
+                    class="flex flex-col items-center justify-center text-text-dark text-opacity-70 text-xs font-medium h-full w-full px-2 pt-2 pb-1 hover:text-primary-blue">
+                    <i class="fas fa-calendar-check text-xl mb-1"></i>
+                    Appointments
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}"
+                    class="flex flex-col items-center justify-center text-text-dark text-opacity-70 text-xs font-medium h-full w-full px-2 pt-2 pb-1 hover:text-danger-red">
+                    <i class="fas fa-sign-out-alt text-xl mb-1"></i>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+    <footer class="mt-auto py-4 text-center text-gray-500 text-xs bg-surface-card shadow-inner border-t border-bg-light">
+        Copyright &copy; 2025 ApkaDr. All rights reserved.<br>
+        Powered by <a href="https://infranique.io" class="text-primary-blue hover:underline">Infranique.io</a>
+    </footer>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        const mobileSidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+        const bottomNav = document.getElementById('bottom-nav');
+
+        function toggleMobileSidebar() {
+            mobileSidebar.classList.toggle('-translate-x-full');
+            mobileSidebarOverlay.classList.toggle('hidden');
+            // Hide bottom nav when sidebar is open to avoid overlap
+            if (mobileSidebar.classList.contains('-translate-x-full')) {
+                bottomNav.classList.remove('hidden');
+            } else {
+                bottomNav.classList.add('hidden');
+            }
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileSidebar);
+
+        // Close sidebar when a link is clicked (optional, but good for UX)
+        const sidebarLinks = mobileSidebar.querySelectorAll('a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!mobileSidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileSidebar();
+                }
+            });
+        });
+
+        // Hide sidebar and show bottom nav on larger screens if window is resized
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) { // Tailwind's 'lg' breakpoint
+                mobileSidebar.classList.add('-translate-x-full');
+                mobileSidebarOverlay.classList.add('hidden');
+                bottomNav.classList.remove('hidden'); // Ensure bottom nav is visible on desktop if it was hidden
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -1,3 +1,5 @@
+# models.py
+
 from .database import db
 import datetime
 
@@ -21,8 +23,8 @@ class Doctor(db.Model):
     phone = db.Column(db.String(20), nullable=False)
     specialty = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(200), nullable=False)   # Hashed
-    status = db.Column(db.String(20), nullable=False, default='pending')    # 'pending' or 'approved'
-    photo = db.Column(db.String(200))    # Path to uploaded photo
+    status = db.Column(db.String(20), nullable=False, default='pending')     # 'pending' or 'approved'
+    photo = db.Column(db.String(200))     # Path to uploaded photo
     age = db.Column(db.Integer(), nullable=True)     # Added age field
     address = db.Column(db.String(200), nullable=True) # Added address field
 
@@ -50,6 +52,9 @@ class Appointment(db.Model):
     symptoms = db.Column(db.String(500), nullable=False)
     status = db.Column(db.String(20), nullable=False, default='pending') # 'pending', 'confirmed', 'rejected', 'cancelled', 'completed'
     token_number = db.Column(db.String(10), nullable=True) # Optional token number
+    
+    # This new field will automatically store the creation timestamp
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     def __repr__(self):
         return f"<Appointment {self.id} for User {self.user_id} with Doctor {self.doctor_id}>"

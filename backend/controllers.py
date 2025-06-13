@@ -33,8 +33,21 @@ def register():
         age = request.form["age"]
         phone = request.form["phone"]
         address = request.form["address"]
-        # Get the plain password for validation before hashing
         plain_password = request.form["password"]
+
+        # --- Proactive checks for existing user ---
+        # Check if email already exists
+        existing_user_by_email = User.query.filter_by(email=email).first()
+        if existing_user_by_email:
+            flash("That email is already registered. Please use a different email or log in.", "danger")
+            return redirect(url_for("register"))
+
+        # Check if full name already exists (since it's unique=True)
+        existing_user_by_fullName = User.query.filter_by(fullName=fullName).first()
+        if existing_user_by_fullName:
+            flash("That full name is already taken. Please choose a different name.", "danger")
+            return redirect(url_for("register"))
+        # --- End proactive checks ---
 
         # Validate password length
         if len(plain_password) < 8:
@@ -55,13 +68,18 @@ def register():
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash("Registration successful!", "success")
+            flash("Registration successful! Please log in.", "success")
+            # --- This is the key line for successful redirection ---
             return redirect(url_for("login_page"))
-        except Exception:
+        except Exception as e: # Catching a more general exception for unexpected errors
             db.session.rollback()
-            flash("Email or name already registered", "danger")
+            # Log the error for debugging purposes
+            current_app.logger.error(f"Error during user registration: {e}")
+            flash("An unexpected error occurred during registration. Please try again.", "danger")
+            return redirect(url_for("register")) # Stay on register page if an unexpected error occurs
 
     return render_template("register.html")
+
     
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -102,6 +120,10 @@ def logout():
     flash("You have been logged out.", "success")
     return redirect(url_for("index")) # Changed from login_page to index
 
+from flask import render_template, session, flash, redirect, url_for
+# Assuming you have these models correctly imported from your_models.py
+from .models import Doctor, Appointment # Make sure these imports are correct based on your project structure
+
 @app.route("/doctor_dashboard/<int:user_id>")
 def doctor_dashboard(user_id):
     doctor = Doctor.query.get_or_404(user_id)
@@ -109,10 +131,15 @@ def doctor_dashboard(user_id):
     if session.get("user_type") != "doctor" or session.get("user_id") != doctor.id:
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
-    # Fetch appointments for this doctor, ordered by date and time
-    doctor_appointments = Appointment.query.filter_by(doctor_id=doctor.id).order_by(Appointment.appointment_date, Appointment.appointment_time).all()
-    return render_template("doctor/doctor_dashboard.html", doctor=doctor, appointments=doctor_appointments)
 
+    # FIX: Fetch appointments for this doctor, ordered by the earliest upcoming date and time
+    # This will put appointments happening soonest (closest to the current date/time) at the top.
+    doctor_appointments = Appointment.query.filter_by(doctor_id=doctor.id).order_by(
+        Appointment.appointment_date.asc(),  # Sort by date in ASCENDING order (earliest date first)
+        Appointment.appointment_time.asc()   # Then by time in ASCENDING order (earliest time first on the same date)
+    ).all()
+
+    return render_template("doctor/doctor_dashboard.html", doctor=doctor, appointments=doctor_appointments)
 @app.route("/doctor/appointments/<int:user_id>")
 def doctor_appointments(user_id):
     """
@@ -597,3 +624,39 @@ def user_profile():
             db.session.rollback()
             flash(f"Error updating profile: {e}", "danger")
     return render_template("user/user_profile.html", user=user)
+
+#footer routes 
+@app.route('/about-us')
+def about_us():
+    return render_template('static_pages/about_us.html') # You'll need to create this HTML file
+
+@app.route('/contact-us')
+def contact_us():
+    return render_template('static_pages/contact_us.html')
+
+@app.route('/faqs')
+def faqs():
+    return render_template('static_pages/faqs.html')
+
+@app.route('/blog')
+def blog():
+    return render_template('static_pages/blog.html')
+
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template('static_pages/privacy_policy.html')
+
+@app.route('/terms-and-conditions')
+def terms_and_conditions():
+    return render_template('static_pages/terms_and_conditions.html')
+
+@app.route('/sitemap')
+def sitemap():
+    # You might render an XML sitemap or a simple HTML page listing links
+    return render_template('static_pages/sitemap.html')
+
+@app.route('/disclaimer')
+def disclaimer():
+    return render_template('static_pages/disclaimer.html')
+
+# Keep your existing user_dashboard route and others
