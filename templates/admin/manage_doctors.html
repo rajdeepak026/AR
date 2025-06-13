@@ -1,419 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Manage Doctors - ApkaDr.</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom Colors inspired by ApkaDr. Logo (consistent with admin_dashboard) */
+        /* Custom Colors inspired by ApkaDr. Logo (consistent across the app) */
         :root {
-            --apkadr-dark-blue: #1e3a8a; /* From logo's pen */
-            --apkadr-gold: #facc15; /* From logo's pen accent */
-            --apkadr-black: #343a40; /* General dark text/element, from logo text */
-            --apkadr-light-gray: #f7f7f7; /* Soft background */
+            --apkadr-dark-blue: #1e3a8a;
+            /* From logo's pen */
+            --apkadr-gold: #facc15;
+            /* From logo's pen accent */
+            --apkadr-black: #343a40;
+            /* General dark text/element, from logo text */
+            --apkadr-light-gray: #f7f7f7;
+            /* Soft background */
             --apkadr-white: #ffffff;
-
-            /* Mapped to general Bootstrap-like variable names for convenience */
-            --primary-color: var(--apkadr-dark-blue);
-            --secondary-color: #6c757d; /* Keep some default for general secondary */
-            --success-color: #1a6f3b; /* A darker green for success */
-            --danger-color: #c0392b; /* A more subdued red */
-            --warning-color: var(--apkadr-gold); /* Using gold for warning/attention */
-            --info-color: #2980b9; /* A distinct blue for info */
-            --dark-color: var(--apkadr-black);
-            --light-color: var(--apkadr-light-gray);
-            --white-color: var(--apkadr-white);
         }
 
-        body {
-            font-family: 'Poppins', sans-serif; /* Consistent with login/register and dashboard */
-            background-color: var(--light-color);
-            color: var(--dark-color);
-        }
+        /* Extend Tailwind's default theme with custom colors */
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
 
-        /* Sidebar styles (consistent with dashboard) */
-        .sidebar {
-            width: 280px; /* Consistent with dashboard */
-            background-color: var(--dark-color); /* Black/Dark Gray */
-            color: var(--white-color);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.75);
-            padding: 15px 25px; /* More padding for better click area */
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-        }
-
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--white-color);
-            border-left: 5px solid var(--apkadr-gold); /* Gold accent for active link */
-            padding-left: 20px; /* Adjust padding due to border */
-        }
-
-        .sidebar .nav-link i {
-            margin-right: 12px; /* Increased icon spacing */
-            font-size: 1.1rem;
-        }
-
-        /* Logo container in sidebar (consistent with dashboard) */
-        .sidebar .logo-container {
-            padding: 20px;
-            margin-bottom: 0;
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar .logo-container img {
-            max-height: 80px; /* Adjust logo height */
-            width: 80px; /* Ensure width matches height for perfect circle */
-            object-fit: cover; /* Ensures image covers the circular area */
-            border: 2px solid var(--apkadr-gold); /* Add a subtle gold border */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a subtle shadow to the logo */
-        }
-
-        /* Main content styles (consistent with dashboard) */
-        .main-content {
-            flex-grow: 1;
-            padding: 30px; /* More overall padding */
-            background-color: var(--light-color);
-        }
-
-        /* Header for Admin Dashboard (reused for main page title) */
-        .header-admin-dashboard {
-            font-size: 2rem; /* Consistent large heading on desktop */
-            text-align: left !important;
-            margin-bottom: 2rem; /* Consistent margin */
-            color: var(--dark-color); /* Ensure consistent text color */
-        }
-
-        /* Table styles (enhanced for theme) */
-        .table {
-            background-color: var(--white-color);
-            border-radius: 12px; /* More rounded corners */
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
-        }
-
-        .table thead th {
-            background-color: var(--primary-color); /* Using themed primary color */
-            color: var(--white-color);
-            padding: 15px;
-            border-bottom: none;
-            font-weight: 600;
-            vertical-align: middle;
-        }
-
-        .table tbody td {
-            padding: 12px 15px;
-            vertical-align: middle;
-            border-bottom: 1px solid #e9ecef; /* Lighter border for better look */
-        }
-
-        .table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f0f2f5; /* Slightly darker light-gray on hover */
-        }
-
-        /* Badge styling (using themed colors) */
-        .badge {
-            padding: 0.5em 0.75em;
-            font-size: 0.85em;
-            font-weight: 600;
-            border-radius: 0.375rem;
-        }
-        /* Override Bootstrap defaults for specific badge colors */
-        .badge.bg-warning.text-dark {
-            background-color: var(--warning-color) !important;
-            color: var(--dark-color) !important;
-        }
-        .badge.bg-success {
-            background-color: var(--success-color) !important;
-        }
-        .badge.bg-danger {
-            background-color: var(--danger-color) !important;
-        }
-        .badge.bg-info {
-            background-color: var(--info-color) !important;
-        }
-
-        /* Action buttons (using themed colors implicitly from Bootstrap, or explicitly if needed) */
-        .btn-success {
-            background-color: var(--success-color);
-            border-color: var(--success-color);
-        }
-        .btn-success:hover {
-            background-color: #155e30; /* Darker green */
-            border-color: #155e30;
-        }
-        .btn-danger {
-            background-color: var(--danger-color);
-            border-color: var(--danger-color);
-        }
-        .btn-danger:hover {
-            background-color: #a72d38; /* Darker red */
-            border-color: #a72d38;
-        }
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-        .btn-secondary:hover {
-            background-color: #5a6268; /* Darker secondary */
-            border-color: #5a6268;
-        }
-        .btn-sm {
-            padding: 0.35rem 0.75rem;
-            font-size: 0.875rem;
-        }
-
-        /* Responsive table wrapper for horizontal scrolling */
-        .table-responsive-custom {
-            display: block;
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Hamburger menu and offcanvas (consistent with dashboard) */
-        .navbar-toggler {
-            border: none;
-            color: var(--white-color);
-            padding: 0;
-            font-size: 1.5rem; /* Larger icon */
-        }
-
-        .navbar-toggler:focus {
-            box-shadow: none;
-        }
-
-        .offcanvas-header {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px;
-        }
-
-        .offcanvas-header .offcanvas-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .offcanvas-header .offcanvas-title img {
-            max-height: 40px; /* Smaller logo in offcanvas header */
-            width: 40px; /* Ensure width matches height for perfect circle */
-            object-fit: cover; /* Ensures image covers the circular area */
-            border: 1.5px solid var(--apkadr-gold); /* Add a subtle gold border */
-        }
-
-        .offcanvas-body {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            padding-top: 0; /* Remove top padding for nav links */
-        }
-
-        .offcanvas-body .nav-link {
-            padding: 15px 25px; /* Consistent padding */
-        }
-
-        /* Responsive adjustments (consistent with dashboard) */
-        @media (max-width: 991.98px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: -280px; /* Match new width */
-                height: 100vh;
-                z-index: 1050;
-                width: 280px; /* Match new width */
-            }
-
-            .sidebar.show {
-                left: 0;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px; /* Slightly less padding on small screens */
-            }
-
-            /* Mobile header consistent with dashboard */
-            .header-mobile-bar { /* New class for the mobile header container */
-                font-size: 1.5rem; /* Smaller heading on mobile */
-                text-align: right; /* Align title to the right */
-                background-color: var(--dark-color);
-                color: var(--white-color);
-                padding: 15px 20px; /* Adjusted padding */
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                margin-bottom: 20px; /* Space below header */
-                display: flex; /* Make it a flex container */
-                justify-content: space-between; /* Space out items */
-                align-items: center; /* Vertically align items */
-            }
-
-            /* Hide desktop H2 on mobile */
-            .main-content .header-admin-dashboard.d-lg-block {
-                display: none !important;
-            }
-
-            /* Ensure table fits small screens with horizontal scroll */
-            .table-responsive-custom table {
-                min-width: 550px; /* Adjust as needed based on content */
+        @layer base {
+            body {
+                font-family: 'Poppins', sans-serif;
+                /* Consistent font */
+                @apply bg-apkadr-light-gray text-apkadr-black overflow-x-hidden;
+                /* Ensure no horizontal overflow */
             }
         }
 
-        @media (min-width: 992px) {
-            /* Hide mobile header on desktop */
-            .header-mobile-bar {
-                display: none;
+        /* Custom classes for specific elements for reusability and clarity */
+        .sidebar-link-active {
+            @apply bg-white bg-opacity-10 text-white border-l-4 border-apkadr-gold pl-5;
+        }
+
+        /* Styles for flash messages */
+        .alert-success {
+            @apply bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4;
+        }
+
+        .alert-danger {
+            @apply bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4;
+        }
+
+        .alert-info {
+            @apply bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4;
+        }
+
+        .alert-warning {
+            @apply bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4;
+        }
+
+        /* For mobile table (vertical display) */
+        @media screen and (max-width: 767px) {
+            .vertical-table thead {
+                @apply hidden;
             }
-        }
 
-        /* Add Doctor button styling (themed) */
-        .btn-add-doctor {
-            background-color: var(--primary-color); /* Use primary color for "Add" button */
-            border-color: var(--primary-color);
-            color: var(--white-color);
-            font-weight: 500;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.375rem;
-            transition: all 0.3s ease;
-        }
+            .vertical-table tr {
+                @apply block mb-4 border border-gray-200 rounded-lg shadow-sm;
+                background-color: var(--apkadr-white); /* Ensure row background is white */
+            }
 
-        .btn-add-doctor:hover {
-            background-color: #1a3070; /* Darker shade on hover */
-            border-color: #1a3070;
+            .vertical-table td {
+                @apply block text-sm text-gray-800 text-right px-4 py-2 relative;
+                border-bottom: 1px solid #eee; /* Light separator between cells */
+            }
+
+            .vertical-table td:last-child {
+                border-bottom: 0;
+            }
+
+            .vertical-table td::before {
+                content: attr(data-label);
+                @apply float-left font-semibold text-apkadr-black uppercase;
+                margin-right: 1rem;
+            }
+
+            /* Adjust badge styling for vertical table */
+            .vertical-table .badge {
+                @apply inline-block float-none; /* Remove float for better centering */
+            }
+
+            /* Adjust action buttons container for mobile vertical display */
+            .vertical-table .actions-cell .flex.flex-col {
+                @apply flex-row flex-wrap justify-end gap-2; /* Align items to end with gap */
+            }
+            .vertical-table .actions-cell .flex.flex-col > * {
+                @apply flex-grow-0 flex-shrink-0; /* Prevent items from stretching excessively */
+            }
         }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'apkadr-dark-blue': 'var(--apkadr-dark-blue)',
+                        'apkadr-gold': 'var(--apkadr-gold)',
+                        'apkadr-black': 'var(--apkadr-black)',
+                        'apkadr-light-gray': 'var(--apkadr-light-gray)',
+                        'apkadr-white': 'var(--apkadr-white)',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <div class="d-flex">
-        <nav class="sidebar vh-100 d-none d-lg-block">
-            <div class="logo-container">
-                <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle">
+
+<body class="flex flex-col min-h-screen">
+    <div class="flex flex-1">
+        <aside id="sidebar" class="w-72 bg-apkadr-black text-white shadow-lg transition-all duration-300 ease-in-out
+                       hidden lg:flex flex-col flex-shrink-0">
+            <div class="p-5 mb-0 text-center bg-black bg-opacity-20 border-b border-white border-opacity-10">
+                <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo"
+                    class="w-20 h-20 object-cover rounded-full mx-auto border-2 border-apkadr-gold shadow-md">
             </div>
-            <ul class="nav flex-column mt-4">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-        </nav>
+            <nav class="mt-4 flex-grow">
+                <ul class="flex flex-col">
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                            href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-tachometer-alt mr-3 text-lg"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5
+                                  sidebar-link-active"
+                            href="{{ url_for('manage_doctors') }}">
+                            <i class="fas fa-user-md mr-3 text-lg"></i> Manage Doctors
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                            href="{{ url_for('manage_users') }}">
+                            <i class="fas fa-users mr-3 text-lg"></i> Manage Users
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                            href="{{ url_for('appointments') }}">
+                            <i class="fas fa-calendar-check mr-3 text-lg"></i> Appointments
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                            href="{{ url_for('add_doctor') }}">
+                            <i class="fas fa-user-plus mr-3 text-lg"></i> Add Doctor
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                            href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt mr-3 text-lg"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
-        <main class="main-content w-100">
-            <header class="header-mobile-bar d-lg-none">
-                <button class="btn text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
-                    <i class="fas fa-bars fa-lg"></i>
+        <main class="flex-grow p-4 md:p-8 bg-apkadr-light-gray flex flex-col">
+            <header class="flex justify-between items-center bg-apkadr-black text-white p-4 shadow-md lg:hidden mb-4">
+                <button id="mobile-menu-button" class="text-white text-xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
                 </button>
-                <h2 class="mb-0 text-white">Manage Doctors</h2>
-            </header>
+                <h2 class="text-xl font-semibold text-white">Manage Doctors</h2>
+                <div></div> </header>
 
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasSidebarLabel">
-                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle"> ApkaDr.
+            <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"
+                onclick="toggleMobileSidebar()"></div>
+            <div id="mobile-sidebar"
+                class="fixed top-0 left-0 h-full w-72 bg-apkadr-black text-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
+                <div class="p-5 border-b border-white border-opacity-10 flex items-center justify-between">
+                    <h5 class="text-xl font-semibold flex items-center gap-2">
+                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo"
+                            class="w-10 h-10 object-cover rounded-full border-1.5 border-apkadr-gold">
+                        ApkaDr. Admin
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <button class="text-white focus:outline-none" onclick="toggleMobileSidebar()">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
                 </div>
-                <div class="offcanvas-body">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <nav class="mt-0">
+                    <ul class="flex flex-col">
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                                href="{{ url_for('admin_dashboard') }}">
+                                <i class="fas fa-tachometer-alt mr-3 text-lg"></i> Dashboard
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5 sidebar-link-active"
+                                href="{{ url_for('manage_doctors') }}">
+                                <i class="fas fa-user-md mr-3 text-lg"></i> Manage Doctors
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                                href="{{ url_for('manage_users') }}">
+                                <i class="fas fa-users mr-3 text-lg"></i> Manage Users
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                                href="{{ url_for('appointments') }}">
+                                <i class="fas fa-calendar-check mr-3 text-lg"></i> Appointments
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                                href="{{ url_for('add_doctor') }}">
+                                <i class="fas fa-user-plus mr-3 text-lg"></i> Add Doctor
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                                href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt mr-3 text-lg"></i> Logout
+                            </a>
                         </li>
                     </ul>
-                </div>
+                </nav>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4 mt-lg-0">
-                <h2 class="header-admin-dashboard mb-0 d-none d-lg-block">Manage Doctors</h2>
-                <a href="{{ url_for('add_doctor') }}" class="btn btn-add-doctor d-flex align-items-center">
-                    <i class="fas fa-plus me-2"></i> Add Doctor
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 mt-0 lg:mt-0">
+                <h2 class="text-3xl font-semibold text-apkadr-black hidden lg:block">Manage Doctors</h2>
+                <a href="{{ url_for('add_doctor') }}"
+                    class="bg-apkadr-dark-blue text-white px-4 py-2 rounded-md hover:bg-blue-800 transition-colors duration-200 flex items-center shadow-md">
+                    <i class="fas fa-plus mr-2"></i> Add Doctor
                 </a>
             </div>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="
+                {% if category == 'success' %} alert-success
+                {% elif category == 'danger' %} alert-danger
+                {% elif category == 'info' %} alert-info
+                {% elif category == 'warning' %} alert-warning
+                {% else %} bg-gray-100 border border-gray-400 text-gray-700
                 {% endif %}
+                px-4 py-3 rounded relative mb-4">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
             {% endwith %}
 
-            <div class="table-responsive-custom mt-4">
-                <table class="table table-hover">
-                    <thead>
+            <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 vertical-table">
+                    <thead class="bg-apkadr-dark-blue text-white">
                         <tr>
-                            <th><i class="fas fa-user"></i> Name</th>
-                            <th><i class="fas fa-envelope"></i> Email</th>
-                            <th><i class="fas fa-info-circle"></i> Status</th>
-                            <th><i class="fas fa-cogs"></i> Actions</th>
+                            <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tl-xl">
+                                <i class="fas fa-user mr-2"></i> Name</th>
+                            <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">
+                                <i class="fas fa-envelope mr-2"></i> Email</th>
+                            <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">
+                                <i class="fas fa-info-circle mr-2"></i> Status</th>
+                            <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tr-xl">
+                                <i class="fas fa-cogs mr-2"></i> Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="bg-white divide-y divide-gray-200">
                         {% for doctor in doctors %}
-                        <tr>
-                            <td>{{ doctor.full_name }}</td>
-                            <td>{{ doctor.email }}</td>
-                            <td>
+                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                            <td data-label="Name" class="px-4 py-3 text-sm font-medium text-gray-900">
+                                {{ doctor.full_name }}</td>
+                            <td data-label="Email" class="px-4 py-3 text-sm text-gray-800">
+                                {{ doctor.email }}</td>
+                            <td data-label="Status" class="px-4 py-3 text-sm">
                                 {% if doctor.status == 'approved' %}
-                                    <span class="badge bg-success">Approved</span>
+                                <span
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-600 text-white badge">
+                                    Approved
+                                </span>
                                 {% elif doctor.status == 'rejected' %}
-                                    <span class="badge bg-danger">Rejected</span>
+                                <span
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-600 text-white badge">
+                                    Rejected
+                                </span>
                                 {% else %}
-                                    <span class="badge bg-warning text-dark">Pending</span>
+                                <span
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-apkadr-gold text-apkadr-black badge">
+                                    Pending
+                                </span>
                                 {% endif %}
                             </td>
-                            <td>
-                                {% if doctor.status != 'approved' %}
-                                    <a href="{{ url_for('approve_doctor', doctor_id=doctor.id) }}" class="btn btn-success btn-sm me-2" title="Approve"><i class="fas fa-check"></i></a>
-                                {% endif %}
-                                {% if doctor.status != 'rejected' %}
-                                    <a href="{{ url_for('reject_doctor', doctor_id=doctor.id) }}" class="btn btn-danger btn-sm" title="Reject"><i class="fas fa-times"></i></a>
-                                {% endif %}
+                            <td data-label="Actions" class="px-4 py-3 text-sm font-medium actions-cell">
+                                <div class="flex flex-col md:flex-row md:space-x-2 space-y-1 md:space-y-0">
+                                    {% if doctor.status != 'approved' %}
+                                    <a href="{{ url_for('approve_doctor', doctor_id=doctor.id) }}"
+                                        class="bg-green-600 text-white p-2 rounded-md hover:bg-green-700 transition-colors duration-200 text-center flex-shrink-0"
+                                        title="Approve">
+                                        <i class="fas fa-check"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% if doctor.status != 'rejected' %}
+                                    <a href="{{ url_for('reject_doctor', doctor_id=doctor.id) }}"
+                                        class="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition-colors duration-200 text-center flex-shrink-0"
+                                        title="Reject">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="4" class="text-center py-4 text-muted">No doctors found.</td>
+                            <td colspan="4" class="px-4 py-4 text-center text-gray-500 text-base">No doctors found.
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -422,6 +337,35 @@
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    ---
+
+    <footer class="mt-auto py-4 text-center text-gray-500 text-xs bg-white shadow-inner">
+        Copyright &copy; 2025 ApkaDr. All rights reserved.<br>
+        Powered by <a href="https://infranique.io" class="text-indigo-600 hover:underline">Infranique.io</a>
+    </footer>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        const mobileSidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+
+        function toggleMobileSidebar() {
+            mobileSidebar.classList.toggle('-translate-x-full');
+            mobileSidebarOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileSidebar);
+
+        // Close sidebar when a link is clicked (optional, but good for UX)
+        const sidebarLinks = mobileSidebar.querySelectorAll('a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!mobileSidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileSidebar();
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>

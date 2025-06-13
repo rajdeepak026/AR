@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - ApkaDr.</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -15,319 +15,244 @@
             --apkadr-black: #343a40; /* General dark text/element, from logo text */
             --apkadr-light-gray: #f7f7f7; /* Soft background */
             --apkadr-white: #ffffff;
-
-            /* Mapped to general Bootstrap-like variable names for convenience */
-            --primary-color: var(--apkadr-dark-blue);
-            --secondary-color: #6c757d; /* Keep some default for general secondary */
-            --success-color: #1a6f3b; /* A darker green for success */
-            --danger-color: #c0392b; /* A more subdued red */
-            --warning-color: var(--apkadr-gold); /* Using gold for warning/attention */
-            --info-color: #2980b9; /* A distinct blue for info */
-            --dark-color: var(--apkadr-black);
-            --light-color: var(--apkadr-light-gray);
-            --white-color: var(--apkadr-white);
         }
 
-        body {
-            font-family: 'Poppins', sans-serif; /* Consistent with login/register */
-            background-color: var(--light-color);
-            color: var(--dark-color);
-        }
+        /* Extend Tailwind's default theme with custom colors */
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
 
-        /* Sidebar styles */
-        .sidebar {
-            width: 280px; /* Slightly wider sidebar for better logo display */
-            background-color: var(--dark-color); /* Black/Dark Gray */
-            color: var(--white-color);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.75);
-            padding: 15px 25px; /* More padding for better click area */
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-        }
-
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--white-color);
-            border-left: 5px solid var(--apkadr-gold); /* Gold accent for active link */
-            padding-left: 20px; /* Adjust padding due to border */
-        }
-
-        .sidebar .nav-link i {
-            margin-right: 12px; /* Increased icon spacing */
-            font-size: 1.1rem;
-        }
-
-        .sidebar .logo-container {
-            padding: 20px;
-            margin-bottom: 0;
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar .logo-container img {
-            max-height: 80px; /* Adjust logo height */
-            width: 80px; /* Ensure width matches height for perfect circle */
-            object-fit: cover; /* Ensures image covers the circular area */
-            border: 2px solid var(--apkadr-gold); /* Add a subtle gold border */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a subtle shadow to the logo */
-        }
-
-        /* Main content styles */
-        .main-content {
-            flex-grow: 1;
-            padding: 30px; /* More overall padding */
-            background-color: var(--light-color);
-        }
-
-        .card {
-            border: none;
-            border-radius: 12px; /* More rounded corners */
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-8px); /* More pronounced lift on hover */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-body {
-            padding: 30px; /* More padding inside cards */
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        /* Custom card backgrounds */
-        .card.bg-custom-blue {
-            background-color: var(--apkadr-dark-blue) !important;
-            color: var(--white-color) !important;
-        }
-        .card.bg-custom-gold {
-            background-color: var(--apkadr-gold) !important;
-            color: var(--apkadr-black) !important; /* Black text on gold */
-        }
-        .card.bg-custom-green {
-            background-color: var(--success-color) !important;
-            color: var(--white-color) !important;
-        }
-        .card.bg-custom-red {
-            background-color: var(--danger-color) !important;
-            color: var(--white-color) !important;
-        }
-
-        /* Hamburger menu and offcanvas */
-        .navbar-toggler {
-            border: none;
-            color: var(--white-color);
-            padding: 0;
-            font-size: 1.5rem; /* Larger icon */
-        }
-
-        .navbar-toggler:focus {
-            box-shadow: none;
-        }
-
-        .offcanvas-header {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px;
-        }
-
-        .offcanvas-header .offcanvas-title {
-             display: flex;
-             align-items: center;
-             gap: 10px;
-        }
-
-        .offcanvas-header .offcanvas-title img {
-            max-height: 40px; /* Smaller logo in offcanvas header */
-            width: 40px; /* Ensure width matches height for perfect circle */
-            object-fit: cover; /* Ensures image covers the circular area */
-            border: 1.5px solid var(--apkadr-gold); /* Add a subtle gold border */
-        }
-
-        .offcanvas-body {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            padding-top: 0; /* Remove top padding for nav links */
-        }
-
-        .offcanvas-body .nav-link {
-            padding: 15px 25px; /* Consistent padding */
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 991.98px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: -280px; /* Match new width */
-                height: 100vh;
-                z-index: 1050;
-                width: 280px; /* Match new width */
-            }
-
-            .sidebar.show {
-                left: 0;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px; /* Slightly less padding on small screens */
-            }
-
-            .navbar-expand-lg .navbar-collapse {
-                display: none !important;
-            }
-
-            .header-admin-dashboard { /* New class for mobile header */
-                font-size: 1.5rem; /* Smaller heading on mobile */
+        @layer base {
+            body {
+                font-family: 'Poppins', sans-serif;
+                @apply bg-apkadr-light-gray text-apkadr-black overflow-x-hidden;
             }
         }
 
-        @media (min-width: 992px) {
-            .navbar-toggler-container {
-                display: none;
-            }
-            .header-admin-dashboard {
-                font-size: 2rem; /* Larger heading on desktop */
-                text-align: left !important;
-            }
+        /* Custom classes for specific elements, if Tailwind's utility classes become too verbose */
+        .sidebar-link-active {
+            @apply bg-white bg-opacity-10 text-white border-l-4 border-apkadr-gold pl-5; /* Adjusted padding due to border */
         }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'apkadr-dark-blue': 'var(--apkadr-dark-blue)',
+                        'apkadr-gold': 'var(--apkadr-gold)',
+                        'apkadr-black': 'var(--apkadr-black)',
+                        'apkadr-light-gray': 'var(--apkadr-light-gray)',
+                        'apkadr-white': 'var(--apkadr-white)',
+                        'success-color': '#1a6f3b', /* A darker green for success */
+                        'danger-color': '#c0392b', /* A more subdued red */
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <div class="d-flex">
-        <nav class="sidebar vh-100 d-none d-lg-block">
-            <div class="logo-container">
-                <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle">
+<body class="flex flex-col min-h-screen">
+    <div class="flex flex-1">
+        <aside id="sidebar" class="w-72 bg-apkadr-black text-white shadow-lg transition-all duration-300 ease-in-out
+                       hidden lg:flex flex-col flex-shrink-0">
+            <div class="p-5 mb-0 text-center bg-black bg-opacity-20 border-b border-white border-opacity-10">
+                <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo"
+                     class="w-20 h-20 object-cover rounded-full mx-auto border-2 border-apkadr-gold shadow-md">
             </div>
-            <ul class="nav flex-column mt-4">
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('add_doctor') }}"><i class="fas fa-user-plus"></i> Add Doctor</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-        </nav>
+            <nav class="mt-4 flex-grow">
+                <ul class="flex flex-col">
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5
+                                  sidebar-link-active"
+                           href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-tachometer-alt mr-3 text-lg"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                           href="{{ url_for('manage_doctors') }}">
+                            <i class="fas fa-user-md mr-3 text-lg"></i> Manage Doctors
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                           href="{{ url_for('manage_users') }}">
+                            <i class="fas fa-users mr-3 text-lg"></i> Manage Users
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                           href="{{ url_for('appointments') }}">
+                            <i class="fas fa-calendar-check mr-3 text-lg"></i> Appointments
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                           href="{{ url_for('add_doctor') }}">
+                            <i class="fas fa-user-plus mr-3 text-lg"></i> Add Doctor
+                        </a>
+                    </li>
+                    <li>
+                        <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                  hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                           href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt mr-3 text-lg"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
-        <div class="main-content flex-grow-1">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="navbar-toggler-container d-lg-none">
-                    <button class="navbar-toggler text-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas" aria-label="Toggle navigation">
+        <main class="flex-grow p-8 bg-apkadr-light-gray flex flex-col">
+            <header class="flex justify-between items-center mb-6">
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button" class="text-apkadr-black text-2xl focus:outline-none">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
-                <h1 class="header-admin-dashboard text-center text-lg-start mb-0">Welcome, {{ user_name }}!</h1>
-            </div>
+                <h1 class="text-2xl lg:text-3xl font-semibold text-center lg:text-left mb-0">Welcome, {{ user_name }}!</h1>
+            </header>
 
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">
-                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="img-fluid rounded-circle me-2">
+            <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleMobileSidebar()"></div>
+            <div id="mobile-sidebar" class="fixed top-0 left-0 h-full w-72 bg-apkadr-black text-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
+                <div class="p-5 border-b border-white border-opacity-10 flex items-center justify-between">
+                    <h5 class="text-xl font-semibold flex items-center gap-2">
+                        <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="w-10 h-10 object-cover rounded-full border-1.5 border-apkadr-gold">
                         ApkaDr. Admin
                     </h5>
-                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <button class="text-white focus:outline-none" onclick="toggleMobileSidebar()">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
                 </div>
-                <div class="offcanvas-body">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <nav class="mt-0">
+                    <ul class="flex flex-col">
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5
+                                      sidebar-link-active"
+                               href="{{ url_for('admin_dashboard') }}">
+                                <i class="fas fa-tachometer-alt mr-3 text-lg"></i> Dashboard
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_doctors') }}"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                               href="{{ url_for('manage_doctors') }}">
+                                <i class="fas fa-user-md mr-3 text-lg"></i> Manage Doctors
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_users') }}"><i class="fas fa-users"></i> Manage Users</a>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                               href="{{ url_for('manage_users') }}">
+                                <i class="fas fa-users mr-3 text-lg"></i> Manage Users
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('appointments') }}"><i class="fas fa-calendar-check"></i> Appointments</a>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                               href="{{ url_for('appointments') }}">
+                                <i class="fas fa-calendar-check mr-3 text-lg"></i> Appointments
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('add_doctor') }}"><i class="fas fa-user-plus"></i> Add Doctor</a>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                               href="{{ url_for('add_doctor') }}">
+                                <i class="fas fa-user-plus mr-3 text-lg"></i> Add Doctor
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <li>
+                            <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
+                                      hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5"
+                               href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt mr-3 text-lg"></i> Logout
+                            </a>
                         </li>
                     </ul>
-                </div>
+                </nav>
             </div>
 
-            <div class="row g-4 mb-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="card bg-custom-blue text-white">
-                        <div class="card-body d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="card-title text-white-50">Total Users</h5>
-                                <h3 class="card-text">{{ total_users }}</h3>
-                            </div>
-                            <i class="fas fa-users fa-3x"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-apkadr-dark-blue text-white rounded-xl shadow-lg overflow-hidden
+                            transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl">
+                    <div class="p-8 flex items-center justify-between text-xl font-medium">
+                        <div>
+                            <h5 class="text-white text-opacity-70">Total Users</h5>
+                            <h3 class="text-3xl font-bold mt-2">{{ total_users }}</h3>
                         </div>
+                        <i class="fas fa-users text-5xl"></i>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card bg-custom-gold text-white">
-                        <div class="card-body d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="card-title text-black-50">Total Doctors</h5>
-                                <h3 class="card-text text-black">{{ total_doctors }}</h3>
-                            </div>
-                            <i class="fas fa-user-md fa-3x text-black"></i>
+
+                <div class="bg-apkadr-gold text-apkadr-black rounded-xl shadow-lg overflow-hidden
+                            transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl">
+                    <div class="p-8 flex items-center justify-between text-xl font-medium">
+                        <div>
+                            <h5 class="text-black text-opacity-70">Total Doctors</h5>
+                            <h3 class="text-3xl font-bold mt-2">{{ total_doctors }}</h3>
                         </div>
+                        <i class="fas fa-user-md text-5xl text-apkadr-black"></i>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card bg-custom-green text-white">
-                        <div class="card-body d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="card-title text-white-50">Today's Appointments</h5>
-                                <h3 class="card-text">{{ todays_appointments }}</h3>
-                            </div>
-                            <i class="fas fa-calendar-day fa-3x"></i>
+
+                <div class="bg-success-color text-white rounded-xl shadow-lg overflow-hidden
+                            transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl">
+                    <div class="p-8 flex items-center justify-between text-xl font-medium">
+                        <div>
+                            <h5 class="text-white text-opacity-70">Today's Appointments</h5>
+                            <h3 class="text-3xl font-bold mt-2">{{ todays_appointments }}</h3>
                         </div>
+                        <i class="fas fa-calendar-day text-5xl"></i>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card bg-custom-red text-white">
-                        <div class="card-body d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="card-title text-white-50">Total Revenue</h5>
-                                <h3 class="card-text"> ₹{{ "%.2f"|format(total_revenue) }}</h3>
-                            </div>
-                            <i class="fas fa-indian-rupee-sign fa-3x"></i>
+
+                <div class="bg-danger-color text-white rounded-xl shadow-lg overflow-hidden
+                            transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl">
+                    <div class="p-8 flex items-center justify-between text-xl font-medium">
+                        <div>
+                            <h5 class="text-white text-opacity-70">Total Revenue</h5>
+                            <h3 class="text-3xl font-bold mt-2"> ₹{{ "%.2f"|format(total_revenue) }}</h3>
                         </div>
+                        <i class="fas fa-indian-rupee-sign text-5xl"></i>
                     </div>
                 </div>
             </div>
-
-        </div>
+            </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <footer class="mt-auto py-4 text-center text-gray-500 text-xs bg-white shadow-inner">
+        Copyright &copy; 2025 ApkaDr. All rights reserved.<br>
+        Powered by <a href="https://infranique.io" class="text-indigo-600 hover:underline">Infranique.io</a>
+    </footer>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        const mobileSidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+
+        function toggleMobileSidebar() {
+            mobileSidebar.classList.toggle('-translate-x-full');
+            mobileSidebarOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileSidebar);
+
+        // Close sidebar when a link is clicked (optional, but good for UX)
+        const sidebarLinks = mobileSidebar.querySelectorAll('a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!mobileSidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileSidebar();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
