@@ -8,23 +8,9 @@ from datetime import date # Import date for today's date
 from sqlalchemy.orm import joinedload # Make sure to import this
 
 @app.route("/")
-def index(): # Renamed from login_page to index for clarity
-    # Check if user is already logged in
-    if "user_id" in session:
-        user_id = session["user_id"]
-        user_type = session.get("user_type") # Use .get() to avoid KeyError if not set
+def landing_page():
+    return render_template("landing.html")  # public landing page
 
-        if user_type == "admin":
-            return redirect(url_for("admin_dashboard"))
-        elif user_type == "general":
-            return redirect(url_for("user_dashboard", user_id=user_id))
-        elif user_type == "doctor":
-            # For doctors, also check if their status is approved if needed,
-            # but usually, this check happens at initial login.
-            # Here we just redirect if they are already in session.
-            return redirect(url_for("doctor_dashboard", user_id=user_id))
-    # If no user_id in session, show the login page
-    return render_template("login.html")
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -36,20 +22,17 @@ def register():
         plain_password = request.form["password"]
 
         # --- Proactive checks for existing user ---
-        # Check if email already exists
         existing_user_by_email = User.query.filter_by(email=email).first()
         if existing_user_by_email:
             flash("That email is already registered. Please use a different email or log in.", "danger")
             return redirect(url_for("register"))
 
-        # Check if full name already exists (since it's unique=True)
         existing_user_by_fullName = User.query.filter_by(fullName=fullName).first()
         if existing_user_by_fullName:
             flash("That full name is already taken. Please choose a different name.", "danger")
             return redirect(url_for("register"))
         # --- End proactive checks ---
 
-        # Validate password length
         if len(plain_password) < 8:
             flash("Password must be at least 8 characters long.", "danger")
             return redirect(url_for("register"))
@@ -69,16 +52,15 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash("Registration successful! Please log in.", "success")
-            # --- This is the key line for successful redirection ---
-            return redirect(url_for("login_page"))
-        except Exception as e: # Catching a more general exception for unexpected errors
+            return redirect(url_for("index"))  # ✅ Updated from login_page to index
+        except Exception as e:
             db.session.rollback()
-            # Log the error for debugging purposes
             current_app.logger.error(f"Error during user registration: {e}")
             flash("An unexpected error occurred during registration. Please try again.", "danger")
-            return redirect(url_for("register")) # Stay on register page if an unexpected error occurs
+            return redirect(url_for("register"))
 
     return render_template("register.html")
+
 
     
 @app.route("/login", methods=["GET", "POST"])
