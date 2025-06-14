@@ -6,6 +6,8 @@ from flask import current_app as app
 import datetime
 from datetime import date # Import date for today's date
 from sqlalchemy.orm import joinedload # Make sure to import this
+import re
+
 
 @app.route("/")
 def landing_page():
@@ -14,94 +16,116 @@ def landing_page():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        fullName = request.form["fullName"]
-        email = request.form["email"]
-        age = request.form["age"]
-        phone = request.form["phone"]
-        address = request.form["address"]
-        plain_password = request.form["password"]
-
-        # --- Proactive checks for existing user ---
-        existing_user_by_email = User.query.filter_by(email=email).first()
-        if existing_user_by_email:
-            flash("That email is already registered. Please use a different email or log in.", "danger")
-            return redirect(url_for("register"))
-
-        existing_user_by_fullName = User.query.filter_by(fullName=fullName).first()
-        if existing_user_by_fullName:
-            flash("That full name is already taken. Please choose a different name.", "danger")
-            return redirect(url_for("register"))
-        # --- End proactive checks ---
-
-        if len(plain_password) < 8:
-            flash("Password must be at least 8 characters long.", "danger")
-            return redirect(url_for("register"))
-
-        password = generate_password_hash(plain_password)
-
-        new_user = User(
-            fullName=fullName,
-            email=email,
-            age=age,
-            phone=phone,
-            address=address,
-            password=password
-        )
-
         try:
+            fullName = request.form.get("fullName", "").strip()
+            email = request.form.get("email", "").strip()
+            age = request.form.get("age", "").strip()
+            phone = request.form.get("phone", "").strip()
+            address = request.form.get("address", "").strip()
+            plain_password = request.form.get("password", "")
+
+            # --- Basic Validations ---
+            if not all([fullName, email, age, phone, address, plain_password]):
+                flash("All fields are required.", "danger")
+                return redirect(url_for("register"))
+
+            if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                flash("Invalid email format.", "danger")
+                return redirect(url_for("register"))
+
+            if not age.isdigit() or not (0 < int(age) < 120):
+                flash("Please enter a valid age.", "danger")
+                return redirect(url_for("register"))
+
+            if not phone.isdigit() or len(phone) < 7:
+                flash("Please enter a valid phone number.", "danger")
+                return redirect(url_for("register"))
+
+            if len(plain_password) < 8:
+                flash("Password must be at least 8 characters long.", "danger")
+                return redirect(url_for("register"))
+
+            # --- Email Uniqueness Check ---
+            if User.query.filter_by(email=email).first():
+                flash("That email is already registered. Please use a different email or log in.", "danger")
+                return redirect(url_for("register"))
+
+            # --- Registration ---
+            password = generate_password_hash(plain_password)
+            new_user = User(
+                fullName=fullName,
+                email=email,
+                age=age,
+                phone=phone,
+                address=address,
+                password=password
+            )
+
             db.session.add(new_user)
             db.session.commit()
+
             flash("Registration successful! Please log in.", "success")
-            return redirect(url_for("index"))  # ✅ Updated from login_page to index
+            return redirect(url_for("login"))
+
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"Error during user registration: {e}")
-            flash("An unexpected error occurred during registration. Please try again.", "danger")
+            current_app.logger.error(f"Registration Error: {e}")
+            flash("An error occurred during registration. Please try again later.", "danger")
             return redirect(url_for("register"))
 
     return render_template("register.html")
 
 
-    
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
+        try:
+            email = request.form.get("email", "").strip()
+            password = request.form.get("password", "")
 
-        user = User.query.filter_by(email=email).first()
-        if user and check_password_hash(user.password, password):
-            session["user_id"] = user.id
-            session["user_type"] = user.type
-            session["user_name"] = user.fullName
-            session.permanent = True # <--- Add this line for permanent user session
-            if user.type == "admin":
-                return redirect(url_for("admin_dashboard"))
-            elif user.type == "general":
+            # General user login
+            user = User.query.filter_by(email=email).first()
+            if user and check_password_hash(user.password, password):
+                session["user_id"] = user.id
+                session["user_type"] = user.type
+                session["user_name"] = user.fullName
+                session.permanent = True
+                if user.type == "admin":
+                    return redirect(url_for("admin_dashboard"))
                 return redirect(url_for("user_dashboard", user_id=user.id))
 
-        doctor = Doctor.query.filter_by(email=email).first()
-        if doctor and check_password_hash(doctor.password, password):
-            if doctor.status != "approved":
-                flash("Doctor account not approved yet.", "warning")
-                return redirect(url_for("login_page"))
+            # Doctor login
+            doctor = Doctor.query.filter_by(email=email).first()
+            if doctor and check_password_hash(doctor.password, password):
+                if doctor.status != "approved":
+                    flash("Doctor account not approved yet.", "warning")
+                    return redirect(url_for("login"))
+                session["user_id"] = doctor.id
+                session["user_type"] = "doctor"
+                session["user_name"] = doctor.full_name
+                session.permanent = True
+                return redirect(url_for("doctor_dashboard", user_id=doctor.id))
 
-            session["user_id"] = doctor.id
-            session["user_type"] = "doctor"
-            session["user_name"] = doctor.full_name
-            session.permanent = True # <--- Add this line for permanent doctor session
-            return redirect(url_for("doctor_dashboard", user_id=doctor.id))
+            flash("Invalid email or password", "danger")
 
-        flash("Invalid email or password", "danger")
+        except Exception as e:
+            current_app.logger.error(f"Login Error: {e}")
+            flash("An error occurred during login. Please try again.", "danger")
+            return redirect(url_for("login"))
 
     return render_template("login.html")
 
+
 @app.route("/logout")
 def logout():
-    session.clear()
-    flash("You have been logged out.", "success")
-    return redirect(url_for("index")) # Changed from login_page to index
-
+    try:
+        session.clear()
+        flash("You have been logged out.", "success")
+        return redirect(url_for("login"))
+    except Exception as e:
+        current_app.logger.error(f"Logout Error: {e}")
+        flash("An error occurred during logout. Please try again.", "danger")
+        return redirect(url_for("login"))
 from flask import render_template, session, flash, redirect, url_for
 # Assuming you have these models correctly imported from your_models.py
 from .models import Doctor, Appointment # Make sure these imports are correct based on your project structure

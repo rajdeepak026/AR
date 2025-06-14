@@ -5,7 +5,7 @@ import datetime
 
 class User(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    fullName = db.Column(db.String(), unique=True, nullable=False)
+    fullName = db.Column(db.String(), nullable=False)  # Removed unique=True
     email = db.Column(db.String(), unique=True, nullable=False)
     age = db.Column(db.Integer(), nullable=False)
     phone = db.Column(db.String(), nullable=False)
@@ -40,7 +40,7 @@ class Doctor(db.Model):
     # Define relationship to appointments where this doctor is involved
     appointments = db.relationship('Appointment', backref='doctor', lazy=True, primaryjoin="Doctor.id == Appointment.doctor_id")
 
-    def __repr__(self):
+    def __repr__(self): 
         return f"<Doctor {self.full_name}>"
 
 class Appointment(db.Model):
