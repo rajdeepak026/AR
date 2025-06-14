@@ -6,7 +6,6 @@ from flask import current_app as app
 import datetime
 from datetime import date # Import date for today's date
 from sqlalchemy.orm import joinedload # Make sure to import this
-from flask import send_from_directory
 
 @app.route("/")
 def index(): # Renamed from login_page to index for clarity
@@ -661,7 +660,3 @@ def disclaimer():
     return render_template('static_pages/disclaimer.html')
 
 # Keep your existing user_dashboard route and others
-
-@app.route('/google12345678abcdef.html')
-def google_verification():
-    return send_from_directory('static', 'google12345678abcdef.html')

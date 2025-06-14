@@ -1,9 +1,12 @@
 import os
-from flask import Flask
+from flask import Flask, send_from_directory
 from backend.database import db
 from datetime import timedelta # Added: Import timedelta for session lifetime
 
 app = Flask(__name__)
+@app.route('/google0bd79030d3228202.html')
+def google_verification():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'google0bd79030d3228202.html')
 
 # --- CHANGE 1: Database Configuration for Production ---
 # Use a production-ready database (e.g., PostgreSQL, MySQL)
