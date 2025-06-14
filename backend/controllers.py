@@ -609,28 +609,50 @@ def my_appointments():
     appointments = Appointment.query.filter_by(user_id=user_id).order_by(Appointment.appointment_date.desc(), Appointment.appointment_time.desc()).all()
     return render_template("user/my_appointments.html", appointments=appointments)
 
+
 @app.route("/user/profile", methods=["GET", "POST"])
 def user_profile():
     if session.get("user_type") != "general":
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
+
     user_id = session.get("user_id")
     user = User.query.get_or_404(user_id)
+
     if request.method == "POST":
         user.fullName = request.form["fullName"]
-        user.email = request.form["email"]
         user.age = request.form["age"]
         user.phone = request.form["phone"]
         user.address = request.form["address"]
+
+        # Handle password change only if all fields are filled
+        current_password = request.form.get("current_password")
+        new_password = request.form.get("new_password")
+        confirm_password = request.form.get("confirm_password")
+
+        if current_password or new_password or confirm_password:
+            if not (current_password and new_password and confirm_password):
+                flash("All password fields are required to change password.", "warning")
+                return redirect(url_for("user_profile"))
+            if not check_password_hash(user.password, current_password):
+                flash("Current password is incorrect.", "danger")
+                return redirect(url_for("user_profile"))
+            if new_password != confirm_password:
+                flash("New passwords do not match.", "warning")
+                return redirect(url_for("user_profile"))
+            user.password = generate_password_hash(new_password)
+            flash("Password updated successfully!", "success")
+
         try:
             db.session.commit()
             flash("Profile updated successfully!", "success")
-            return redirect(url_for("user_profile"))
         except Exception as e:
             db.session.rollback()
             flash(f"Error updating profile: {e}", "danger")
-    return render_template("user/user_profile.html", user=user)
 
+        return redirect(url_for("user_profile"))
+
+    return render_template("user/user_profile.html", user=user)
 #footer routes 
 @app.route('/about-us')
 def about_us():
