@@ -11,7 +11,31 @@ import re
 
 @app.route("/")
 def landing_page():
-    return render_template("landing.html")  # public landing page
+    return render_template("landing.html")  
+
+@app.route("/privacy-policy")
+def privacy_policy():
+    return render_template("content/policy.html")
+
+@app.route("/terms")
+def terms():
+    return render_template("content/terms.html")
+
+@app.route("/refund-policy")
+def refund_policy():
+    return render_template("content/refund.html")
+
+@app.route("/careers")
+def careers():
+    return render_template("content/career.html")
+
+@app.route("/faqs")
+def faqs():
+    return render_template("content/faqs.html")
+
+@app.route("/download-apk")
+def download_apk():
+    return render_template("content/download_apk.html")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -653,30 +677,6 @@ def user_profile():
         return redirect(url_for("user_profile"))
 
     return render_template("user/user_profile.html", user=user)
-#footer routes 
-@app.route('/about-us')
-def about_us():
-    return render_template('static_pages/about_us.html') # You'll need to create this HTML file
-
-@app.route('/contact-us')
-def contact_us():
-    return render_template('static_pages/contact_us.html')
-
-@app.route('/faqs')
-def faqs():
-    return render_template('static_pages/faqs.html')
-
-@app.route('/blog')
-def blog():
-    return render_template('static_pages/blog.html')
-
-@app.route('/privacy-policy')
-def privacy_policy():
-    return render_template('static_pages/privacy_policy.html')
-
-@app.route('/terms-and-conditions')
-def terms_and_conditions():
-    return render_template('static_pages/terms_and_conditions.html')
 
 @app.route('/sitemap')
 def sitemap():
