@@ -1,19 +1,34 @@
 from backend.database import db
 from backend.models import User, Doctor
 from werkzeug.security import generate_password_hash
-from app import app  # Import app after db/models to avoid circular import
+from app import app  # This must be after importing db/models
+from dotenv import load_dotenv
+import os
 
-# Ensure this runs only when script is executed directly
+# ✅ Load environment variables explicitly from the correct path
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+
 if __name__ == "__main__":
     with app.app_context():
-        # ✅ Create tables if they don’t exist
-        db.create_all()
+        # ✅ Confirm that environment variable is loaded
+        print("📦 DATABASE_URL:", os.getenv("DATABASE_URL"))
 
-        # ✅ Add admin user if not already present
-        if not User.query.filter_by(email="admin@gmail.com").first():
+        print("🔄 Connecting to the database...")
+        try:
+            db.create_all()
+            print("✅ Tables checked/created successfully.")
+        except Exception as e:
+            print("❌ Failed to connect or create tables:", str(e))
+            exit(1)
+
+        # ✅ Admin creation logic
+        admin_email = "admin@gmail.com"
+        admin_exists = User.query.filter_by(email=admin_email).first()
+
+        if not admin_exists:
             admin_user = User(
                 fullName="Admin",
-                email="admin@gmail.com",
+                email=admin_email,
                 age=30,
                 phone="9999999999",
                 address="Admin Street",
@@ -22,6 +37,6 @@ if __name__ == "__main__":
             )
             db.session.add(admin_user)
             db.session.commit()
-            print("✅ Admin user created.")
+            print("✅ Admin user created successfully in Render DB.")
         else:
-            print("ℹ️ Admin user already exists.")
+            print("ℹ️ Admin user already exists in Render DB.")
