@@ -170,6 +170,18 @@ def doctor_dashboard(user_id):
     ).all()
 
     return render_template("doctor/doctor_dashboard.html", doctor=doctor, appointments=doctor_appointments)
+@app.route("/toggle_clinic_status/<int:user_id>", methods=["POST"])
+def toggle_clinic_status(user_id):
+    doctor = Doctor.query.get_or_404(user_id)
+    if session.get("user_type") != "doctor" or session.get("user_id") != doctor.id:
+        flash("Unauthorized access", "danger")
+        return redirect(url_for("login_page"))
+
+    # Toggle logic
+    doctor.clinic_status = "closed" if doctor.clinic_status == "open" else "open"
+    db.session.commit()
+    return redirect(url_for("doctor_dashboard", user_id=doctor.id))
+
 @app.route("/doctor/appointments/<int:user_id>")
 def doctor_appointments(user_id):
     """
@@ -262,11 +274,8 @@ def cancel_appointment_by_doctor(appointment_id):
 
 @app.route("/doctor/profile/<int:user_id>", methods=["GET", "POST"])
 def doctor_profile(user_id):
-    """
-    Doctor route to view and update their profile.
-    """
     doctor = Doctor.query.get_or_404(user_id)
-    # Ensure the user ID in the URL matches the session ID for the logged-in doctor
+
     if session.get("user_type") != "doctor" or session.get("user_id") != doctor.id:
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
@@ -276,9 +285,11 @@ def doctor_profile(user_id):
         doctor.email = request.form["email"]
         doctor.phone = request.form["phone"]
         doctor.specialty = request.form["specialty"]
-        # Removed lines attempting to update doctor.age and doctor.address
-        # doctor.age = request.form.get("age", type=int)
-        # doctor.address = request.form.get("address")
+        doctor.available_from = request.form.get("available_from")
+        doctor.available_to = request.form.get("available_to")
+        doctor.morning_slot = request.form.get("morning_slot")
+        doctor.afternoon_slot = request.form.get("afternoon_slot")
+        doctor.evening_slot = request.form.get("evening_slot")
 
         try:
             db.session.commit()
@@ -534,26 +545,27 @@ def search_doctors():
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
 
+    # Base query - fetch all approved doctors (open or closed)
     doctors_query = Doctor.query.filter_by(status='approved')
 
-    # Get all approved doctors to extract unique specialties for the dropdown
-    # It's good practice to get all approved doctors first, then extract specialties
-    all_approved_doctors = Doctor.query.filter_by(status='approved').all()
-    specialties = sorted(list(set([d.specialty for d in all_approved_doctors if d.specialty]))) # Added check for None specialty
+    # Get all approved doctors for distinct specialties list
+    all_approved_doctors = doctors_query.all()
+    specialties = sorted(set(d.specialty for d in all_approved_doctors if d.specialty))
 
+    # Filters from user input
     specialty_filter = request.args.get("specialty")
     location_filter = request.args.get("location")
+    name_filter = request.args.get("name")
 
+    # Apply filters
     if specialty_filter and specialty_filter != "Choose...":
-        doctors_query = doctors_query.filter_by(specialty=specialty_filter)
+        doctors_query = doctors_query.filter(Doctor.specialty == specialty_filter)
 
-    # Activate location filtering
     if location_filter:
-        # Use ilike for case-insensitive partial match on the address field
-        doctors_query = doctors_query.filter(Doctor.address.ilike(f'%{location_filter}%'))
-        flash("Location search results are displayed.", "info") # Optional: update message
+        doctors_query = doctors_query.filter(Doctor.address.ilike(f"%{location_filter}%"))
 
-    # No need for the 'else' block that flashed the "not implemented" message now
+    if name_filter:
+        doctors_query = doctors_query.filter(Doctor.full_name.ilike(f"%{name_filter}%"))
 
     doctors = doctors_query.all()
 
@@ -561,9 +573,11 @@ def search_doctors():
         "user/search_doctors.html",
         doctors=doctors,
         specialties=specialties,
-        selected_specialty=specialty_filter if specialty_filter else "", # Changed default to empty string for 'All Specialties'
-        selected_location=location_filter if location_filter else ""
+        selected_specialty=specialty_filter or "",
+        selected_location=location_filter or "",
+        selected_name=name_filter or ""
     )
+
 
 @app.route("/user/book_appointment", methods=["GET", "POST"])
 def book_appointment():
@@ -619,10 +633,14 @@ def book_appointment():
             flash(f"An error occurred while booking the appointment: {e}", "danger")
             app.logger.error(f"Appointment booking error: {e}")
     return render_template(
-        "user/book_appointment.html",
-        doctor=selected_doctor,
-        user=current_user
-    )
+    "user/book_appointment.html",
+    doctor=selected_doctor,
+    user=current_user,
+    morning_slot=selected_doctor.morning_slot,
+    afternoon_slot=selected_doctor.afternoon_slot,
+    evening_slot=selected_doctor.evening_slot
+)
+
 
 @app.route("/user/my_appointments")
 def my_appointments():
@@ -687,4 +705,3 @@ def sitemap():
 def disclaimer():
     return render_template('static_pages/disclaimer.html')
 
-# Keep your existing user_dashboard route and others

@@ -266,39 +266,23 @@
                 </div>
 
                 <h4 class="text-xl font-semibold mb-4 text-apkadr-black">Availability Slots</h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mb-6">
-                    <div>
-                        <label for="morning_slot" class="block text-apkadr-black text-base font-medium mb-1">Morning Slot</label>
-                        <select id="morning_slot" name="morning_slot"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:border-transparent bg-white appearance-none">
-                            <option value="">Select Morning Slot (Optional)</option>
-                            <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
-                            <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-                            <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="afternoon_slot" class="block text-apkadr-black text-base font-medium mb-1">Afternoon Slot</label>
-                        <select id="afternoon_slot" name="afternoon_slot"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:border-transparent bg-white appearance-none">
-                            <option value="">Select Afternoon Slot (Optional)</option>
-                            <option value="01:00 PM - 02:00 PM">01:00 PM - 02:00 PM</option>
-                            <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
-                            <option value="03:00 PM - 04:00 PM">03:00 PM - 04:00 PM</option>
-                            <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="evening_slot" class="block text-apkadr-black text-base font-medium mb-1">Evening Slot</label>
-                        <select id="evening_slot" name="evening_slot"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:border-transparent bg-white appearance-none">
-                            <option value="">Select Evening Slot (Optional)</option>
-                            <option value="06:00 PM - 07:00 PM">06:00 PM - 07:00 PM</option>
-                            <option value="07:00 PM - 08:00 PM">07:00 PM - 08:00 PM</option>
-                            <option value="08:00 PM - 09:00 PM">08:00 PM - 09:00 PM</option>
-                        </select>
-                    </div>
-                </div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mb-6">
+    <div>
+        <label for="morning_slot" class="block text-apkadr-black text-base font-medium mb-1">Morning Slot</label>
+        <input type="text" id="morning_slot" name="morning_slot" placeholder="e.g., 09:00 AM - 10:00 AM"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:border-transparent">
+    </div>
+    <div>
+        <label for="afternoon_slot" class="block text-apkadr-black text-base font-medium mb-1">Afternoon Slot</label>
+        <input type="text" id="afternoon_slot" name="afternoon_slot" placeholder="e.g., 01:00 PM - 02:00 PM"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:border-transparent">
+    </div>
+    <div>
+        <label for="evening_slot" class="block text-apkadr-black text-base font-medium mb-1">Evening Slot</label>
+        <input type="text" id="evening_slot" name="evening_slot" placeholder="e.g., 06:00 PM - 07:00 PM"
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-apkadr-dark-blue focus:border-transparent">
+    </div>
+</div>
 
                 <div class="mb-6">
                     <label for="photo" class="block text-apkadr-black text-base font-medium mb-1">Profile Photo</label>
