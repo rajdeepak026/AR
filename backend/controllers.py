@@ -48,43 +48,51 @@ def register():
             address = request.form.get("address", "").strip()
             plain_password = request.form.get("password", "")
 
-            # --- Basic Validations ---
+            # Preserve form data for repopulating form on error
+            form_data = {
+                "fullName": fullName,
+                "email": email,
+                "age": age,
+                "phone": phone,
+                "address": address
+            }
+
+            # --- Validations ---
             if not all([fullName, email, age, phone, address, plain_password]):
                 flash("All fields are required.", "danger")
-                return redirect(url_for("register"))
+                return render_template("register.html", **form_data)
 
             if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
                 flash("Invalid email format.", "danger")
-                return redirect(url_for("register"))
+                return render_template("register.html", **form_data)
 
             if not age.isdigit() or not (0 < int(age) < 120):
                 flash("Please enter a valid age.", "danger")
-                return redirect(url_for("register"))
+                return render_template("register.html", **form_data)
 
-            if not phone.isdigit() or len(phone) < 7:
-                flash("Please enter a valid phone number.", "danger")
-                return redirect(url_for("register"))
+            if not re.match(r"^\+?\d{7,15}$", phone):
+                flash("Please enter a valid phone number (min 7 digits, optional +).", "danger")
+                return render_template("register.html", **form_data)
 
-            if len(plain_password) < 8:
-                flash("Password must be at least 8 characters long.", "danger")
-                return redirect(url_for("register"))
+            if len(plain_password) < 6:
+                flash("Password must be at least 6 characters long.", "danger")
+                return render_template("register.html", **form_data)
 
-            # --- Email Uniqueness Check ---
+            # --- Email Uniqueness ---
             if User.query.filter_by(email=email).first():
-                flash("That email is already registered. Please use a different email or log in.", "danger")
-                return redirect(url_for("register"))
+                flash("That email is already registered. Please log in instead.", "danger")
+                return render_template("register.html", **form_data)
 
-            # --- Registration ---
-            password = generate_password_hash(plain_password)
+            # --- User Creation ---
+            hashed_password = generate_password_hash(plain_password)
             new_user = User(
                 fullName=fullName,
                 email=email,
                 age=age,
                 phone=phone,
                 address=address,
-                password=password
+                password=hashed_password
             )
-
             db.session.add(new_user)
             db.session.commit()
 
@@ -94,8 +102,8 @@ def register():
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Registration Error: {e}")
-            flash("An error occurred during registration. Please try again later.", "danger")
-            return redirect(url_for("register"))
+            flash("An error occurred during registration. Please try again.", "danger")
+            return render_template("register.html", **request.form.to_dict())
 
     return render_template("register.html")
 
