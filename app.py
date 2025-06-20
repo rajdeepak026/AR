@@ -1,40 +1,41 @@
 import os
 from flask import Flask, send_from_directory
 from backend.database import db
-from datetime import timedelta # Added: Import timedelta for session lifetime
+from datetime import timedelta
+from dotenv import load_dotenv  # ✅ Load .env variables for local dev
+
+# ✅ Load .env file (useful for local testing)
+load_dotenv()
 
 app = Flask(__name__)
+
+# Google verification route (static file)
 @app.route('/google0bd79030d3228202.html')
 def google_verification():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'google0bd79030d3228202.html')
 
-# --- CHANGE 1: Database Configuration for Production ---
-# Use a production-ready database (e.g., PostgreSQL, MySQL)
-# and load the URI from an environment variable
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///med.sqlite3")
-# The second argument to .get() is a fallback for local development if DATABASE_URL isn't set.
+# ✅ Production-ready database config (uses PostgreSQL from Render or fallback to SQLite)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DATABASE_URL", "sqlite:///med.sqlite3"
+)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# --- CHANGE 2: Secret Key (CRITICAL SECURITY) ---
-# Load your secret key from an environment variable.
-# NEVER hardcode it in production.
+# ✅ Secret key from environment (NEVER hardcode in production)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your-fallback-dev-secret-key-if-not-set")
 
-# --- ADDITION: Configure Permanent Sessions ---
-# Sessions will last for 30 days if marked as permanent
+# ✅ Session lifetime config
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
+# ✅ Initialize database
 db.init_app(app)
 
-# Import routes after app and db are set up
+# ✅ App context for importing routes & optionally creating tables
 with app.app_context():
     from backend import controllers
-    # --- OPTIONAL: Database Creation on First Run (less common for production) ---
-    # db.create_all() # Only use this if you want tables to be created on app startup
-                        # For production, use migration tools like Alembic.
 
+    # Uncomment only for the first time (create tables in Render DB)
+    # db.create_all()
+
+# ✅ Main entry point with debug controlled by env variable
 if __name__ == "__main__":
-    # --- CHANGE 3: Remove debug=True for Production (CRITICAL SECURITY & Performance) ---
-    # app.run(debug=True) is ONLY for development.
-    # In production, you will use a WSGI server like Gunicorn or uWSGI.
-    app.run(debug=os.environ.get("FLASK_DEBUG") == "True") # Use env var for debug mode
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "True")
