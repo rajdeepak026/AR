@@ -4,6 +4,8 @@ from backend.database import db
 from datetime import timedelta
 from dotenv import load_dotenv
 from flask_migrate import Migrate
+from flask import Flask, send_from_directory
+
 
 # ✅ Load environment variables from .env file
 load_dotenv()
@@ -11,6 +13,13 @@ load_dotenv()
 # ✅ Initialize Flask app
 app = Flask(__name__)
 
+@app.route('/sitemap.xml', endpoint='sitemap_static')
+def sitemap():
+    return send_from_directory(app.static_folder, 'sitemap.xml')
+
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.static_folder, 'robots.txt')
 # ✅ Google verification route
 @app.route('/google0bd79030d3228202.html')
 def google_verification():
