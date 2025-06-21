@@ -1,11 +1,18 @@
-<footer style="background-color: #2c3e50; color: #fff; padding: 60px 20px 40px;">
+<!-- SEO Meta Tags (place these in the <head> section of your HTML, not the footer) -->
+<!--
+<meta name="description" content="ApkaDr is the leading doctor appointment booking platform in Saran, Bihar. Book online appointments with trusted local doctors and clinics easily.">
+<meta name="keywords" content="doctor appointment Saran Bihar, online doctor booking Bihar, ApkaDr, book doctor online, Saran clinics, Bihar healthcare, ApkaDr platform">
+<meta name="author" content="ApkaDr">
+-->
+
+<footer style="background-color: #2c3e50; color: #fff; padding: 60px 20px 40px;" itemscope itemtype="https://schema.org/Organization">
   <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
 
     <!-- Logo + Tagline -->
     <div style="margin-bottom: 30px;">
-      <img src="{{ url_for('static', filename='images/apkadr.logo.jpg') }}" alt="ApkaDr Logo" style="height: 60px; margin-bottom: 15px;" />
-      <h2 style="font-size: 30px; font-weight: 600; margin: 10px 0;">ApkaDr.</h2>
-      <p style="font-size: 16px; color: #bdc3c7;">Your Trusted Online Doctor Appointment Platform</p>
+      <img src="{{ url_for('static', filename='images/apkadr.logo.jpg') }}" alt="ApkaDr Logo" style="height: 60px; margin-bottom: 15px;" itemprop="logo" />
+      <h2 style="font-size: 30px; font-weight: 600; margin: 10px 0;" itemprop="name">ApkaDr.</h2>
+      <p style="font-size: 16px; color: #bdc3c7;" itemprop="description">Online Doctor Appointment Booking in Saran, Bihar</p>
     </div>
 
     <!-- Navigation Links -->
@@ -19,32 +26,36 @@
 
     <!-- Support Email -->
     <div style="margin: 20px 0; font-size: 15px; color: #bdc3c7;">
-      Support Email: <a href="mailto:hello.apkadr@gmail.com" style="color: #ecf0f1; text-decoration: underline;">hello.apkadr@gmail.com</a>
+      Support Email: <a href="mailto:hello.apkadr@gmail.com" style="color: #ecf0f1; text-decoration: underline;" itemprop="email">hello.apkadr@gmail.com</a>
     </div>
 
     <!-- Social Media Icons -->
-    <div style="margin-bottom: 30px;">
-      <a href="https://facebook.com" target="_blank" style="margin: 0 10px; color: #ecf0f1; font-size: 20px; transition: color 0.3s;">
+    <div style="margin-bottom: 30px;" itemprop="sameAs">
+      <a href="https://facebook.com" target="_blank" style="margin: 0 10px; color: #ecf0f1; font-size: 20px;">
         <i class="fab fa-facebook-f"></i>
       </a>
-      <a href="https://www.instagram.com/apkadr_official?igsh=c2JveWViYTFtZmZq" target="_blank" style="margin: 0 10px; color: #ecf0f1; font-size: 20px; transition: color 0.3s;">
+      <a href="https://www.instagram.com/apkadr_official?igsh=c2JveWViYTFtZmZq" target="_blank" style="margin: 0 10px; color: #ecf0f1; font-size: 20px;">
         <i class="fab fa-instagram"></i>
       </a>
-      <a href="https://linkedin.com" target="_blank" style="margin: 0 10px; color: #ecf0f1; font-size: 20px; transition: color 0.3s;">
+      <a href="https://linkedin.com" target="_blank" style="margin: 0 10px; color: #ecf0f1; font-size: 20px;">
         <i class="fab fa-linkedin-in"></i>
       </a>
-      <a href="https://twitter.com" target="_blank" style="margin: 0 10px; color: #ecf0f1; font-size: 20px; transition: color 0.3s;">
+      <a href="https://twitter.com" target="_blank" style="margin: 0 10px; color: #ecf0f1; font-size: 20px;">
         <i class="fab fa-twitter"></i>
       </a>
+    </div>
 
-      <!-- Optional Icons -->
-      <!--
-      <a href="https://youtube.com" target="_blank" style="margin: 0 10px; color: #ecf0f1; font-size: 20px;"><i class="fab fa-youtube"></i></a>
-      <a href="mailto:contact@apkadr.com" style="margin: 0 10px; color: #ecf0f1; font-size: 20px;"><i class="fas fa-envelope"></i></a>
-      -->
+    <!-- SEO Hidden Keywords for Local Search -->
+    <div style="display: none;">
+      <p>Book doctor appointment online in Saran district</p>
+      <p>Best online medical consultation Bihar</p>
+      <p>Saran doctors booking app</p>
+      <p>Find doctor near me in Saran Bihar</p>
+      <p>Online clinic appointment in Bihar</p>
+      <p>ApkaDr Saran healthcare platform</p>
     </div>
 
     <!-- Copyright -->
-    <p style="font-size: 14px; color: #95a5a6;">&copy; 2025 ApkaDr. All rights reserved.</p>
+    <p style="font-size: 14px; color: #95a5a6;">&copy; 2025 <span itemprop="name">ApkaDr</span>. All rights reserved.</p>
   </div>
 </footer>
