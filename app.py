@@ -34,7 +34,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # ✅ Session configuration
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "fallback-secret")
+app.secret_key = os.environ["FLASK_SECRET_KEY"]  # Raises error if not set
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
 # ✅ Initialize extensions
