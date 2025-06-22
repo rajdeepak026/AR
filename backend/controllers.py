@@ -3,15 +3,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User, Doctor, Appointment
 from .database import db
 from flask import current_app as app
-import datetime
-from datetime import date # Import date for today's date
-from sqlalchemy.orm import joinedload # Make sure to import this
+from datetime import date
+from sqlalchemy.orm import joinedload
 import re
-
 
 @app.route("/")
 def landing_page():
-    return render_template("landing.html")  
+    return render_template("landing.html")
 
 @app.route("/privacy-policy")
 def privacy_policy():
@@ -48,7 +46,6 @@ def register():
             address = request.form.get("address", "").strip()
             plain_password = request.form.get("password", "")
 
-            # Preserve form data for repopulating form on error
             form_data = {
                 "fullName": fullName,
                 "email": email,
@@ -57,7 +54,6 @@ def register():
                 "address": address
             }
 
-            # --- Validations ---
             if not all([fullName, email, age, phone, address, plain_password]):
                 flash("All fields are required.", "danger")
                 return render_template("register.html", **form_data)
@@ -78,12 +74,10 @@ def register():
                 flash("Password must be at least 6 characters long.", "danger")
                 return render_template("register.html", **form_data)
 
-            # --- Email Uniqueness ---
             if User.query.filter_by(email=email).first():
                 flash("That email is already registered. Please log in instead.", "danger")
                 return render_template("register.html", **form_data)
 
-            # --- User Creation ---
             hashed_password = generate_password_hash(plain_password)
             new_user = User(
                 fullName=fullName,
@@ -107,15 +101,22 @@ def register():
 
     return render_template("register.html")
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if "user_id" in session:
+        user_type = session.get("user_type")
+        if user_type == "admin":
+            return redirect(url_for("admin_dashboard"))
+        elif user_type == "doctor":
+            return redirect(url_for("doctor_dashboard", user_id=session["user_id"]))
+        else:
+            return redirect(url_for("user_dashboard", user_id=session["user_id"]))
+
     if request.method == "POST":
         try:
             email = request.form.get("email", "").strip()
             password = request.form.get("password", "")
 
-            # General user login
             user = User.query.filter_by(email=email).first()
             if user and check_password_hash(user.password, password):
                 session["user_id"] = user.id
@@ -126,7 +127,6 @@ def login():
                     return redirect(url_for("admin_dashboard"))
                 return redirect(url_for("user_dashboard", user_id=user.id))
 
-            # Doctor login
             doctor = Doctor.query.filter_by(email=email).first()
             if doctor and check_password_hash(doctor.password, password):
                 if doctor.status != "approved":
@@ -147,7 +147,6 @@ def login():
 
     return render_template("login.html")
 
-
 @app.route("/logout")
 def logout():
     try:
@@ -158,9 +157,6 @@ def logout():
         current_app.logger.error(f"Logout Error: {e}")
         flash("An error occurred during logout. Please try again.", "danger")
         return redirect(url_for("login"))
-from flask import render_template, session, flash, redirect, url_for
-# Assuming you have these models correctly imported from your_models.py
-from .models import Doctor, Appointment # Make sure these imports are correct based on your project structure
 
 @app.route("/doctor_dashboard/<int:user_id>")
 def doctor_dashboard(user_id):
