@@ -9,6 +9,14 @@ import re
 
 @app.route("/")
 def landing_page():
+    if "user_id" in session:
+        user_type = session.get("user_type")
+        if user_type == "admin":
+            return redirect(url_for("admin_dashboard"))
+        elif user_type == "doctor":
+            return redirect(url_for("doctor_dashboard", user_id=session["user_id"]))
+        else:
+            return redirect(url_for("user_dashboard", user_id=session["user_id"]))
     return render_template("landing.html")
 
 @app.route("/privacy-policy")
