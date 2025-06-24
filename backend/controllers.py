@@ -6,6 +6,8 @@ from flask import current_app as app
 from datetime import date
 from sqlalchemy.orm import joinedload
 import re
+from datetime import datetime
+
 
 @app.route("/")
 def landing_page():
@@ -591,42 +593,62 @@ def search_doctors():
     )
 
 
+from datetime import datetime  # Ensure this is at the top of your file
+
 @app.route("/user/book_appointment", methods=["GET", "POST"])
 def book_appointment():
     if session.get("user_type") != "general":
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
+
     user_id = session.get("user_id")
     current_user = User.query.get_or_404(user_id)
+
     doctor_id = request.args.get('doctor_id', type=int)
     selected_doctor = None
-    if doctor_id:
+
+    if request.method == "GET":
+        if not doctor_id:
+            flash("Please select a doctor to book an appointment.", "warning")
+            return redirect(url_for('search_doctors'))
+
         selected_doctor = Doctor.query.get(doctor_id)
         if not selected_doctor:
             flash("Selected doctor not found.", "danger")
             return redirect(url_for('search_doctors'))
+
     if request.method == "POST":
         doctor_id_form = request.form.get('doctor_id', type=int)
         appointment_date_str = request.form.get('appointmentDate')
         appointment_time = request.form.get('appointmentTime')
         booking_for_other = request.form.get('bookingForOther')
+
         if booking_for_other:
             patient_name = request.form.get('patientName')
-            symptoms = f"Patient: {patient_name}, Age: {request.form.get('patientAge')}, Phone: {request.form.get('patientPhone')}, Notes: {request.form.get('patientNotes')}"
+            symptoms = (
+                f"Patient: {patient_name}, "
+                f"Age: {request.form.get('patientAge')}, "
+                f"Phone: {request.form.get('patientPhone')}, "
+                f"Notes: {request.form.get('patientNotes')}"
+            )
         else:
             symptoms = request.form.get('notes')
+
         if not doctor_id_form or not appointment_date_str or not appointment_time or not symptoms:
             flash("Please fill in all required fields for the appointment.", "danger")
             return redirect(request.url)
+
         try:
-            appointment_date = datetime.datetime.strptime(appointment_date_str, '%Y-%m-%d').date()
+            appointment_date = datetime.strptime(appointment_date_str, '%Y-%m-%d').date()
         except ValueError:
-            flash("Invalid date format. Please use %Y-%m-%d.", "danger")
+            flash("Invalid date format. Please use YYYY-MM-DD.", "danger")
             return redirect(request.url)
+
         doctor_for_booking = Doctor.query.get(doctor_id_form)
         if not doctor_for_booking:
             flash("The selected doctor is not valid.", "danger")
             return redirect(request.url)
+
         new_appointment = Appointment(
             user_id=user_id,
             doctor_id=doctor_for_booking.id,
@@ -635,6 +657,7 @@ def book_appointment():
             symptoms=symptoms,
             status='pending'
         )
+
         try:
             db.session.add(new_appointment)
             db.session.commit()
@@ -644,14 +667,18 @@ def book_appointment():
             db.session.rollback()
             flash(f"An error occurred while booking the appointment: {e}", "danger")
             app.logger.error(f"Appointment booking error: {e}")
+
+        # Fetch the selected doctor again to render page correctly after failure
+        selected_doctor = doctor_for_booking
+
     return render_template(
-    "user/book_appointment.html",
-    doctor=selected_doctor,
-    user=current_user,
-    morning_slot=selected_doctor.morning_slot,
-    afternoon_slot=selected_doctor.afternoon_slot,
-    evening_slot=selected_doctor.evening_slot
-)
+        "user/book_appointment.html",
+        doctor=selected_doctor,
+        user=current_user,
+        morning_slot=selected_doctor.morning_slot if selected_doctor else None,
+        afternoon_slot=selected_doctor.afternoon_slot if selected_doctor else None,
+        evening_slot=selected_doctor.evening_slot if selected_doctor else None
+    )
 
 
 @app.route("/user/my_appointments")
