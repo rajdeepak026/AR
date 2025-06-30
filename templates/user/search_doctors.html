@@ -388,7 +388,7 @@
             }
         });
     </script>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
@@ -399,10 +399,11 @@
       }
     });
 
-    // ✅ Updated method for SDK v16+
-    const playerId = await OneSignal.User.getId(); 
+    // ✅ Correct method to get player ID in v16
+    const playerId = await OneSignal.getUserId();
+
     if (playerId) {
-      // Send to your backend via fetch
+      // Send to your backend
       fetch('/save_player_id', {
         method: 'POST',
         headers: {
@@ -413,6 +414,7 @@
     }
   });
 </script>
+
 
 </body>
 
