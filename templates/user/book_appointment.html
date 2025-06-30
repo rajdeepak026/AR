@@ -103,8 +103,11 @@
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
+
   OneSignalDeferred.push(async function(OneSignal) {
     try {
+      console.log("🔄 Initializing OneSignal...");
+      
       await OneSignal.init({
         appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
         notifyButton: {
@@ -112,32 +115,32 @@
         }
       });
 
-      // Request permission if not already granted
-      const permission = await OneSignal.Notifications.permission;
-      if (permission !== 'granted') {
-        console.log("Requesting permission...");
-        await OneSignal.Notifications.requestPermission();
-      }
+      console.log("✅ OneSignal initialized successfully.");
 
-      // ✅ SAFELY get player/user ID
-      const playerId = await OneSignal.getUserId();
+      // Safely get the session object
+      const session = await OneSignal.session;
+      const playerId = session?.user?.id;
+
       if (playerId) {
-        console.log("✅ Player ID:", playerId);
+        console.log("✅ Player ID (OneSignal User ID):", playerId);
 
-        // Send to backend
-        fetch('/save_player_id', {
+        // Send player ID to backend
+        const response = await fetch('/save_player_id', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ player_id: playerId })
         });
+
+        const result = await response.json();
+        console.log("📦 Backend response:", result);
       } else {
-        console.warn("User ID not available yet.");
+        console.warn("⚠️ Player ID not available. User may not be subscribed or allowed notifications.");
       }
 
     } catch (error) {
-      console.error("❌ OneSignal error:", error);
+      console.warn("🚫 OneSignal error caught:", error?.message || error);
     }
   });
 </script>
