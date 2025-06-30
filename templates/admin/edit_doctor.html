@@ -7,8 +7,7 @@
     <title>Admin - Manage Doctors - ApkaDr.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Custom Colors inspired by ApkaDr. Logo (consistent across the app) */
         :root {
@@ -67,14 +66,12 @@
 
             .vertical-table tr {
                 @apply block mb-4 border border-gray-200 rounded-lg shadow-sm;
-                background-color: var(--apkadr-white);
-                /* Ensure row background is white */
+                background-color: var(--apkadr-white); /* Ensure row background is white */
             }
 
             .vertical-table td {
                 @apply block text-sm text-gray-800 text-right px-4 py-2 relative;
-                border-bottom: 1px solid #eee;
-                /* Light separator between cells */
+                border-bottom: 1px solid #eee; /* Light separator between cells */
             }
 
             .vertical-table td:last-child {
@@ -89,19 +86,15 @@
 
             /* Adjust badge styling for vertical table */
             .vertical-table .badge {
-                @apply inline-block float-none;
-                /* Remove float for better centering */
+                @apply inline-block float-none; /* Remove float for better centering */
             }
 
             /* Adjust action buttons container for mobile vertical display */
             .vertical-table .actions-cell .flex.flex-col {
-                @apply flex-row flex-wrap justify-end gap-2;
-                /* Align items to end with gap */
+                @apply flex-row flex-wrap justify-end gap-2; /* Align items to end with gap */
             }
-
-            .vertical-table .actions-cell .flex.flex-col>* {
-                @apply flex-grow-0 flex-shrink-0;
-                /* Prevent items from stretching excessively */
+            .vertical-table .actions-cell .flex.flex-col > * {
+                @apply flex-grow-0 flex-shrink-0; /* Prevent items from stretching excessively */
             }
         }
     </style>
@@ -142,7 +135,8 @@
                     <li>
                         <a class="flex items-center py-4 px-6 text-white text-opacity-75 font-medium
                                   hover:bg-white hover:bg-opacity-10 hover:text-white hover:border-l-4 hover:border-apkadr-gold hover:pl-5
-                                  sidebar-link-active" href="{{ url_for('manage_doctors') }}">
+                                  sidebar-link-active"
+                            href="{{ url_for('manage_doctors') }}">
                             <i class="fas fa-user-md mr-3 text-lg"></i> Manage Doctors
                         </a>
                     </li>
@@ -184,8 +178,7 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <h2 class="text-xl font-semibold text-white">Manage Doctors</h2>
-                <div></div>
-            </header>
+                <div></div> </header>
 
             <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"
                 onclick="toggleMobileSidebar()"></div>
@@ -249,120 +242,103 @@
                 </nav>
             </div>
 
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 mt-0 lg:mt-0">
-                <h2 class="text-3xl font-semibold text-apkadr-black hidden lg:block">Manage Doctors</h2>
-                <a href="{{ url_for('add_doctor') }}"
-                    class="bg-apkadr-dark-blue text-white px-4 py-2 rounded-md hover:bg-blue-800 transition-colors duration-200 flex items-center shadow-md">
-                    <i class="fas fa-plus mr-2"></i> Add Doctor
-                </a>
+           
+<main class="flex-grow p-6 md:p-8 bg-apkadr-light-gray flex flex-col">
+    <h2 class="text-3xl font-semibold text-apkadr-black mb-6 hidden lg:block">Edit Doctor</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert-{{ category }} px-4 py-3 rounded relative mb-4">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('edit_doctor', doctor_id=doctor.id) }}" method="post" enctype="multipart/form-data" class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-4">
+            <div>
+                <label for="name" class="block text-apkadr-black text-base font-medium mb-1">Full Name</label>
+                <input type="text" id="name" name="full_name" required value="{{ doctor.full_name }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md">
             </div>
-
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div class="
-                {% if category == 'success' %} alert-success
-                {% elif category == 'danger' %} alert-danger
-                {% elif category == 'info' %} alert-info
-                {% elif category == 'warning' %} alert-warning
-                {% else %} bg-gray-100 border border-gray-400 text-gray-700
-                {% endif %}
-                px-4 py-3 rounded relative mb-4">
-                {{ message }}
+            <div>
+                <label for="email" class="block text-apkadr-black text-base font-medium mb-1">Email</label>
+                <input type="email" id="email" name="email" required value="{{ doctor.email }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md">
             </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
+        </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 vertical-table">
-                    <thead class="bg-apkadr-dark-blue text-white">
-                        <tr>
-                            <th
-                                class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tl-xl">
-                                <i class="fas fa-user mr-2"></i> Name
-                            </th>
-                            <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">
-                                <i class="fas fa-envelope mr-2"></i> Email
-                            </th>
-                            <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">
-                                <i class="fas fa-info-circle mr-2"></i> Status
-                            </th>
-                            <th
-                                class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tr-xl">
-                                <i class="fas fa-cogs mr-2"></i> Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        {% for doctor in doctors %}
-                        <tr class="hover:bg-gray-50 transition-colors duration-200">
-                            <td data-label="Name" class="px-4 py-3 text-sm font-medium text-gray-900">
-                                {{ doctor.full_name }}</td>
-                            <td data-label="Email" class="px-4 py-3 text-sm text-gray-800">
-                                {{ doctor.email }}</td>
-                            <td data-label="Status" class="px-4 py-3 text-sm">
-                                {% if doctor.status == 'approved' %}
-                                <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-600 text-white badge">
-                                    Approved
-                                </span>
-                                {% elif doctor.status == 'rejected' %}
-                                <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-600 text-white badge">
-                                    Rejected
-                                </span>
-                                {% else %}
-                                <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-apkadr-gold text-apkadr-black badge">
-                                    Pending
-                                </span>
-                                {% endif %}
-                            </td>
-                            <td data-label="Actions" class="px-4 py-3 text-sm font-medium actions-cell">
-                                <div class="flex flex-col md:flex-row md:space-x-2 space-y-1 md:space-y-0">
-                                    {% if doctor.status != 'approved' %}
-                                    <a href="{{ url_for('approve_doctor', doctor_id=doctor.id) }}"
-                                        class="bg-green-600 text-white p-2 rounded-md hover:bg-green-700 transition-colors duration-200 text-center flex-shrink-0"
-                                        title="Approve">
-                                        <i class="fas fa-check"></i>
-                                    </a>
-                                    {% endif %}
-                                    {% if doctor.status != 'rejected' %}
-                                    <a href="{{ url_for('reject_doctor', doctor_id=doctor.id) }}"
-                                        class="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition-colors duration-200 text-center flex-shrink-0"
-                                        title="Reject">
-                                        <i class="fas fa-times"></i>
-                                    </a>
-                                    {% endif %}
-
-                                    <a href="{{ url_for('edit_doctor', doctor_id=doctor.id) }}"
-                                        class="bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 transition-colors duration-200 text-center flex-shrink-0"
-                                        title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-
-                                </div>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="4" class="px-4 py-4 text-center text-gray-500 text-base">No doctors found.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-4">
+            <div>
+                <label for="phone" class="block text-apkadr-black text-base font-medium mb-1">Phone</label>
+                <input type="tel" id="phone" name="phone" required value="{{ doctor.phone }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md">
             </div>
-        </main>
-    </div>
+            <div>
+                <label for="specialty" class="block text-apkadr-black text-base font-medium mb-1">Specialty</label>
+                <input type="text" id="specialty" name="specialty" required value="{{ doctor.specialty }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md">
+            </div>
+        </div>
 
-    ---
+        <div class="mb-4">
+            <label for="address" class="block text-apkadr-black text-base font-medium mb-1">Address</label>
+            <input type="text" id="address" name="address" required value="{{ doctor.address }}"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-md">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6">
+            <div>
+                <label for="password" class="block text-apkadr-black text-base font-medium mb-1">New Password (optional)</label>
+                <input type="password" id="password" name="password"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="status" class="block text-apkadr-black text-base font-medium mb-1">Status</label>
+                <select id="status" name="status"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                    <option value="pending" {% if doctor.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="approved" {% if doctor.status == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="rejected" {% if doctor.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+        </div>
+
+        <h4 class="text-xl font-semibold mb-4 text-apkadr-black">Availability Slots</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mb-6">
+            <div>
+                <label for="morning_slot" class="block text-apkadr-black text-base font-medium mb-1">Morning Slot</label>
+                <input type="text" id="morning_slot" name="morning_slot" value="{{ doctor.morning_slot }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="afternoon_slot" class="block text-apkadr-black text-base font-medium mb-1">Afternoon Slot</label>
+                <input type="text" id="afternoon_slot" name="afternoon_slot" value="{{ doctor.afternoon_slot }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="evening_slot" class="block text-apkadr-black text-base font-medium mb-1">Evening Slot</label>
+                <input type="text" id="evening_slot" name="evening_slot" value="{{ doctor.evening_slot }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md">
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label for="photo" class="block text-apkadr-black text-base font-medium mb-1">Profile Photo</label>
+            <input type="file" id="photo" name="photo" accept="image/*"
+                   class="w-full text-apkadr-black file:bg-apkadr-dark-blue file:text-white file:rounded-md">
+        </div>
+
+        <button type="submit"
+                class="w-full bg-apkadr-dark-blue text-white py-3 px-4 rounded-md text-lg hover:bg-indigo-700">
+            Update Doctor
+        </button>
+    </form>
+</main>
 
     <footer class="mt-auto py-4 text-center text-gray-500 text-xs bg-white shadow-inner">
         Copyright &copy; 2025 ApkaDr. All rights reserved.<br>
-        Powered by <a href="https://XyneroTech Solutions.io" class="text-indigo-600 hover:underline">XyneroTech
-            Solutions.io</a>
+        Powered by <a href="https://XyneroTech Solutions.io" class="text-indigo-600 hover:underline">XyneroTech Solutions.io</a>
     </footer>
 
     <script>

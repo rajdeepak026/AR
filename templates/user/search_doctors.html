@@ -199,7 +199,7 @@
                <form class="space-y-6 md:space-y-0 md:flex md:gap-4 items-end mb-10" method="GET"
     action="{{ url_for('search_doctors') }}">
 
-    <div class="flex-1">
+    <!-- <div class="flex-1">
         <label for="specialty" class="block text-sm font-medium text-gray-700 mb-1">Specialty</label>
         <select id="specialty" name="specialty"
             class="input-aesthetic block w-full px-4 py-2.5 rounded-lg text-gray-800">
@@ -211,20 +211,20 @@
             </option>
             {% endfor %}
         </select>
-    </div>
+    </div> -->
 
     <div class="flex-1">
         <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
         <input type="text" name="location" id="location"
             class="input-aesthetic block w-full px-4 py-2.5 rounded-lg text-gray-800 placeholder-gray-400"
-            placeholder="e.g., Patna" value="{{ selected_location }}">
+            placeholder="e.g., Chapra" value="{{ selected_location }}">
     </div>
 
     <div class="flex-1">
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Doctor Name</label>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Clinic Name/ Doctor Name</label>
         <input type="text" name="name" id="name"
             class="input-aesthetic block w-full px-4 py-2.5 rounded-lg text-gray-800 placeholder-gray-400"
-            placeholder="e.g., Dr. Verma" value="{{ selected_name }}">
+            placeholder="e.g., Bachpan Hospital" value="{{ selected_name }}">
     </div>
 
     <div>

@@ -526,6 +526,43 @@ def add_doctor():
             # print(f"Error adding doctor: {e}")
 
     return render_template("admin/adddoctor.html")
+@app.route("/edit_doctor/<int:doctor_id>", methods=["GET", "POST"])
+def edit_doctor(doctor_id):
+    if session.get("user_type") != "admin":
+        flash("Unauthorized access", "danger")
+        return redirect(url_for("login_page"))
+
+    doctor = Doctor.query.get_or_404(doctor_id)
+
+    if request.method == "POST":
+        # 📝 Update doctor fields from form
+        doctor.full_name = request.form["full_name"]
+        doctor.email = request.form["email"]
+        doctor.phone = request.form["phone"]
+        doctor.specialty = request.form["specialty"]
+
+        # Optional: Only update password if provided
+        password_input = request.form.get("password")
+        if password_input:
+            doctor.password = generate_password_hash(password_input)
+
+        doctor.status = request.form.get("status", doctor.status)
+        doctor.available_from = request.form.get("available_from")
+        doctor.available_to = request.form.get("available_to")
+        doctor.address = request.form.get("address")
+        doctor.morning_slot = request.form.get("morning_slot")
+        doctor.afternoon_slot = request.form.get("afternoon_slot")
+        doctor.evening_slot = request.form.get("evening_slot")
+
+        try:
+            db.session.commit()
+            flash("Doctor details updated successfully.", "success")
+            return redirect(url_for("manage_doctors"))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred while updating: {e}", "danger")
+
+    return render_template("admin/edit_doctor.html", doctor=doctor)
 
 
 @app.route("/approve_doctor/<int:doctor_id>")
