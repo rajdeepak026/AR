@@ -233,92 +233,87 @@ def toggle_clinic_status(user_id):
 
 @app.route("/doctor/appointments/<int:user_id>")
 def doctor_appointments(user_id):
-    """
-    Route for doctor to manage all their appointments.
-    """
     doctor = Doctor.query.get_or_404(user_id)
-    # Ensure the user ID in the URL matches the session ID for the logged-in doctor
     if session.get("user_type") != "doctor" or session.get("user_id") != doctor.id:
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
 
-    # Fetch appointments for this doctor, ordered by date and time
     appointments = Appointment.query.filter_by(doctor_id=doctor.id).order_by(Appointment.appointment_date, Appointment.appointment_time).all()
     return render_template("doctor/doctor_appointments.html", appointments=appointments)
 
 
-# --- Updated /doctor/appointments/confirm/<int:appointment_id> route ---
 @app.route("/doctor/appointments/confirm/<int:appointment_id>", methods=["POST"])
 def confirm_appointment_by_doctor(appointment_id):
-    """
-    Doctor route to confirm a pending appointment.
-    Requires a token number from the form.
-    """
     if session.get("user_type") != "doctor":
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
 
     appointment = Appointment.query.get_or_404(appointment_id)
-
-    # Ensure the doctor is confirming their own appointment
     if appointment.doctor_id != session.get("user_id"):
         flash("You can only confirm appointments assigned to you.", "danger")
         return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
 
-    # Retrieve the token number from the form submission
     token_number = request.form.get('token_number')
-
     if not token_number:
         flash("Token number is required to confirm an appointment.", "warning")
         return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
 
     if appointment.status == 'pending':
         appointment.status = "confirmed"
-        # Assign the token number provided by the doctor
         appointment.token_number = token_number
 
         try:
             db.session.commit()
             flash(f"Appointment {appointment_id} for {appointment.patient.fullName} confirmed with Token: {token_number}.", "success")
+
+            # ✅ Send notification to patient
+            if appointment.patient.player_id:
+                send_push_notification(
+                    player_id=appointment.patient.player_id,
+                    heading="Appointment Confirmed",
+                    content=f"Your appointment with Dr. {appointment.doctor.name} is confirmed. Token: {token_number}."
+                )
+
         except Exception as e:
             db.session.rollback()
             flash(f"Error confirming appointment: {e}", "danger")
     else:
         flash(f"Appointment {appointment_id} is already '{appointment.status}'. Only pending appointments can be confirmed.", "warning")
-    
-    # Redirect back to the doctor's appointments page
+
     return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
 
 
-# --- Original /doctor/appointments/cancel/<int:appointment_id> route ---
 @app.route("/doctor/appointments/cancel/<int:appointment_id>")
 def cancel_appointment_by_doctor(appointment_id):
-    """
-    Doctor route to cancel a pending or confirmed appointment.
-    """
     if session.get("user_type") != "doctor":
         flash("Unauthorized access", "danger")
         return redirect(url_for("login_page"))
 
     appointment = Appointment.query.get_or_404(appointment_id)
-
-    # Ensure the doctor is cancelling their own appointment
     if appointment.doctor_id != session.get("user_id"):
         flash("You can only cancel appointments assigned to you.", "danger")
         return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
 
     if appointment.status in ['pending', 'confirmed']:
-        appointment.status = "cancelled" # Changed status to 'cancelled' for doctor actions
+        appointment.status = "cancelled"
         try:
             db.session.commit()
             flash(f"Appointment {appointment_id} for {appointment.patient.fullName} cancelled.", "warning")
+
+            # ✅ Notify patient
+            if appointment.patient.player_id:
+                send_push_notification(
+                    player_id=appointment.patient.player_id,
+                    heading="Appointment Cancelled",
+                    content=f"Your appointment with Dr. {appointment.doctor.name} has been cancelled."
+                )
+
         except Exception as e:
             db.session.rollback()
             flash(f"Error cancelling appointment: {e}", "danger")
     else:
         flash(f"Appointment {appointment_id} is already '{appointment.status}'. Cannot cancel.", "warning")
-    
-    # Redirect back to the doctor's appointments page
+
     return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
 
 @app.route("/doctor/profile/<int:user_id>", methods=["GET", "POST"])
