@@ -11,11 +11,19 @@ from datetime import datetime
 
 @app.route('/save_player_id', methods=['POST'])
 def save_player_id():
-    data = request.get_json()
-    player_id = data.get('player_id')
-    # ✅ Save `player_id` in DB against the user
-    print("Received OneSignal Player ID:", player_id)
-    return jsonify({"status": "success"}), 200
+    try:
+        data = request.get_json()
+        player_id = data.get("player_id")
+        if not player_id:
+            return jsonify({"status": "error", "message": "Missing player_id"}), 400
+
+        # You can save to DB here
+        print("📥 Received player_id:", player_id)
+
+        return jsonify({"status": "success", "message": "Player ID saved successfully"})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 @app.route("/")
 def landing_page():
     if "user_id" in session:
