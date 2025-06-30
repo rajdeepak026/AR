@@ -75,36 +75,43 @@
   OneSignalDeferred.push(async function(OneSignal) {
     try {
       console.log("🔄 Initializing OneSignal...");
-      
+
       await OneSignal.init({
         appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
-        notifyButton: {
-          enable: true
+        notifyButton: { enable: true },
+        promptOptions: {
+          slidedown: {
+            enabled: true,
+            autoPrompt: true
+          }
         }
       });
 
       console.log("✅ OneSignal initialized successfully.");
 
-      // Safely get the session object
-      const session = await OneSignal.session;
-      const playerId = session?.user?.id;
+      const isEnabled = await OneSignal.isPushNotificationsEnabled();
+      console.log("🔔 Notifications enabled?", isEnabled);
+
+      if (!isEnabled) {
+        console.warn("❌ Notifications not enabled by user.");
+        return;
+      }
+
+      const playerId = await OneSignal.getUserId();
 
       if (playerId) {
         console.log("✅ Player ID (OneSignal User ID):", playerId);
 
-        // Send player ID to backend
         const response = await fetch('/save_player_id', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ player_id: playerId })
         });
 
         const result = await response.json();
         console.log("📦 Backend response:", result);
       } else {
-        console.warn("⚠️ Player ID not available. User may not be subscribed or allowed notifications.");
+        console.warn("⚠️ Player ID not available.");
       }
 
     } catch (error) {
