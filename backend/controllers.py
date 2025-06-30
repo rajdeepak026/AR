@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request, session, flash, url_for
+from flask import render_template, redirect, request, session, flash, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User, Doctor, Appointment
 from .database import db
@@ -8,28 +8,41 @@ from sqlalchemy.orm import joinedload
 import re
 from datetime import datetime
 
-import requests
 
-def send_push_notification(title, message, user_tag):
-    headers = {
-        "Content-Type": "application/json; charset=utf-8",
-        "Authorization": "os_v2_app_zbmpiyfzkvdmzdlb5ohjjeydxayifrssmpuejo5l3fsm35tcziihrlebm7tnhaufnxiabmrec46lzpsawz44ldahsuykhhpdsph3a4y",  # Get this from OneSignal dashboard
-    }
+@app.route("/save_player_id", methods=["POST"])
+def save_player_id():
+    data = request.get_json()
+    player_id = data.get("player_id")
 
-    payload = {
-        "app_id": "c858f460-b955-46cc-8d61-eb8e949303b8",
-        "headings": {"en": title},
-        "contents": {"en": message},
-        "filters": [
-            {"field": "tag", "key": "user_type", "relation": "=", "value": user_tag}
-        ],
-    }
+    if not player_id:
+        return jsonify({"status": "error", "message": "Player ID missing"}), 400
 
-    response = requests.post(
-        "https://onesignal.com/api/v1/notifications", headers=headers, json=payload
-    )
+    user_type = session.get("user_type")
+    user_id = session.get("user_id")
 
-    return response.json()
+    if not user_type or not user_id:
+        return jsonify({"status": "error", "message": "Not logged in"}), 401
+
+    try:
+        if user_type == "doctor":
+            doctor = Doctor.query.get(user_id)
+            if doctor:
+                doctor.player_id = player_id
+                db.session.commit()
+                return jsonify({"status": "success"}), 200
+        else:
+            user = User.query.get(user_id)
+            if user:
+                user.player_id = player_id
+                db.session.commit()
+                return jsonify({"status": "success"}), 200
+
+        return jsonify({"status": "error", "message": "User not found"}), 404
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Save Player ID Error: {e}")
+        return jsonify({"status": "error", "message": "Internal server error"}), 500
 
 @app.route("/")
 def landing_page():
@@ -652,7 +665,28 @@ def search_doctors():
     )
 
 
-from datetime import datetime  # Ensure this is at the top of your file
+import requests
+from datetime import datetime
+
+def send_push_notification(player_id, heading, content):
+    url = "https://onesignal.com/api/v1/notifications"
+    headers = {
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": "Basic kus37ni6auldnwy3jruygbw7h"  # 🔁 Replace this
+    }
+    payload = {
+        "app_id": "b247bbe3-988e-4438-b5b2-74207755fea4",  # 🔁 Your OneSignal App ID
+        "include_player_ids": [player_id],
+        "headings": {"en": heading},
+        "contents": {"en": content}
+    }
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code != 200:
+            print("Push failed:", response.json())
+    except Exception as e:
+        print("Push error:", e)
+
 
 @app.route("/user/book_appointment", methods=["GET", "POST"])
 def book_appointment():
@@ -721,12 +755,13 @@ def book_appointment():
             db.session.add(new_appointment)
             db.session.commit()
 
-            # ✅ Send push notification to doctors
-            send_push_notification(
-                "New Appointment",
-                f"New appointment request from {current_user.name} on {appointment_date} at {appointment_time}.",
-                user_tag="doctor"
-            )
+            # ✅ Push notification to doctor
+            if doctor_for_booking.fcm_token:
+                send_push_notification(
+                    doctor_for_booking.fcm_token,
+                    "New Appointment",
+                    f"{current_user.fullName} booked an appointment with you on {appointment_date} at {appointment_time}."
+                )
 
             flash("Appointment booked successfully! It is pending doctor's approval.", "success")
             return redirect(url_for('my_appointments'))
@@ -735,9 +770,7 @@ def book_appointment():
             db.session.rollback()
             flash(f"An error occurred while booking the appointment: {e}", "danger")
             app.logger.error(f"Appointment booking error: {e}")
-
-        # Fetch the selected doctor again to render page correctly after failure
-        selected_doctor = doctor_for_booking
+            selected_doctor = doctor_for_booking  # To keep page rendering intact
 
     return render_template(
         "user/book_appointment.html",

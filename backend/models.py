@@ -12,6 +12,7 @@ class User(db.Model):
     address = db.Column(db.String(), nullable=False)
     password = db.Column(db.String(), nullable=False)
     type = db.Column(db.String(), default="general")
+    fcm_token = db.Column(db.Text)  # this stores the OneSignal player ID
 
     appointments = db.relationship('Appointment', backref='patient', lazy=True, primaryjoin="User.id == Appointment.user_id")
 
