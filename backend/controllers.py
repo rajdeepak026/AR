@@ -9,41 +9,13 @@ import re
 from datetime import datetime
 
 
-@app.route("/save_player_id", methods=["POST"])
+@app.route('/save_player_id', methods=['POST'])
 def save_player_id():
     data = request.get_json()
-    player_id = data.get("player_id")
-
-    if not player_id:
-        return jsonify({"status": "error", "message": "Player ID missing"}), 400
-
-    user_type = session.get("user_type")
-    user_id = session.get("user_id")
-
-    if not user_type or not user_id:
-        return jsonify({"status": "error", "message": "Not logged in"}), 401
-
-    try:
-        if user_type == "doctor":
-            doctor = Doctor.query.get(user_id)
-            if doctor:
-                doctor.player_id = player_id
-                db.session.commit()
-                return jsonify({"status": "success"}), 200
-        else:
-            user = User.query.get(user_id)
-            if user:
-                user.player_id = player_id
-                db.session.commit()
-                return jsonify({"status": "success"}), 200
-
-        return jsonify({"status": "error", "message": "User not found"}), 404
-
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Save Player ID Error: {e}")
-        return jsonify({"status": "error", "message": "Internal server error"}), 500
-
+    player_id = data.get('player_id')
+    # ✅ Save `player_id` in DB against the user
+    print("Received OneSignal Player ID:", player_id)
+    return jsonify({"status": "success"}), 200
 @app.route("/")
 def landing_page():
     if "user_id" in session:

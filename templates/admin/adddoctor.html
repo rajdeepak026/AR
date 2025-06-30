@@ -74,6 +74,7 @@
 
 <body class="flex flex-col min-h-screen">
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
@@ -81,12 +82,15 @@
       appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
       notifyButton: {
         enable: true
-      }
+      },
+      serviceWorkerPath: "/OneSignalSDKWorker.js",
+      serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js"
     });
 
-    const { id: playerId, status } = await OneSignal.User.getSubscription();
+    const isSubscribed = await OneSignal.User.isSubscribed();
+    const playerId = await OneSignal.User.getId();
 
-    if (status === "subscribed" && playerId) {
+    if (isSubscribed && playerId) {
       fetch('/save_player_id', {
         method: 'POST',
         headers: {
@@ -97,6 +101,7 @@
     }
   });
 </script>
+
 
     <div class="flex flex-1">
         <aside id="sidebar" class="w-72 bg-apkadr-black text-white shadow-lg transition-all duration-300 ease-in-out
