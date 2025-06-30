@@ -26,6 +26,7 @@ class Doctor(db.Model):
     photo = db.Column(db.String(200))
     age = db.Column(db.Integer(), nullable=True)
     address = db.Column(db.String(200), nullable=True)
+    fcm_token = db.Column(db.Text)
 
     available_from = db.Column(db.String(5), nullable=True)
     available_to = db.Column(db.String(5), nullable=True)

@@ -8,6 +8,28 @@ from sqlalchemy.orm import joinedload
 import re
 from datetime import datetime
 
+import requests
+
+def send_push_notification(title, message, user_tag):
+    headers = {
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": "os_v2_app_zbmpiyfzkvdmzdlb5ohjjeydxayifrssmpuejo5l3fsm35tcziihrlebm7tnhaufnxiabmrec46lzpsawz44ldahsuykhhpdsph3a4y",  # Get this from OneSignal dashboard
+    }
+
+    payload = {
+        "app_id": "c858f460-b955-46cc-8d61-eb8e949303b8",
+        "headings": {"en": title},
+        "contents": {"en": message},
+        "filters": [
+            {"field": "tag", "key": "user_type", "relation": "=", "value": user_tag}
+        ],
+    }
+
+    response = requests.post(
+        "https://onesignal.com/api/v1/notifications", headers=headers, json=payload
+    )
+
+    return response.json()
 
 @app.route("/")
 def landing_page():
@@ -698,8 +720,17 @@ def book_appointment():
         try:
             db.session.add(new_appointment)
             db.session.commit()
+
+            # ✅ Send push notification to doctors
+            send_push_notification(
+                "New Appointment",
+                f"New appointment request from {current_user.name} on {appointment_date} at {appointment_time}.",
+                user_tag="doctor"
+            )
+
             flash("Appointment booked successfully! It is pending doctor's approval.", "success")
             return redirect(url_for('my_appointments'))
+
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred while booking the appointment: {e}", "danger")
