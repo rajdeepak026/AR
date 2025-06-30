@@ -140,60 +140,39 @@
 </head>
 
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
-<!-- Load OneSignal SDK -->
-<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
-  // Create OneSignal queue or use existing one
-  window.OneSignal = window.OneSignal || [];
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
+      notifyButton: {
+        enable: true
+      }
+    });
 
-  OneSignal.push(async function() {
-    try {
-      console.log("🔄 Initializing OneSignal...");
+    // Check notification permission
+    const permission = await OneSignal.Notifications.permission;
+    if (permission !== 'granted') {
+      console.log("Requesting permission...");
+      await OneSignal.Notifications.requestPermission();
+    }
 
-      await OneSignal.init({
-        appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
-        notifyButton: { enable: true },
-        promptOptions: {
-          slidedown: {
-            enabled: true,
-            autoPrompt: true
-          }
-        }
+    // Get player ID from subscription
+    const subscription = await OneSignal.User.PushSubscription.get();
+    if (subscription && subscription.id) {
+      console.log("Player ID:", subscription.id);
+
+      // Send player ID to backend
+      fetch('/save_player_id', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ player_id: subscription.id })
       });
-
-      console.log("✅ OneSignal initialized successfully.");
-
-      const isEnabled = await OneSignal.isPushNotificationsEnabled();
-      console.log("🔔 Notifications enabled?", isEnabled);
-
-      if (!isEnabled) {
-        console.warn("❌ Notifications not enabled by user.");
-        // Optionally, you can manually prompt the user here:
-        // await OneSignal.showSlidedownPrompt();
-        return;
-      }
-
-      const playerId = await OneSignal.getUserId();
-
-      if (playerId) {
-        console.log("✅ Player ID (OneSignal User ID):", playerId);
-
-        // Send the player ID to your backend
-        const response = await fetch('/save_player_id', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ player_id: playerId })
-        });
-
-        const result = await response.json();
-        console.log("📦 Backend response:", result);
-      } else {
-        console.warn("⚠️ Player ID not available.");
-      }
-
-    } catch (error) {
-      console.warn("🚫 OneSignal error caught:", error?.message || error);
+    } else {
+      console.warn("User not subscribed or no player ID available.");
     }
   });
 </script>

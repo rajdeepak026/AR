@@ -74,7 +74,6 @@
 
 <body class="flex flex-col min-h-screen">
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
@@ -96,7 +95,7 @@
     const subscription = await OneSignal.User.PushSubscription.get();
     if (subscription && subscription.id) {
       console.log("Player ID:", subscription.id);
-      
+
       // Send player ID to backend
       fetch('/save_player_id', {
         method: 'POST',
@@ -110,6 +109,7 @@
     }
   });
 </script>
+
 
 
     <div class="flex flex-1">
