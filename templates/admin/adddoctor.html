@@ -82,22 +82,31 @@
       appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
       notifyButton: {
         enable: true
-      },
-      serviceWorkerPath: "/OneSignalSDKWorker.js",
-      serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js"
+      }
     });
 
-    const isSubscribed = await OneSignal.User.isSubscribed();
-    const playerId = await OneSignal.User.getId();
+    // Check notification permission
+    const permission = await OneSignal.Notifications.permission;
+    if (permission !== 'granted') {
+      console.log("Requesting permission...");
+      await OneSignal.Notifications.requestPermission();
+    }
 
-    if (isSubscribed && playerId) {
+    // Get player ID from subscription
+    const subscription = await OneSignal.User.PushSubscription.get();
+    if (subscription && subscription.id) {
+      console.log("Player ID:", subscription.id);
+      
+      // Send player ID to backend
       fetch('/save_player_id', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ player_id: playerId })
+        body: JSON.stringify({ player_id: subscription.id })
       });
+    } else {
+      console.warn("User not subscribed or no player ID available.");
     }
   });
 </script>
