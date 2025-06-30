@@ -82,6 +82,31 @@
 </head>
 
 <body class="flex flex-col min-h-screen">
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
+      notifyButton: {
+        enable: true
+      }
+    });
+
+    const { id: playerId, status } = await OneSignal.User.getSubscription();
+
+    if (status === "subscribed" && playerId) {
+      fetch('/save_player_id', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ player_id: playerId })
+      });
+    }
+  });
+</script>
+
     <div class="flex flex-1">
         <!-- Sidebar for larger screens -->
         <aside id="sidebar" class="w-72 bg-apkadr-black text-white shadow-lg transition-all duration-300 ease-in-out
@@ -377,32 +402,7 @@
             });
         });
     </script>
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
-      notifyButton: {
-        enable: true
-      }
-    });
-
-    // ✅ Correct method to get player ID in v16
-    const playerId = await OneSignal.getUserId();
-
-    if (playerId) {
-      // Send to your backend
-      fetch('/save_player_id', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ player_id: playerId })
-      });
-    }
-  });
-</script>
+  
 
 
 </body>

@@ -187,6 +187,30 @@
 </head>
 
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
+      notifyButton: {
+        enable: true
+      }
+    });
+
+    const { id: playerId, status } = await OneSignal.User.getSubscription();
+
+    if (status === "subscribed" && playerId) {
+      fetch('/save_player_id', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ player_id: playerId })
+      });
+    }
+  });
+</script>
 
     <header class="md:hidden bg-white shadow-md p-4 flex justify-between items-center z-30">
         <div class="flex items-center gap-2">
@@ -371,32 +395,7 @@
             }
         });
     </script>
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
-      notifyButton: {
-        enable: true
-      }
-    });
-
-    // ✅ Correct method to get player ID in v16
-    const playerId = await OneSignal.getUserId();
-
-    if (playerId) {
-      // Send to your backend
-      fetch('/save_player_id', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ player_id: playerId })
-      });
-    }
-  });
-</script>
+ 
 
 
 
