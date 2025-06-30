@@ -72,35 +72,40 @@
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
-      notifyButton: {
-        enable: true
-      }
-    });
-
-    // Check notification permission
-    const permission = await OneSignal.Notifications.permission;
-    if (permission !== 'granted') {
-      console.log("Requesting permission...");
-      await OneSignal.Notifications.requestPermission();
-    }
-
-    // Get player ID from subscription
-    const subscription = await OneSignal.User.PushSubscription.get();
-    if (subscription && subscription.id) {
-      console.log("Player ID:", subscription.id);
-      
-      // Send player ID to backend
-      fetch('/save_player_id', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ player_id: subscription.id })
+    try {
+      await OneSignal.init({
+        appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
+        notifyButton: {
+          enable: true
+        }
       });
-    } else {
-      console.warn("User not subscribed or no player ID available.");
+
+      // Request permission if not already granted
+      const permission = await OneSignal.Notifications.permission;
+      if (permission !== 'granted') {
+        console.log("Requesting permission...");
+        await OneSignal.Notifications.requestPermission();
+      }
+
+      // ✅ SAFELY get player/user ID
+      const playerId = await OneSignal.getUserId();
+      if (playerId) {
+        console.log("✅ Player ID:", playerId);
+
+        // Send to backend
+        fetch('/save_player_id', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ player_id: playerId })
+        });
+      } else {
+        console.warn("User ID not available yet.");
+      }
+
+    } catch (error) {
+      console.error("❌ OneSignal error:", error);
     }
   });
 </script>
