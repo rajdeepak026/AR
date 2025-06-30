@@ -266,7 +266,8 @@
       }
     });
 
-    const playerId = await OneSignal.getUserId();
+    // ✅ Updated method for SDK v16+
+    const playerId = await OneSignal.User.getId(); 
     if (playerId) {
       // Send to your backend via fetch
       fetch('/save_player_id', {
@@ -279,6 +280,7 @@
     }
   });
 </script>
+
 
 </body>
 </html>
