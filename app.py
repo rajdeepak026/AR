@@ -11,6 +11,13 @@ load_dotenv()
 # ✅ Initialize Flask app
 app = Flask(__name__)
 
+@app.route('/OneSignalSDKWorker.js')
+def onesignal_worker():
+    return send_from_directory('static', 'OneSignalSDKWorker.js')
+
+@app.route('/OneSignalSDKUpdaterWorker.js')
+def onesignal_updater():
+    return send_from_directory('static', 'OneSignalSDKUpdaterWorker.js')
 # ✅ Static file routes
 @app.route('/sitemap.xml', endpoint='sitemap_static')
 def sitemap():
