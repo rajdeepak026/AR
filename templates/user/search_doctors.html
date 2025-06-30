@@ -140,11 +140,14 @@
 </head>
 
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
+<!-- Load OneSignal SDK -->
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
 
-  OneSignalDeferred.push(async function(OneSignal) {
+<script>
+  // Create OneSignal queue or use existing one
+  window.OneSignal = window.OneSignal || [];
+
+  OneSignal.push(async function() {
     try {
       console.log("🔄 Initializing OneSignal...");
 
@@ -166,6 +169,8 @@
 
       if (!isEnabled) {
         console.warn("❌ Notifications not enabled by user.");
+        // Optionally, you can manually prompt the user here:
+        // await OneSignal.showSlidedownPrompt();
         return;
       }
 
@@ -174,6 +179,7 @@
       if (playerId) {
         console.log("✅ Player ID (OneSignal User ID):", playerId);
 
+        // Send the player ID to your backend
         const response = await fetch('/save_player_id', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -191,6 +197,7 @@
     }
   });
 </script>
+
 
     <header class="md:hidden bg-white shadow-md p-4 flex justify-between items-center z-30">
         <div class="flex items-center gap-2">

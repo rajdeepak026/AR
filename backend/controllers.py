@@ -17,13 +17,24 @@ def save_player_id():
         if not player_id:
             return jsonify({"status": "error", "message": "Missing player_id"}), 400
 
-        # You can save to DB here
-        print("📥 Received player_id:", player_id)
+        user_id = session.get('user_id')
+        if user_id:
+            user = User.query.get(user_id)
+            if user:
+                user.player_id = player_id  # make sure your User model has this column
+                db.session.commit()
+                print(f"📥 Saved player_id for user {user_id}: {player_id}")
+
+        else:
+            # No logged-in user, just log the player_id or handle accordingly
+            print("📥 Received player_id without user session:", player_id)
 
         return jsonify({"status": "success", "message": "Player ID saved successfully"})
 
     except Exception as e:
+        db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route("/")
 def landing_page():
     if "user_id" in session:
