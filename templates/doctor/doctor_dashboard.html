@@ -90,9 +90,13 @@
   OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
+      serviceWorkerPath: "/OneSignalSDKWorker.js",
+      serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js",
+      notifyButton: { enable: true }
     });
   });
 </script>
+
 
   <div class="flex flex-1">
     <aside id="sidebar" class="w-64 bg-gray-900 text-white p-4 shadow-lg transition-all duration-300 ease-in-out
