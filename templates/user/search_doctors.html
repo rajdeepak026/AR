@@ -140,11 +140,6 @@
 </head>
 
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
-<!-- Load OneSignal SDK -->
-<!-- <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script> -->
-
-<!-- Then your init script -->
-<script src="/static/js/onesignal-init.js"></script>
 
 
     <header class="md:hidden bg-white shadow-md p-4 flex justify-between items-center z-30">
@@ -395,6 +390,11 @@
         });
     </script>
   
+<!-- OneSignal SDK (must be first) -->
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+
+<!-- Your custom init script -->
+<script src="{{ url_for('static', filename='js/onesignal-init.js') }}"></script>
 
 
 </body>

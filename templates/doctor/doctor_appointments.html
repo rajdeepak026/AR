@@ -135,17 +135,6 @@
 </head>
 
 <body class="flex flex-col min-h-screen">
-  <!-- Load OneSignal SDK -->
-<!-- <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script> -->
-
-<!-- Then your init script -->
-<script src="/static/js/onesignal-init.js"></script>
-
-
-
-
-
-
     <div class="flex flex-1">
         <aside id="sidebar" class="w-64 bg-gray-900 text-white p-4 shadow-lg transition-all duration-300 ease-in-out
                        hidden lg:flex flex-col flex-shrink-0 rounded-tr-xl rounded-br-xl">
@@ -367,7 +356,12 @@
             });
         });
     </script>
-  
+  <!-- OneSignal SDK (must be first) -->
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+
+<!-- Your custom init script -->
+<script src="{{ url_for('static', filename='js/onesignal-init.js') }}"></script>
+
 
 </body>
 

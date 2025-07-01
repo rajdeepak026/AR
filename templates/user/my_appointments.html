@@ -213,18 +213,6 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
-<!-- Load OneSignal SDK -->
-<!-- <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script> -->
-
-<!-- Then your init script -->
-<script src="/static/js/onesignal-init.js"></script>
-
-
-
-
-
-
-
     <header class="md:hidden bg-white shadow-md p-4 flex justify-between items-center z-30">
         <div class="flex items-center gap-2">
             <img src="/static/images/apkadr.logo.jpg" alt="ApkaDr. Logo" class="h-10 w-10 rounded-full object-cover border border-indigo-600">
@@ -489,88 +477,12 @@
             checkAndShowStatusToast(); 
         });
 
-        // --- Recommended: Using AJAX for periodic updates instead of full page reload ---
-        // This requires an API endpoint (e.g., /api/appointments/status) that returns
-        // the current status of appointments for the logged-in user.
-
-        /*
-        async function fetchAndUpdateAppointmentStatuses() {
-            try {
-                // Replace with your actual API endpoint for fetching appointment statuses
-                const response = await fetch('/api/appointments/status'); 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const appointments = await response.json(); // Assuming your API returns JSON
-
-                const userName = "{{ user.full_name if user else 'प्रिय उपयोगकर्ता' }}"; // Fallback to 'प्रिय उपयोगकर्ता' for Hindi
-                let newStatusFound = false;
-
-                appointments.forEach(appointment => {
-                    const appointmentId = String(appointment.id); // Ensure ID is a string for Set
-                    const status = appointment.status.toLowerCase();
-
-                    // Find the corresponding element in the DOM and update its text and class
-                    const element = document.querySelector(`.appointment-status[data-appointment-id="${appointmentId}"]`);
-                    if (element) {
-                        element.textContent = appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1); // Capitalize first letter
-                        if (status === 'confirmed') {
-                            element.classList.remove('bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800', 'bg-gray-100', 'text-gray-800');
-                            element.classList.add('bg-green-100', 'text-green-800');
-                        } else if (status === 'rejected') {
-                            element.classList.remove('bg-yellow-100', 'text-yellow-800', 'bg-green-100', 'text-green-800', 'bg-gray-100', 'text-gray-800');
-                            element.classList.add('bg-red-100', 'text-red-800');
-                        } else if (status === 'pending') {
-                            element.classList.remove('bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-gray-100', 'text-gray-800');
-                            element.classList.add('bg-yellow-100', 'text-yellow-800');
-                        } else {
-                            element.classList.remove('bg-yellow-100', 'text-yellow-800', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
-                            element.classList.add('bg-gray-100', 'text-gray-800');
-                        }
-                    }
-
-                    if (status === 'confirmed' && !confirmedAppointmentIds.has(appointmentId)) {
-                        showToast(
-                            'अपॉइंटमेंट स्वीकृत!', 
-                            `${userName}, आपका अपॉइंटमेंट सफलतापूर्वक स्वीकृत हो गया है।`, 
-                            'text-green-500 fas fa-check-circle'
-                        );
-                        confirmedAppointmentIds.add(appointmentId);
-                        rejectedAppointmentIds.delete(appointmentId); // If it was previously rejected, now confirmed
-                        newStatusFound = true;
-                    } else if (status === 'rejected' && !rejectedAppointmentIds.has(appointmentId)) {
-                        showToast(
-                            'अपॉइंटमेंट अस्वीकृत!', 
-                            `${userName}, आपका अपॉइंटमेंट अस्वीकृत हो गया है।`, 
-                            'text-red-500 fas fa-times-circle'
-                        );
-                        rejectedAppointmentIds.add(appointmentId);
-                        confirmedAppointmentIds.delete(appointmentId); // If it was previously confirmed, now rejected (unlikely)
-                        newStatusFound = true;
-                    }
-                });
-
-                if (newStatusFound) {
-                    sessionStorage.setItem('confirmedAppointmentIds', JSON.stringify(Array.from(confirmedAppointmentIds)));
-                    sessionStorage.setItem('rejectedAppointmentIds', JSON.stringify(Array.from(rejectedAppointmentIds)));
-                }
-
-            } catch (error) {
-                console.error("Failed to fetch appointment statuses:", error);
-                // Optionally show an error toast here
-            }
-        }
-
-        // Call the AJAX function periodically
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initial call
-            fetchAndUpdateAppointmentStatuses(); 
-
-            // Set interval for periodic checks (e.g., every 10 seconds)
-            setInterval(fetchAndUpdateAppointmentStatuses, 10000); // 10 seconds
-        });
-        */
     </script>
+<!-- OneSignal SDK (must be first) -->
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+
+<!-- Your custom init script -->
+<script src="{{ url_for('static', filename='js/onesignal-init.js') }}"></script>
  
 
 

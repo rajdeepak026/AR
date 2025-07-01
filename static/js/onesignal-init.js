@@ -1,29 +1,31 @@
-// Ensure OneSignalDeferred is defined
-window.OneSignalDeferred = window.OneSignalDeferred || [];
+window.OneSignal = window.OneSignal || [];
+OneSignal.push(function () {
+  console.log("Initializing OneSignal...");
 
-// Add your init logic to the queue
-window.OneSignalDeferred.push(async function (OneSignal) {
-  await OneSignal.init({
+  OneSignal.init({
     appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
-    notifyButton: { enable: true },
-    allowLocalhostAsSecureOrigin: true // Remove in production if not needed
+    allowLocalhostAsSecureOrigin: true,
+    notifyButton: {
+      enable: true,
+    },
   });
 
-  const isPushSupported = await OneSignal.isPushNotificationsSupported();
-  if (isPushSupported) {
-    const permission = await OneSignal.getNotificationPermission();
-    if (permission === 'granted') {
-      const userId = await OneSignal.getUserId();
-      if (userId) {
-        console.log("📬 Player ID:", userId);
-        fetch('/save_player_id', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ player_id: userId })
-        });
-      }
+  // 🔄 After initialization, get and store the player's ID
+  OneSignal.getUserId().then(function (playerId) {
+    console.log("OneSignal Player ID:", playerId);
+    if (playerId) {
+      // Send the player ID to your Flask backend with the correct field name: fcm_token
+      fetch("/store_player_id", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fcm_token: playerId })
+      }).then(res => {
+        if (res.ok) {
+          console.log("Player ID stored successfully.");
+        } else {
+          console.warn("Failed to store player ID.");
+        }
+      });
     }
-  } else {
-    console.warn("Push notifications not supported in this browser.");
-  }
+  });
 });

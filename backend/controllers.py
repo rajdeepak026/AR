@@ -34,6 +34,22 @@ def save_player_id():
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
+@app.route("/store_player_id", methods=["POST"])
+def store_player_id():
+    if session.get("user_type") != "general":
+        return "Unauthorized", 403
+
+    user = User.query.get(session["user_id"])
+    data = request.get_json()
+    token = data.get("fcm_token")
+
+    if token:
+        user.fcm_token = token
+        db.session.commit()
+        return "OK", 200
+
+    return "Missing fcm_token", 400
+
 
 @app.route("/")
 def landing_page():
@@ -257,13 +273,15 @@ def confirm_appointment_by_doctor(appointment_id):
             db.session.commit()
             flash(f"Appointment {appointment_id} for {appointment.patient.fullName} confirmed with Token: {token_number}.", "success")
 
-            # ✅ Send notification to patient
-            if appointment.patient.player_id:
+            # ✅ Send notification to patient using fcm_token (correct field)
+            if appointment.patient.fcm_token:
                 send_push_notification(
-                    player_id=appointment.patient.player_id,
+                    player_id=appointment.patient.fcm_token,
                     heading="Appointment Confirmed",
-                    content=f"Your appointment with Dr. {appointment.doctor.name} is confirmed. Token: {token_number}."
+                    content=f"Your appointment with Dr. {appointment.doctor.full_name} is confirmed. Token: {token_number}."
                 )
+            else:
+                app.logger.warning(f"Patient {appointment.patient.id} has no fcm_token set.")
 
         except Exception as e:
             db.session.rollback()
