@@ -16,8 +16,12 @@ def onesignal_worker():
     return send_from_directory('static', 'OneSignalSDKWorker.js')
 
 @app.route('/OneSignalSDKUpdaterWorker.js')
-def onesignal_updater():
+def onesignal_updater_worker():
     return send_from_directory('static', 'OneSignalSDKUpdaterWorker.js')
+
+@app.route('/OneSignalSDK.sw.js')
+def onesignal_sw():
+    return send_from_directory('static', 'OneSignalSDK.sw.js')
 # ✅ Static file routes
 @app.route('/sitemap.xml', endpoint='sitemap_static')
 def sitemap():
