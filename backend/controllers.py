@@ -83,16 +83,16 @@ def save_player_id():
         return jsonify({"status": "error", "message": str(e)}), 500
 @app.route("/store_player_id", methods=["POST"])
 def store_player_id():
-    if session.get("user_type") != "general":
-        return "Unauthorized", 403
-    user = User.query.get(session["user_id"])
+    if "user_id" not in session:
+        return "Unauthorized", 401
+
     data = request.get_json()
     token = data.get("fcm_token")
-    if token:
-        user.fcm_token = token
-        db.session.commit()
-        return "OK", 200
-    return "Missing fcm_token", 400
+
+    user = User.query.get(session["user_id"])
+    user.fcm_token = token
+    db.session.commit()
+    return "OK", 200
 
 @app.route("/")
 def landing_page():
