@@ -85,48 +85,14 @@
 <body class="flex flex-col min-h-screen">
   <!-- OneSignal SDK Script (only include once!) -->
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function (OneSignal) {
+  OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
-      notifyButton: {
-        enable: true
-      }
     });
-
-    // Check and request permission if not already granted
-    const permission = await OneSignal.Notifications.permission;
-    if (permission !== 'granted') {
-      console.log("Requesting permission...");
-      await OneSignal.Notifications.requestPermission();
-    }
-
-    // Check if user is subscribed and get userId (player_id)
-    const isSubscribed = await OneSignal.Notifications.isPushSupported()
-      ? await OneSignal.Notifications.isSubscribed()
-      : false;
-
-    const userId = await OneSignal.User.getId();
-
-    if (isSubscribed && userId) {
-      console.log("Player ID:", userId);
-
-      // Send player ID to backend
-      fetch('/save_player_id', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ player_id: userId })
-      });
-    } else {
-      console.warn("User not subscribed or no user ID available.");
-    }
   });
 </script>
-
 
   <div class="flex flex-1">
     <aside id="sidebar" class="w-64 bg-gray-900 text-white p-4 shadow-lg transition-all duration-300 ease-in-out
