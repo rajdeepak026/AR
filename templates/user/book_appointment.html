@@ -101,21 +101,12 @@
 
 <body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col">
 <!-- OneSignal SDK Script (only include once!) -->
+<!-- Load OneSignal SDK -->
 <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-<script>
-  window.OneSignal = window.OneSignal || [];
-  OneSignal.push(function () {
-    OneSignal.init({
-      appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
-      serviceWorkerPath: "/OneSignalSDKWorker.js",
-      serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js",
-      serviceWorkerParam: { scope: "/" },
-      notifyButton: {
-        enable: true,
-      },
-    });
-  });
-</script>
+
+<!-- Your init code AFTER SDK -->
+<script src="/static/js/onesignal-init.js"></script>
+
 
 
 
