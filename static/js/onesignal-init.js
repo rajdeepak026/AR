@@ -1,28 +1,29 @@
-window.OneSignalDeferred.push(async function(OneSignal) {
+// Ensure OneSignalDeferred is defined
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+
+// Add your init logic to the queue
+window.OneSignalDeferred.push(async function (OneSignal) {
   await OneSignal.init({
     appId: "b247bbe3-988e-4438-b5b2-74207755fea4",
-    notifyButton: { enable: true }, // optional UI
-    allowLocalhostAsSecureOrigin: true // only for dev
+    notifyButton: { enable: true },
+    allowLocalhostAsSecureOrigin: true // Remove in production if not needed
   });
 
   const isPushSupported = await OneSignal.isPushNotificationsSupported();
   if (isPushSupported) {
     const permission = await OneSignal.getNotificationPermission();
     if (permission === 'granted') {
-      const userId = await OneSignal.getUserId(); // This is the player_id
+      const userId = await OneSignal.getUserId();
       if (userId) {
+        console.log("📬 Player ID:", userId);
         fetch('/save_player_id', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ player_id: userId })
         });
       }
-    } else {
-      console.warn('Notification permission not granted:', permission);
     }
   } else {
-    console.warn('Push notifications are not supported');
+    console.warn("Push notifications not supported in this browser.");
   }
 });
