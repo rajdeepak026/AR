@@ -31,6 +31,18 @@ def send_push_notification(player_id, heading, content):
         print("Response:", response.json())
     except Exception as e:
         print("Push error:", e)
+@app.route("/force_push")
+def force_push():
+    user = User.query.filter(User.fcm_token.isnot(None)).first()
+    if not user:
+        return "❌ No user with fcm_token"
+
+    send_push_notification(
+        player_id=user.fcm_token,
+        heading="🔔 Real Notification",
+        content="Test from /force_push"
+    )
+    return "✅ Force push sent"
 
 @app.route("/test_push")
 def test_push():
