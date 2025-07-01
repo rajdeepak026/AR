@@ -7,7 +7,38 @@ from datetime import date
 from sqlalchemy.orm import joinedload
 import re
 from datetime import datetime
+import requests
 
+def send_push_notification(player_id, heading, content):
+    url = "https://onesignal.com/api/v1/notifications"
+    headers = {
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": "Basic kus37ni6auldnwy3jruygbw7h"
+    }
+    payload = {
+        "app_id": "b247bbe3-988e-4438-b5b2-74207755fea4",
+        "include_player_ids": [player_id],
+        "headings": {"en": heading},
+        "contents": {"en": content}
+    }
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        print("Push status:", response.status_code)
+        print("Response:", response.json())
+    except Exception as e:
+        print("Push error:", e)
+
+@app.route("/test_push")
+def test_push():
+    user = User.query.first()  # Or current user
+    if not user.fcm_token:
+        return "No token found"
+    send_push_notification(
+        player_id=user.fcm_token,
+        heading="Test",
+        content="This is a test push"
+    )
+    return "Notification sent"
 
 @app.route('/save_player_id', methods=['POST'])
 def save_player_id():
@@ -38,18 +69,14 @@ def save_player_id():
 def store_player_id():
     if session.get("user_type") != "general":
         return "Unauthorized", 403
-
     user = User.query.get(session["user_id"])
     data = request.get_json()
     token = data.get("fcm_token")
-
     if token:
         user.fcm_token = token
         db.session.commit()
         return "OK", 200
-
     return "Missing fcm_token", 400
-
 
 @app.route("/")
 def landing_page():
@@ -256,14 +283,19 @@ def confirm_appointment_by_doctor(appointment_id):
         return redirect(url_for("login_page"))
 
     appointment = Appointment.query.get_or_404(appointment_id)
-    if appointment.doctor_id != session.get("user_id"):
+    doctor_id = session.get("user_id")
+
+    if appointment.doctor_id != doctor_id:
         flash("You can only confirm appointments assigned to you.", "danger")
-        return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
+        return redirect(url_for("doctor_appointments", user_id=doctor_id))
 
     token_number = request.form.get('token_number')
     if not token_number:
         flash("Token number is required to confirm an appointment.", "warning")
-        return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
+        return redirect(url_for("doctor_appointments", user_id=doctor_id))
+
+    # DEBUG LOG
+    print(f"[DEBUG] Doctor {doctor_id} is confirming appointment {appointment_id}")
 
     if appointment.status == 'pending':
         appointment.status = "confirmed"
@@ -271,25 +303,31 @@ def confirm_appointment_by_doctor(appointment_id):
 
         try:
             db.session.commit()
-            flash(f"Appointment {appointment_id} for {appointment.patient.fullName} confirmed with Token: {token_number}.", "success")
+            flash(f"Appointment {appointment_id} confirmed with Token: {token_number}.", "success")
+            print(f"[DEBUG] Appointment {appointment_id} confirmed in DB")
 
-            # ✅ Send notification to patient using fcm_token (correct field)
-            if appointment.patient.fcm_token:
+            # ✅ Send push notification if fcm_token exists
+            fcm_token = appointment.patient.fcm_token
+            if fcm_token:
+                print(f"[DEBUG] Sending push to fcm_token: {fcm_token}")
                 send_push_notification(
-                    player_id=appointment.patient.fcm_token,
+                    player_id=fcm_token,
                     heading="Appointment Confirmed",
                     content=f"Your appointment with Dr. {appointment.doctor.full_name} is confirmed. Token: {token_number}."
                 )
             else:
-                app.logger.warning(f"Patient {appointment.patient.id} has no fcm_token set.")
+                print(f"[DEBUG] ❌ No fcm_token found for user {appointment.patient.id}")
+                app.logger.warning(f"No fcm_token for user {appointment.patient.id}")
 
         except Exception as e:
             db.session.rollback()
             flash(f"Error confirming appointment: {e}", "danger")
+            app.logger.error(f"[ERROR] Failed to confirm appointment {appointment_id}: {e}")
     else:
-        flash(f"Appointment {appointment_id} is already '{appointment.status}'. Only pending appointments can be confirmed.", "warning")
+        flash(f"Appointment {appointment_id} is already '{appointment.status}'.", "warning")
+        print(f"[DEBUG] Appointment {appointment_id} already {appointment.status}")
 
-    return redirect(url_for("doctor_appointments", user_id=session.get("user_id")))
+    return redirect(url_for("doctor_appointments", user_id=doctor_id))
 
 
 @app.route("/doctor/appointments/cancel/<int:appointment_id>")
@@ -667,30 +705,6 @@ def search_doctors():
         selected_location=location_filter or "",
         selected_name=name_filter or ""
     )
-
-
-import requests
-from datetime import datetime
-
-def send_push_notification(player_id, heading, content):
-    url = "https://onesignal.com/api/v1/notifications"
-    headers = {
-        "Content-Type": "application/json; charset=utf-8",
-        "Authorization": "Basic kus37ni6auldnwy3jruygbw7h"  # 🔁 Replace this
-    }
-    payload = {
-        "app_id": "b247bbe3-988e-4438-b5b2-74207755fea4",  # 🔁 Your OneSignal App ID
-        "include_player_ids": [player_id],
-        "headings": {"en": heading},
-        "contents": {"en": content}
-    }
-    try:
-        response = requests.post(url, json=payload, headers=headers)
-        if response.status_code != 200:
-            print("Push failed:", response.json())
-    except Exception as e:
-        print("Push error:", e)
-
 
 @app.route("/user/book_appointment", methods=["GET", "POST"])
 def book_appointment():
