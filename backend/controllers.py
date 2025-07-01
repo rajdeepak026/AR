@@ -13,7 +13,7 @@ def send_push_notification(player_id, heading, content):
     url = "https://onesignal.com/api/v1/notifications"
     headers = {
         "Content-Type": "application/json; charset=utf-8",
-        "Authorization": "Basic kus37ni6auldnwy3jruygbw7h"
+        "Authorization": "Basic 73dnctcbru6cvbpg2mukmzt3v"
     }
     payload = {
     "app_id": "b247bbe3-988e-4438-b5b2-74207755fea4",
