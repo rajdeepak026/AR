@@ -13,24 +13,22 @@ def send_push_notification(player_id, heading, content):
     url = "https://onesignal.com/api/v1/notifications"
     headers = {
         "Content-Type": "application/json; charset=utf-8",
-        "Authorization": "Basic 73dnctcbru6cvbpg2mukmzt3v"
+        "Authorization": "Basic 73dnctcbru6cvbpg2mukmzt3v"  # ✅ Use your new REST API key here
     }
     payload = {
-    "app_id": "b247bbe3-988e-4438-b5b2-74207755fea4",
-    "include_player_ids": [player_id],
-    "headings": {"en": heading},
-    "contents": {"en": content},
-    "chrome_web_icon": "https://img.icons8.com/emoji/48/bell-emoji.png",
-    "ttl": 60,
-    "priority": 10
+        "app_id": "b247bbe3-988e-4438-b5b2-74207755fea4",
+        "include_player_ids": [player_id],
+        "headings": {"en": heading},
+        "contents": {"en": content}
     }
 
     try:
-        response = requests.post(url, json=payload, headers=headers)
+        response = requests.post(url, headers=headers, json=payload)
         print("Push status:", response.status_code)
         print("Response:", response.json())
     except Exception as e:
         print("Push error:", e)
+
 @app.route("/force_push")
 def force_push():
     user = User.query.filter(User.fcm_token.isnot(None)).first()
