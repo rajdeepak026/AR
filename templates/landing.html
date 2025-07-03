@@ -2,59 +2,116 @@
 <html lang="en">
 
 <head>
+    <!-- SEO Meta Tags -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ApkaDr. | Book Doctor Appointments Online in Saran & India - Your Health Partner</title>
+    <title>ApkaDr | Book Doctor Appointments Online in Saran & India - Your Health Partner</title>
     <meta name="description"
-        content="ApkaDr. helps you book appointments with trusted doctors in Saran and across India easily from home. Find nearby specialists, check real-time availability, and get quality healthcare securely. Your health, our priority." />
+        content="ApkaDr helps you book appointments with trusted doctors in Saran and across India easily from home. Founded by Raj Deepak (IIT Madras), Armaan Ali, and Adarsh." />
     <meta name="keywords"
-        content="doctor appointment Saran, book doctor online Saran, healthcare India, ApkaDr, telemedicine Saran, doctor near me Saran, online doctor consultation, specialist doctor booking" />
-    <meta name="author" content="ApkaDr Team" />
+        content="doctor appointment Saran, book doctor online Saran, healthcare India, ApkaDr founders, Raj Deepak IIT Madras, Armaan Ali, Adarsh, telemedicine Saran, doctor near me Saran, online doctor consultation" />
+    <meta name="author" content="Raj Deepak, Armaan Ali, Adarsh" />
 
+    <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:title" content="ApkaDr | Book Nearby Doctors Hassle-Free in Saran & Across India" />
     <meta property="og:description"
-        content="Apne najdiki doctor ke pass number lagaye — ghar baithe, bina line me laghe. Use ApkaDr. for a smarter way to health in Saran and beyond. Trusted online doctor booking platform." />
-    <meta property="og:image" content="https://www.apkadr.in/static/images/apkadr.logo.jpg" />
+        content="Apne najdiki doctor ke pass number lagaye — ghar baithe, bina line me laghe. Founded by Raj Deepak (IIT Madras), Armaan Ali, and Adarsh." />
+    <meta property="og:image" content="https://www.apkadr.in/static/images/apkadr-social-preview.jpg" />
     <meta property="og:url" content="https://www.apkadr.in" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ApkaDr | Book Nearby Doctors Hassle-Free in Saran & Across India" />
-    <meta name="twitter:description"
-        content="Apne najdiki doctor ke pass number lagaye — ghar baithe, bina line me laghe. Use ApkaDr. for a smarter way to health in Saran and beyond. Trusted online doctor booking platform." />
-    <meta name="twitter:image" content="https://www.apkadr.in/static/images/apkadr.logo.jpg" />
+
+    <!-- Favicon -->
     <link rel="icon" href="https://www.apkadr.in/static/images/apkadr.logo.jpg" type="image/jpg" />
+
+    <!-- Preload Resources -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://kit.fontawesome.com">
 
-    <!-- Font Awesome CDN -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/a2d0ef8c4e.js" crossorigin="anonymous"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Custom Styles -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
         }
 
         .glass {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
-            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .btn-gradient {
-            background: linear-gradient(to right, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            transition: all 0.3s ease;
         }
 
         .btn-gradient:hover {
-            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .feature-icon {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .active-nav::after {
+            width: 100%;
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
         }
     </style>
 
+    <!-- Structured Data for Google Knowledge Panel -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -62,61 +119,62 @@
       "name": "ApkaDr.",
       "url": "https://www.apkadr.in",
       "logo": "https://www.apkadr.in/static/images/apkadr.logo.jpg",
-      "description": "ApkaDr. offers easy online doctor appointment booking services in Saran, Bihar, and across India. Find top specialists and book consultations from home.",
-      "telephone": "+91-9876543210", 
+      "description": "ApkaDr. offers easy online doctor appointment booking services in Saran, Bihar, and across India. Founded by Raj Deepak (IIT Madras), Armaan Ali, and Adarsh.",
+      "telephone": "+91-9876543210",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "Shop No. X, Ground Floor, Your Building Name", 
+        "streetAddress": "Shop No. X, Ground Floor, Your Building Name",
         "addressLocality": "Saran",
         "addressRegion": "Bihar",
-        "postalCode": "800001", 
+        "postalCode": "800001",
         "addressCountry": "IN"
       },
-      "openingHours": "Mo-Sa 09:00-20:00", 
+      "openingHours": "Mo-Sa 09:00-20:00",
       "sameAs": [
-        "https://www.facebook.com/ApkaDrOfficial", 
+        "https://www.facebook.com/ApkaDrOfficial",
         "https://twitter.com/ApkaDrOfficial",
         "https://www.linkedin.com/company/apkadr",
-        "https://www.instagram.com/ApkaDrOfficial"
+        "https://www.instagram.com/p/DLfgLrqS0Cs/"
       ],
-      "areaServed": {
-        "@type": "Place",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Saran",
-          "addressRegion": "Bihar",
-          "addressCountry": "IN"
-        }
-      },
-      "potentialAction": {
-        "@type": "BookAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.apkadr.in/book-appointment",
-          "actionPlatform": [
-            "http://schema.org/DesktopWebPlatform",
-            "http://schema.org/IOSPlatform",
-            "http://schema.org/AndroidPlatform"
-          ]
+      "founders": [
+        {
+          "@type": "Person",
+          "name": "Raj Deepak",
+          "jobTitle": "Founder & CEO",
+          "alumniOf": {
+            "@type": "EducationalOrganization",
+            "name": "Indian Institute of Technology Madras",
+            "sameAs": "https://www.iitm.ac.in/"
+          },
+          "url": "https://www.linkedin.com/in/rajdeepak-524a3035b/"
         },
-        "expectsAcceptanceOf": {
-          "@type": "Offer",
-          "category": "MedicalAppointment"
+        {
+          "@type": "Person",
+          "name": "Armaan Ali",
+          "jobTitle": "Co-Founder & COO",
+          "url": "https://www.linkedin.com/in/armaan-ali18/"
+        },
+        {
+          "@type": "Person",
+          "name": "Adarsh",
+          "jobTitle": "Co-Founder & CTO",
+          "url": "https://www.linkedin.com/in/adarsh-kumar-9b7b9822b/"
         }
-      }
+      ]
     }
     </script>
 </head>
 
-<body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex flex-col scroll-smooth">
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 min-h-screen flex flex-col">
 
-    <header class="bg-white shadow-md fixed w-full top-0 z-50">
+    <!-- Navigation -->
+    <header class="bg-white shadow-sm fixed w-full top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
                     <a href="/" class="flex items-center space-x-2" aria-label="ApkaDr. Home">
                         <img src="/static/images/apkadr.logo.jpg"
-                            class="w-10 h-10 rounded-full border border-indigo-600"
+                            class="w-10 h-10 rounded-full border-2 border-indigo-600"
                             alt="ApkaDr. Official Logo - Online Doctor Appointment Platform" />
                         <span class="text-2xl font-bold text-indigo-700 leading-tight">ApkaDr.</span>
                     </a>
@@ -124,7 +182,7 @@
 
                 <div class="-mr-2 flex md:hidden">
                     <button id="nav-toggle" type="button"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 transition duration-200"
                         aria-label="Toggle navigation menu">
                         <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -134,145 +192,596 @@
                     </button>
                 </div>
 
-                <nav class="hidden md:flex items-center space-x-6" aria-label="Main Navigation">
-                    <a href="/" class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200"
-                        aria-current="page">Home</a>
-                    <a href="#features"
-                        class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Why ApkaDr?</a>
-                    <a href="#how-it-works"
-                        class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">How It Works</a>
+                <nav class="hidden md:flex items-center space-x-8" aria-label="Main Navigation">
+                    <a href="/" class="nav-link text-gray-700 font-medium text-indigo-600 active-nav">Home</a>
+                    <a href="#features" class="nav-link text-gray-700 font-medium">Features</a>
+                    <a href="#how-it-works" class="nav-link text-gray-700 font-medium">How It Works</a>
+                    <a href="#founders" class="nav-link text-gray-700 font-medium">Our Team</a>
+                    <a href="#testimonials" class="nav-link text-gray-700 font-medium">Testimonials</a>
                     <a href="/login"
-                        class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Find Doctors</a>
-                    <a href="#contact"
-                        class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Contact Us</a>
-                    <a href="/login"
-                        class="btn-gradient text-white px-4 py-2 rounded-lg shadow font-medium hover:shadow-lg transition duration-200">Login
+                        class="btn-gradient text-white px-5 py-2 rounded-lg shadow font-medium transition duration-200">Login
                         / Sign Up</a>
                 </nav>
             </div>
         </div>
 
-        <nav id="nav-menu" class="md:hidden hidden px-4 pb-4" aria-label="Mobile Navigation">
-            <a href="/" class="block text-gray-700 py-2 hover:bg-gray-100 rounded-md">Home</a>
-            <a href="#features" class="block text-gray-700 py-2 hover:bg-gray-100 rounded-md">Why ApkaDr?</a>
-            <a href="#how-it-works" class="block text-gray-700 py-2 hover:bg-gray-100 rounded-md">How It Works</a>
-            <a href="/login" class="block text-gray-700 py-2 hover:bg-gray-100 rounded-md">Find Doctors</a>
-            <a href="#contact" class="block text-gray-700 py-2 hover:bg-gray-100 rounded-md">Contact Us</a>
+        <nav id="nav-menu" class="md:hidden hidden px-4 pb-4 bg-white shadow-md" aria-label="Mobile Navigation">
+            <a href="/" class="block text-gray-700 py-3 px-4 hover:bg-indigo-50 rounded-md font-medium">Home</a>
+            <a href="#features" class="block text-gray-700 py-3 px-4 hover:bg-indigo-50 rounded-md font-medium">Features</a>
+            <a href="#how-it-works" class="block text-gray-700 py-3 px-4 hover:bg-indigo-50 rounded-md font-medium">How It Works</a>
+            <a href="#founders" class="block text-gray-700 py-3 px-4 hover:bg-indigo-50 rounded-md font-medium">Our Team</a>
+            <a href="#testimonials" class="block text-gray-700 py-3 px-4 hover:bg-indigo-50 rounded-md font-medium">Testimonials</a>
             <a href="/login"
-                class="block btn-gradient text-white px-4 py-2 rounded-lg shadow text-center mt-2 hover:shadow-lg">Login
+                class="block btn-gradient text-white px-4 py-3 rounded-lg shadow text-center mt-2 font-medium">Login
                 / Sign Up</a>
         </nav>
     </header>
     <div class="h-16"></div>
-    <section class="flex flex-col md:flex-row items-center justify-between px-6 md:px-20 py-16">
+
+    <!-- Hero Section -->
+    <section class="flex flex-col md:flex-row items-center justify-between px-6 md:px-20 py-16 md:py-24">
         <div class="md:w-1/2 mb-10 md:mb-0">
             <h1 class="text-3xl lg:text-4xl text-indigo-700 font-bold mb-4 leading-tight">
-                Book Doctor Appointments Online in <span class="text-purple-600">Saran</span> & Across India –
-                Hassle-Free
+                अब घर बैठे डॉक्टर के पास <span class="text-purple-600">Appointments</span> बुक करें छपरा और मढ़ौरा में।
             </h1>
-            <h2 class="text-xl md:text-2xl font-medium text-gray-700 mb-6">
-                Connect with Top Doctors Near You, Instantly. Your Trusted Healthcare Partner.
+            <!-- <h2 class="text-xl md:text-2xl font-medium text-gray-600 mb-6">
+                Powered by dedication, built by experts. ApkaDr brings you the best healthcare experience—quickly, safely, and conveniently.
             </h2>
             <p class="text-lg text-gray-600 mb-8">
-                ApkaDr. simplifies healthcare by letting you find and book appointments with **verified doctors and
-                specialists** in Saran and other major cities. No more queues, just quality care from home.
-            </p>
+                Founded by <strong>Raj Deepak (IIT Madras), Armaan Ali, and Adarsh</strong>, ApkaDr simplifies healthcare by letting you find and book appointments with verified doctors and specialists in Saran and across India.
+            </p> -->
             <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-    <a href="/login"
-        class="btn-gradient text-white px-8 py-4 rounded-full shadow-lg text-lg font-semibold hover:shadow-xl transform hover:scale-105 transition duration-300 text-center">
-        Book Your Appointment Now
-    </a>
-    <a href="/download-apk"
-        class="btn-gradient text-white px-8 py-4 rounded-full shadow-lg text-lg font-semibold hover:shadow-xl transform hover:scale-105 transition duration-300 text-center">
-        Download Our App
-    </a>
-    
-</div>
-
+                <a href="/login"
+                    class="btn-gradient text-white px-8 py-4 rounded-full shadow-lg text-lg font-semibold hover:shadow-xl transition duration-300 text-center">
+                    <i class="fas fa-calendar-check mr-2"></i> Book Appointment
+                </a>
+                <a href="#download-app"
+                    class="bg-white text-indigo-600 border border-indigo-600 px-8 py-4 rounded-full shadow-lg text-lg font-semibold hover:bg-indigo-50 transition duration-300 text-center">
+                    <i class="fas fa-mobile-alt mr-2"></i> Get Our App
+                </a>
+            </div>
+            
+            <div class="mt-8 flex items-center space-x-4">
+                <div class="flex -space-x-2">
+                    <img src="https://randomuser.me/api/portraits/women/12.jpg" class="w-10 h-10 rounded-full border-2 border-white" alt="Happy patient">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-10 h-10 rounded-full border-2 border-white" alt="Happy patient">
+                    <img src="https://randomuser.me/api/portraits/women/45.jpg" class="w-10 h-10 rounded-full border-2 border-white" alt="Happy patient">
+                </div>
+                <div>
+                    <div class="flex items-center">
+                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-sm text-gray-600">Trusted by <span class="font-semibold">1000+</span> patients in Saran</p>
+                </div>
+            </div>
         </div>
-        <div class="md:w-1/2">
+        <div class="md:w-1/2 flex justify-center">
             <img src="/static/images/transparent.logo.png"
                 alt="Patient using ApkaDr mobile app to book online doctor consultation in India"
-                class="w-full max-w-lg mx-auto" loading="lazy" />
+                class="w-full max-w-lg mx-auto floating" loading="lazy" />
         </div>
     </section>
 
-    <section id="features" class="px-6 md:px-20 py-12 bg-white rounded-t-3xl shadow-inner">
-        <h3 class="text-3xl font-bold text-center text-indigo-700 mb-10">Why Choose ApkaDr. for Your Healthcare Needs?
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="glass p-6 text-center">
-                <div class="text-indigo-500 text-4xl mb-4">
+    <!-- Trust Badges Section -->
+    <section class="px-6 md:px-20 py-8 bg-white">
+        <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div class="p-4">
+                <div class="text-indigo-600 text-3xl mb-2">
                     <i class="fas fa-user-md"></i>
                 </div>
-                <h4 class="text-xl font-semibold mb-2">Verified & Expert Doctors</h4>
-                <p class="text-gray-600">Access a network of certified and experienced **specialist doctors** in your
-                    area, carefully vetted for quality care.</p>
+                <h4 class="font-semibold text-gray-800">50+ Doctors</h4>
+                <p class="text-sm text-gray-600">Verified professionals</p>
             </div>
-            <div class="glass p-6 text-center">
-                <div class="text-purple-500 text-4xl mb-4">
+            <div class="p-4">
+                <div class="text-purple-600 text-3xl mb-2">
                     <i class="fas fa-calendar-check"></i>
                 </div>
-                <h4 class="text-xl font-semibold mb-2">Easy Online Appointments</h4>
-                <p class="text-gray-600">Book or reschedule your **doctor appointments online** effortlessly, saving you
-                    time and hassle. View real-time availability and choose your preferred slot.</p>
+                <h4 class="font-semibold text-gray-800">1000+ Appointments</h4>
+                <p class="text-sm text-gray-600">Booked monthly</p>
             </div>
-            <div class="glass p-6 text-center">
-                <div class="text-pink-500 text-4xl mb-4">
+            <div class="p-4">
+                <div class="text-pink-600 text-3xl mb-2">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h4 class="font-semibold text-gray-800">5+ Cities</h4>
+                <p class="text-sm text-gray-600">Across Bihar</p>
+            </div>
+            <div class="p-4">
+                <div class="text-green-600 text-3xl mb-2">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h4 class="font-semibold text-gray-800">24/7 Support</h4>
+                <p class="text-sm text-gray-600">Always available</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="px-6 md:px-20 py-16 bg-indigo-50">
+        <div class="max-w-4xl mx-auto text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Why Choose ApkaDr?</h2>
+            <p class="text-lg text-gray-600">We're revolutionizing healthcare access in Saran with technology and compassion</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="glass p-8">
+                <div class="feature-icon text-4xl mb-4">
                     <i class="fas fa-shield-alt"></i>
                 </div>
-                <h4 class="text-xl font-semibold mb-2">Secure & Private Platform</h4>
-                <p class="text-gray-600">Your health data and personal information are encrypted and handled with the
-                    utmost care, ensuring **privacy and security** at every step.</p>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Verified Doctors</h3>
+                <p class="text-gray-600">All doctors on our platform are thoroughly vetted for credentials and experience to ensure you receive quality care.</p>
+            </div>
+            
+            <div class="glass p-8">
+                <div class="feature-icon text-4xl mb-4">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Real-time Availability</h3>
+                <p class="text-gray-600">See up-to-date doctor schedules and book appointments instantly without phone calls or waiting in line.</p>
+            </div>
+            
+            <div class="glass p-8">
+                <div class="feature-icon text-4xl mb-4">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Video Consultations</h3>
+                <p class="text-gray-600">Get medical advice from the comfort of your home through secure video calls with qualified doctors.</p>
+            </div>
+            
+            <div class="glass p-8">
+                <div class="feature-icon text-4xl mb-4">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Smart Reminders</h3>
+                <p class="text-gray-600">Never miss an appointment with automated reminders via SMS, email, and app notifications.</p>
+            </div>
+            
+            <div class="glass p-8">
+                <div class="feature-icon text-4xl mb-4">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Transparent Pricing</h3>
+                <p class="text-gray-600">Know consultation fees upfront with no hidden charges. Compare prices across doctors.</p>
+            </div>
+            
+            <div class="glass p-8">
+                <div class="feature-icon text-4xl mb-4">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Health Records</h3>
+                <p class="text-gray-600">Securely store and access your medical history, prescriptions, and test reports in one place.</p>
             </div>
         </div>
     </section>
 
-    <section id="how-it-works" class="px-6 md:px-20 py-12">
-        <h3 class="text-3xl font-bold text-center text-gray-800 mb-10">How ApkaDr. Simplifies Your Doctor Visits</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div class="glass p-6">
-                <div class="text-teal-500 text-4xl mb-4">
-                    <i class="fas fa-search"></i>
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="px-6 md:px-20 py-16 bg-white">
+        <div class="max-w-4xl mx-auto text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">How ApkaDr Works</h2>
+            <p class="text-lg text-gray-600">Booking a doctor appointment has never been easier</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="flex flex-col items-center text-center">
+                <div class="bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mb-4">
+                    <span class="bg-indigo-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">1</span>
                 </div>
-                <h4 class="text-xl font-semibold mb-2">1. Search for Doctors</h4>
-                <p class="text-gray-600">Effortlessly **search for doctors by specialty (e.g., General Physician,
-                    Dentist), location (like Saran), or specific name** to find your ideal healthcare provider.</p>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Search Doctors</h3>
+                <p class="text-gray-600">Find specialists near you by location, specialty, or name. View profiles, ratings, and availability.</p>
             </div>
-            <div class="glass p-6">
-                <div class="text-orange-500 text-4xl mb-4">
-                    <i class="fas fa-hand-pointer"></i>
+            
+            <div class="flex flex-col items-center text-center">
+                <div class="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mb-4">
+                    <span class="bg-purple-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">2</span>
                 </div>
-                <h4 class="text-xl font-semibold mb-2">2. Book Instantly Online</h4>
-                <p class="text-gray-600">Select a convenient time slot from **real-time availability** and securely
-                    **book your appointment online** in just a few simple clicks. Get instant confirmation.</p>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Book Appointment</h3>
+                <p class="text-gray-600">Select preferred date and time. Get instant confirmation with all details.</p>
             </div>
-            <div class="glass p-6">
-                <div class="text-blue-500 text-4xl mb-4">
-                    <i class="fas fa-clinic-medical"></i>
+            
+            <div class="flex flex-col items-center text-center">
+                <div class="bg-pink-100 w-20 h-20 rounded-full flex items-center justify-center mb-4">
+                    <span class="bg-pink-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">3</span>
                 </div>
-                <h4 class="text-xl font-semibold mb-2">3. Consult & Get Care</h4>
-                <p class="text-gray-600">Attend your **scheduled doctor appointment** at the clinic or opt for a
-                    convenient **telemedicine consultation**, ensuring you receive timely and quality medical advice.
-                </p>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Visit Doctor</h3>
+                <p class="text-gray-600">Attend your appointment. Get reminders and directions to the clinic.</p>
+            </div>
+        </div>
+        
+        <div class="mt-12 flex justify-center">
+            <a href="/login"
+                class="btn-gradient text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition duration-300">
+                Start Booking Now <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Founders Section -->
+    <section id="founders" class="px-6 md:px-20 py-16 bg-gray-50">
+        <div class="max-w-4xl mx-auto text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Meet Our Founders</h2>
+            <p class="text-lg text-gray-600">The passionate team behind ApkaDr's vision for accessible healthcare</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div class="glass p-6 text-center flex flex-col items-center">
+                <!-- <img src="/static/images/raj-deepak.jpg" alt="Raj Deepak - Founder & CEO of ApkaDr"
+                    class="w-32 h-32 rounded-full mb-4 object-cover border-4 border-indigo-500 shadow-md" loading="lazy"> -->
+                <h4 class="text-xl font-semibold mb-1">Raj Deepak</h4>
+                <p class="text-indigo-600 font-medium mb-2">Founder & CEO</p>
+                <p class="text-gray-600 mb-3">Alumnus of IIT Madras, Raj brings technical expertise and product vision to make healthcare accessible in rural India.</p>
+                <div class="flex space-x-3">
+                    <a href="https://www.linkedin.com/in/rajdeepak-524a3035b/" target="_blank" rel="noopener noreferrer" class="text-indigo-500 hover:text-indigo-700 transition duration-200">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="https://twitter.com/rajdeepak" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-600 transition duration-200">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="glass p-6 text-center flex flex-col items-center">
+                <!-- <img src="/static/images/armaan-ali.jpg" alt="Armaan Ali - Co-Founder & COO of ApkaDr"
+                    class="w-32 h-32 rounded-full mb-4 object-cover border-4 border-purple-500 shadow-md" loading="lazy"> -->
+                <h4 class="text-xl font-semibold mb-1">Armaan Ali</h4>
+                <p class="text-purple-600 font-medium mb-2">Co-Founder & COO</p>
+                <p class="text-gray-600 mb-3">Healthcare strategist focused on creating seamless patient experiences and building doctor partnerships.</p>
+                <div class="flex space-x-3">
+                    <a href="https://www.linkedin.com/in/armaan-ali18/" target="_blank" rel="noopener noreferrer" class="text-purple-500 hover:text-purple-700 transition duration-200">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="glass p-6 text-center flex flex-col items-center">
+                <!-- <img src="/static/images/adarsh.jpg" alt="Adarsh - Co-Founder & CTO of ApkaDr"
+                    class="w-32 h-32 rounded-full mb-4 object-cover border-4 border-pink-500 shadow-md" loading="lazy"> -->
+                <h4 class="text-xl font-semibold mb-1">Adarsh</h4>
+                <p class="text-pink-600 font-medium mb-2">Co-Founder & CTO</p>
+                <p class="text-gray-600 mb-3">Technology architect ensuring ApkaDr's platform is secure, scalable, and delivers exceptional performance.</p>
+                <div class="flex space-x-3">
+                    <a href="https://www.linkedin.com/in/adarsh-kumar-9b7b9822b/" target="_blank" rel="noopener noreferrer" class="text-pink-500 hover:text-pink-700 transition duration-200">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-12 max-w-3xl mx-auto glass p-6">
+            <h3 class="text-xl font-semibold text-center mb-4 text-gray-800">Our Story</h3>
+            <p class="text-gray-600 text-center">
+                Founded in 2025 by Raj Deepak, Armaan Ali, and Adarsh, ApkaDr was born out of a shared vision to make quality healthcare accessible to everyone in Saran and across India. 
+                After witnessing the challenges patients face in booking appointments and accessing doctors in rural areas, we set out to create a solution that bridges the gap between 
+                healthcare providers and those who need care. Today, we're proud to serve thousands of patients and continue innovating to improve healthcare access.
+            </p>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="px-6 md:px-20 py-16 bg-white">
+        <div class="max-w-4xl mx-auto text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">What Our Patients Say</h2>
+            <p class="text-lg text-gray-600">Hear from people who've used ApkaDr to book their doctor appointments</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="glass p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center mr-2">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <span class="text-sm text-gray-500">2 days ago</span>
+                </div>
+                <p class="text-gray-700 italic mb-4">"ApkaDr saved me hours of waiting at the clinic. I booked an appointment in the morning and was seen right at my scheduled time. The doctor was excellent too!"</p>
+                <div class="flex items-center">
+                    <img src="https://randomuser.me/api/portraits/women/32.jpg" class="w-10 h-10 rounded-full mr-3" alt="Priya Sharma">
+                    <div>
+                        <p class="font-semibold text-gray-800">Priya Sharma</p>
+                        <p class="text-sm text-gray-500">Saran, Bihar</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center mr-2">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <span class="text-sm text-gray-500">1 week ago</span>
+                </div>
+                <p class="text-gray-700 italic mb-4">"As a senior citizen, going to the clinic and waiting for hours was difficult. ApkaDr's video consultation feature has been a blessing. The doctor was patient and thorough."</p>
+                <div class="flex items-center">
+                    <img src="https://randomuser.me/api/portraits/men/65.jpg" class="w-10 h-10 rounded-full mr-3" alt="Ramesh Kumar">
+                    <div>
+                        <p class="font-semibold text-gray-800">Ramesh Kumar</p>
+                        <p class="text-sm text-gray-500">Chhapra, Bihar</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center mr-2">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star-half-alt text-yellow-400"></i>
+                    </div>
+                    <span class="text-sm text-gray-500">3 weeks ago</span>
+                </div>
+                <p class="text-gray-700 italic mb-4">"Finding a good pediatrician for my daughter was challenging until I discovered ApkaDr. The platform made it easy to compare doctors and book an appointment quickly."</p>
+                <div class="flex items-center">
+                    <img src="https://randomuser.me/api/portraits/women/45.jpg" class="w-10 h-10 rounded-full mr-3" alt="Sunita Devi">
+                    <div>
+                        <p class="font-semibold text-gray-800">Sunita Devi</p>
+                        <p class="text-sm text-gray-500">Marhowrah, Bihar</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="text-center px-6 py-16">
-        <h4 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Ready to experience hassle-free healthcare?</h4>
-        <p class="text-gray-600 mb-6">Join thousands of satisfied users. **Register today and book your first doctor
-            appointment online** with ApkaDr.</p>
-        <a href="/register" class="btn-gradient text-white px-8 py-3 rounded-lg text-lg shadow-lg">Book Your Appointment
-            Now</a>
+    <!-- FAQ Section -->
+    <section id="faq" class="px-6 md:px-20 py-16 bg-indigo-50">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
+                <p class="text-lg text-gray-600">Find answers to common questions about ApkaDr</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="glass p-6 cursor-pointer group" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-lg font-semibold text-gray-800 group-hover:text-indigo-600 transition duration-200">Is ApkaDr free to use?</h4>
+                        <i class="fas fa-chevron-down text-gray-500 group-hover:text-indigo-600 transition duration-200"></i>
+                    </div>
+                    <div class="mt-3 text-gray-600 hidden">
+                        <p>Yes, ApkaDr is completely free for patients to use. You can search for doctors, view profiles, and book appointments without any charges. Consultation fees are paid directly to the doctor according to their rates.</p>
+                    </div>
+                </div>
+                
+                <div class="glass p-6 cursor-pointer group" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-lg font-semibold text-gray-800 group-hover:text-indigo-600 transition duration-200">How do I know the doctors are qualified?</h4>
+                        <i class="fas fa-chevron-down text-gray-500 group-hover:text-indigo-600 transition duration-200"></i>
+                    </div>
+                    <div class="mt-3 text-gray-600 hidden">
+                        <p>Every doctor on ApkaDr undergoes a rigorous verification process where we check their medical degrees, licenses, and certifications. We also verify their experience and specialization before onboarding them to our platform.</p>
+                    </div>
+                </div>
+                
+                <div class="glass p-6 cursor-pointer group" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-lg font-semibold text-gray-800 group-hover:text-indigo-600 transition duration-200">Can I cancel or reschedule an appointment?</h4>
+                        <i class="fas fa-chevron-down text-gray-500 group-hover:text-indigo-600 transition duration-200"></i>
+                    </div>
+                    <div class="mt-3 text-gray-600 hidden">
+                        <p>Yes, you can cancel or reschedule appointments through your ApkaDr account. Please note that cancellation policies may vary by doctor. We recommend making changes at least 24 hours before your scheduled appointment to avoid any cancellation fees that some doctors may charge.</p>
+                    </div>
+                </div>
+                
+                <div class="glass p-6 cursor-pointer group" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-lg font-semibold text-gray-800 group-hover:text-indigo-600 transition duration-200">Who are the founders of ApkaDr?</h4>
+                        <i class="fas fa-chevron-down text-gray-500 group-hover:text-indigo-600 transition duration-200"></i>
+                    </div>
+                    <div class="mt-3 text-gray-600 hidden">
+                        <p>ApkaDr was founded in 2025 by Raj Deepak (IIT Madras alumnus), Armaan Ali, and Adarsh. The team combines technical expertise, healthcare knowledge, and business strategy to make quality healthcare accessible to everyone in India.</p>
+                    </div>
+                </div>
+                
+                <div class="glass p-6 cursor-pointer group" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-lg font-semibold text-gray-800 group-hover:text-indigo-600 transition duration-200">Is my personal health information secure?</h4>
+                        <i class="fas fa-chevron-down text-gray-500 group-hover:text-indigo-600 transition duration-200"></i>
+                    </div>
+                    <div class="mt-3 text-gray-600 hidden">
+                        <p>Absolutely. We use industry-standard encryption to protect all your data. Your health information is only shared with the doctors you choose to consult with, and we never sell or share your data with third parties without your consent.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <!-- <footer class="bg-white border-t py-6 text-center text-gray-500 text-sm">
-        &copy; 2025 ApkaDr. All rights reserved. | <a href="/privacy-policy" class="text-indigo-600 hover:underline">Privacy Policy</a> | <a href="/terms-of-service" class="text-indigo-600 hover:underline">Terms of Service</a>
-    </footer> -->
-    {% include 'footer.html' %}
+    <!-- Download App Section -->
+    <section id="download-app" class="px-6 md:px-20 py-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Download the ApkaDr App Today!</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Get the full ApkaDr experience on your mobile device. Book appointments, manage your health records, and get reminders all in one place.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                <div class="bg-white text-indigo-600 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 hover:bg-gray-100 transition duration-300 cursor-pointer">
+                    <i class="fas fa-qrcode text-2xl"></i>
+                    <div class="text-left">
+                        <p class="text-xs">Scan to download</p>
+                        <p class="font-semibold">ApkaDr App</p>
+                    </div>
+                </div>
+                
+                <img src="/static/images/QR.png" alt="QR Code for ApkaDr App" class="w-24 h-24 border-4 border-white rounded-lg shadow-md" loading="lazy">
+            </div>
+            
+            <div class="mt-8">
+                <p class="text-indigo-200 mb-2">Don't have a QR scanner?</p>
+                <a href="#contact" class="text-white font-semibold underline hover:text-indigo-200 transition duration-200">Contact us for direct download link</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="px-6 md:px-20 py-16 bg-white">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Get In Touch</h2>
+                <p class="text-lg text-gray-600">Have questions or feedback? We'd love to hear from you</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass p-8">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Contact Information</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="text-indigo-600 mr-4 mt-1">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Our Office</h4>
+                                <p class="text-gray-600">Saran, Bihar 841301, India</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="text-indigo-600 mr-4 mt-1">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Email Us</h4>
+                                <p class="text-gray-600">hello.apkadr@gmail.com</p>
+                            </div>
+                        </div>
+                        
+                        <!-- <div class="flex items-start">
+                            <div class="text-indigo-600 mr-4 mt-1">
+                                <i class="fas fa-phone-alt"></i>
+                            </div> -->
+                            <!-- <div>
+                                <h4 class="font-medium text-gray-800">Call Us</h4>
+                                <p class="text-gray-600">+91 98765 43210</p>
+                            </div> -->
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h4 class="font-medium text-gray-800 mb-3">Follow Us</h4>
+                        <div class="flex space-x-4">
+                            <a href="https://www.facebook.com/ApkaDrOfficial" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800 text-xl transition duration-200">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                            <a href="https://twitter.com/ApkaDrOfficial" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-600 text-xl transition duration-200">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/company/apkadr" target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:text-blue-900 text-xl transition duration-200">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="https://www.instagram.com/p/DLfgLrqS0Cs/" target="_blank" rel="noopener noreferrer" class="text-pink-500 hover:text-pink-700 text-xl transition duration-200">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass p-8">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Send Us a Message</h3>
+                    <form class="space-y-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                            <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200">
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200">
+                        </div>
+                        
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
+                            <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-gradient text-white px-6 py-3 rounded-lg font-medium w-full hover:shadow-lg transition duration-200">
+                            Send Message <i class="fas fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="px-6 md:px-20 py-12 bg-indigo-700 text-white text-center">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-bold mb-4">Ready to Experience Hassle-Free Doctor Appointments?</h2>
+            <p class="text-lg mb-8">Join thousands of patients in Saran who are saving time and getting better healthcare with ApkaDr</p>
+            <a href="/register" class="inline-block bg-white text-indigo-700 px-8 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-gray-100 hover:shadow-xl transition duration-300">
+                Get Started Now <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <img src="/static/images/apkadr.logo.jpg"
+                            class="w-10 h-10 rounded-full border-2 border-indigo-600"
+                            alt="ApkaDr. Logo" />
+                        <span class="text-2xl font-bold text-white leading-tight">ApkaDr.</span>
+                    </div>
+                    <p class="mb-4">Making healthcare accessible and convenient for everyone in Saran and across India.</p>
+                    <p>&copy; 2025 ApkaDr. All rights reserved.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold text-lg mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="hover:text-white transition duration-200">Home</a></li>
+                        <li><a href="#features" class="hover:text-white transition duration-200">Features</a></li>
+                        <li><a href="#how-it-works" class="hover:text-white transition duration-200">How It Works</a></li>
+                        <li><a href="#founders" class="hover:text-white transition duration-200">Our Team</a></li>
+                        <li><a href="#testimonials" class="hover:text-white transition duration-200">Testimonials</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold text-lg mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/about" class="hover:text-white transition duration-200">About Us</a></li>
+                        <li><a href="/blog" class="hover:text-white transition duration-200">Blog</a></li>
+                        <li><a href="/careers" class="hover:text-white transition duration-200">Careers</a></li>
+                        <li><a href="/press" class="hover:text-white transition duration-200">Press</a></li>
+                        <li><a href="/contact" class="hover:text-white transition duration-200">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold text-lg mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/privacy" class="hover:text-white transition duration-200">Privacy Policy</a></li>
+                        <li><a href="/terms" class="hover:text-white transition duration-200">Terms of Service</a></li>
+                        <li><a href="/security" class="hover:text-white transition duration-200">Security</a></li>
+                        <li><a href="/sitemap.xml" class="hover:text-white transition duration-200">Sitemap</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>Made with <i class="fas fa-heart text-red-500"></i> in Saran, Bihar, India</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-6 right-6 bg-indigo-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition duration-200 hidden">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <script>
+        // Mobile Navigation Toggle
         document.getElementById('nav-toggle').addEventListener('click', function () {
             const menu = document.getElementById('nav-menu');
             menu.classList.toggle('hidden');
@@ -280,16 +789,77 @@
             this.setAttribute('aria-expanded', !isExpanded);
         });
 
+        // Smooth Scrolling for Anchor Links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-                const navMenu = document.getElementById('nav-menu');
-                if (!navMenu.classList.contains('hidden')) {
-                    navMenu.classList.add('hidden');
-                    document.getElementById('nav-toggle').setAttribute('aria-expanded', 'false');
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    const navMenu = document.getElementById('nav-menu');
+                    if (!navMenu.classList.contains('hidden')) {
+                        navMenu.classList.add('hidden');
+                        document.getElementById('nav-toggle').setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+        });
+
+        // FAQ Toggle Function
+        function toggleFAQ(element) {
+            const answer = element.querySelector('div:last-child');
+            const icon = element.querySelector('i');
+            
+            answer.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+
+        // Back to Top Button
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Active Navigation Link Highlighting
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        window.addEventListener('scroll', function() {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (pageYOffset >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active-nav', 'text-indigo-600');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active-nav', 'text-indigo-600');
                 }
             });
         });

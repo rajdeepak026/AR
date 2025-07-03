@@ -7,90 +7,6 @@ from datetime import date
 from sqlalchemy.orm import joinedload
 import re
 from datetime import datetime
-import requests
-
-def send_push_notification(player_id, heading, content):
-    url = "https://onesignal.com/api/v1/notifications"
-    headers = {
-        "Content-Type": "application/json; charset=utf-8",
-        "Authorization": "Basic 73dnctcbru6cvbpg2mukmzt3v"  # ✅ Use your new REST API key here
-    }
-    payload = {
-        "app_id": "b247bbe3-988e-4438-b5b2-74207755fea4",
-        "include_player_ids": [player_id],
-        "headings": {"en": heading},
-        "contents": {"en": content}
-    }
-
-    try:
-        response = requests.post(url, headers=headers, json=payload)
-        print("Push status:", response.status_code)
-        print("Response:", response.json())
-    except Exception as e:
-        print("Push error:", e)
-
-@app.route("/force_push")
-def force_push():
-    user = User.query.filter(User.fcm_token.isnot(None)).first()
-    if not user:
-        return "❌ No user with fcm_token"
-
-    send_push_notification(
-        player_id=user.fcm_token,
-        heading="🔔 Real Notification",
-        content="Test from /force_push"
-    )
-    return "✅ Force push sent"
-
-@app.route("/test_push")
-def test_push():
-    user = User.query.first()  # Or current user
-    if not user.fcm_token:
-        return "No token found"
-    send_push_notification(
-        player_id=user.fcm_token,
-        heading="Test",
-        content="This is a test push"
-    )
-    return "Notification sent"
-
-@app.route('/save_player_id', methods=['POST'])
-def save_player_id():
-    try:
-        data = request.get_json()
-        player_id = data.get("player_id")
-        if not player_id:
-            return jsonify({"status": "error", "message": "Missing player_id"}), 400
-
-        user_id = session.get('user_id')
-        if user_id:
-            user = User.query.get(user_id)
-            if user:
-                user.player_id = player_id  # make sure your User model has this column
-                db.session.commit()
-                print(f"📥 Saved player_id for user {user_id}: {player_id}")
-
-        else:
-            # No logged-in user, just log the player_id or handle accordingly
-            print("📥 Received player_id without user session:", player_id)
-
-        return jsonify({"status": "success", "message": "Player ID saved successfully"})
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
-@app.route("/store_player_id", methods=["POST"])
-def store_player_id():
-    if "user_id" not in session:
-        return "Unauthorized", 401
-
-    data = request.get_json()
-    token = data.get("fcm_token")
-
-    user = User.query.get(session["user_id"])
-    user.fcm_token = token
-    db.session.commit()
-    return "OK", 200
 
 @app.route("/")
 def landing_page():
@@ -124,7 +40,7 @@ def careers():
 def faqs():
     return render_template("content/faqs.html")
 
-@app.route("/download-apk")
+@app.route("/download-app")
 def download_apk():
     return render_template("content/download_apk.html")
 

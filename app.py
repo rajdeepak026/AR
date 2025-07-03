@@ -12,17 +12,6 @@ load_dotenv()
 # app = Flask(__name__)
 app = Flask(__name__, static_folder='static')
 
-
-@app.route('/OneSignalSDKWorker.js')
-def onesignal_worker():
-    return send_from_directory('static', 'OneSignalSDKWorker.js')
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory('static', 'favicon.ico')  # Make sure you have a static/favicon.ico file
-
-@app.route('/static/OneSignalSDKWorkerLocal.js')
-def onesignal_local_sdk():
-    return send_from_directory('static', 'OneSignalSDKWorkerLocal.js')
 # ✅ Static file routes
 @app.route('/sitemap.xml', endpoint='sitemap_static')
 def sitemap():
