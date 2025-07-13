@@ -264,14 +264,30 @@
 
             <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 vertical-table">
-                    <thead class="bg-apkadr-dark-blue text-white">
-                        <tr>
-                            <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tl-xl">
-                                <i class="fas fa-user mr-2"></i> Name</th>
-                            <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tr-xl">
-                                <i class="fas fa-envelope mr-2"></i> Email</th>
-                        </tr>
-                    </thead>
+                   <thead class="bg-apkadr-dark-blue text-white">
+    <tr>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tl-xl">
+            <i class="fas fa-user mr-2"></i> Name</th>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider">
+            <i class="fas fa-envelope mr-2"></i> Email</th>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider rounded-tr-xl">
+            <i class="fas fa-phone mr-2"></i> Phone</th>
+    </tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200">
+    {% for user in users %}
+    <tr class="hover:bg-gray-50 transition-colors duration-200">
+        <td data-label="Name" class="px-4 py-3 text-sm font-medium text-gray-900">{{ user.fullName }}</td>
+        <td data-label="Email" class="px-4 py-3 text-sm text-gray-800">{{ user.email }}</td>
+        <td data-label="Phone" class="px-4 py-3 text-sm text-gray-800">{{ user.phone }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="3" class="px-4 py-4 text-center text-gray-500 text-base">No users found.</td>
+    </tr>
+    {% endfor %}
+</tbody>
+
                     <tbody class="bg-white divide-y divide-gray-200">
                         {% for user in users %}
                         <tr class="hover:bg-gray-50 transition-colors duration-200">
