@@ -22,9 +22,12 @@ def robots():
 def google_verification():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'google0bd79030d3228202.html')
 
-# ✅ Database config (fallback to SQLite)
-database_url = os.environ.get("DATABASE_URL") or "sqlite:///app.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+# ✅ Database config (Render Postgres → fallback to SQLite)
+database_url = os.environ.get("DATABASE_URL")
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url or "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # ✅ Sessions
@@ -33,7 +36,7 @@ app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 app.config["SESSION_COOKIE_NAME"] = "yourdr_session"
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = False
+app.config["SESSION_COOKIE_SECURE"] = False  # ⚠️ change to True if HTTPS on production
 
 # ✅ Init extensions
 db.init_app(app)
