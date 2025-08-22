@@ -5,11 +5,16 @@ from datetime import timedelta
 from dotenv import load_dotenv
 from flask_migrate import Migrate
 
+# ✅ Load environment variables from .env file
 load_dotenv()
 
-app = Flask(__name__, static_folder='static')
+# ✅ Initialize Flask app
+app = Flask(__name__, static_folder='static', instance_relative_config=True)
 
-# ✅ Static routes
+# ✅ Ensure instance folder exists
+os.makedirs(app.instance_path, exist_ok=True)
+
+# ✅ Static file routes
 @app.route('/sitemap.xml', endpoint='sitemap_static')
 def sitemap():
     return send_from_directory(app.static_folder, 'sitemap.xml')
@@ -22,38 +27,28 @@ def robots():
 def google_verification():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'google0bd79030d3228202.html')
 
-
-# ✅ Database config
-use_sqlite = os.environ.get("USE_SQLITE") == "True"   # toggle with env var
-
-database_url = None if use_sqlite else os.environ.get("DATABASE_URL")
-
-# Fix old postgres:// URLs → postgresql://
-if database_url and database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
-
-# Fall back to SQLite if no database_url
-app.config["SQLALCHEMY_DATABASE_URI"] = database_url or "sqlite:///app.db"
+# ✅ SQLite configuration (always local, never Postgres)
+sqlite_path = os.path.join(app.instance_path, "app.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{sqlite_path}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-
-# ✅ Sessions
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev_secret")
+# ✅ Session configuration
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev_secret_key")  # Fallback for dev
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 app.config["SESSION_COOKIE_NAME"] = "yourdr_session"
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "False") == "True"
+app.config["SESSION_COOKIE_SECURE"] = False  # Set to True in production with HTTPS
 
-
-# ✅ Init extensions
+# ✅ Initialize extensions
 db.init_app(app)
 migrate = Migrate(app, db)
 
+# ✅ Import routes inside app context
 with app.app_context():
     from backend import controllers
-    # db.create_all()  # Uncomment only if not using migrations
+    # db.create_all()  # Uncomment only for initial table creation
 
-
+# ✅ Run app
 if __name__ == "__main__":
     app.run(debug=os.environ.get("FLASK_DEBUG") == "True")
